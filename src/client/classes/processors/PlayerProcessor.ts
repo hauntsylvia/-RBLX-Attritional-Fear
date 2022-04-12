@@ -1,4 +1,4 @@
-import { Faction } from "shared/classes/in game/factions/Faction";
+import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { FoAPlayer } from "shared/classes/in game/players/FoAPlayer";
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
@@ -14,10 +14,10 @@ export class PlayerProcessor extends Processor
 
     GetAllPlayers(): ServerResponse<FoAPlayer[]>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetPlayerFactionsRoute, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
 
-    RegisterFactionToGame(Faction: Faction): ServerResponse<Faction>
+    RegisterFactionToGame(Faction: FoAFaction): ServerResponse<FoAFaction>
     {
         return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.RegisterPlayerFaction, Faction));
     }

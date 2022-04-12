@@ -6,5 +6,6 @@ export class FoAClient
     {
         this.PlayerProcessor = new PlayerProcessor(RemoteFunction);
     }
+
     PlayerProcessor: PlayerProcessor;
 }

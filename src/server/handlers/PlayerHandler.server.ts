@@ -1,5 +1,5 @@
 import { Server } from "server/classes/Server";
-import { Faction } from "shared/classes/in game/factions/Faction";
+import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { FoAPlayer } from "shared/classes/in game/players/FoAPlayer";
 import { Endpoint } from "server/classes/Endpoint";
 import { Handler } from "server/classes/Handler";
@@ -7,12 +7,13 @@ import { Strings } from "shared/consts/Strings";
 
 
 
-function GetPlayerFactions(Player: Player, Arg: any): FoAPlayer[]
+function GetAllActivePlayerFactions (Player: Player, Arg: any): FoAFaction[]
 {
-    return [new FoAPlayer(Player)];
+    return Server.ServerData.CurrentActiveFactions;
 }
 
-function RegisterPlayerFaction(Player: Player, Arg: Faction): Faction | undefined
+
+function RegisterPlayerFaction(Player: Player, Arg: FoAFaction): FoAFaction | undefined
 {
     if(!Server.ServerData.CurrentActiveFactions.some(function(Faction)
     {
@@ -38,8 +39,8 @@ function RegisterPlayerToGame(Player: Player): FoAPlayer | undefined
 }
 const PlayerHandler = new Handler(Strings.PlayerStrings.PlayerHandlerRoute, 
     [
-        new Endpoint<any, FoAPlayer[]>(Strings.PlayerStrings.GetPlayerFactionsRoute, GetPlayerFactions),
-        new Endpoint<Faction, Faction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, RegisterPlayerFaction),
+        new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions, GetAllActivePlayerFactions),
+        new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, RegisterPlayerFaction),
         new Endpoint<Player, FoAPlayer | undefined>(Strings.PlayerStrings.RegisterCurrentPlayer, RegisterPlayerToGame)
     ]);
 

@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\shared",
+    "\\src\\shared\\classes",
+    "\\src\\shared\\classes\\in game",
+    "\\src\\shared\\classes\\in game\\factions",
+    "\\src\\shared\\classes\\in game\\players",
+    "\\src\\shared\\classes\\server helpers",
+    "\\src\\shared\\consts"
+  ],
+  "SelectedNode": "\\src\\shared\\classes\\in game\\factions\\Faction.ts",
+  "PreviewInSolutionExplorer": false
+}
