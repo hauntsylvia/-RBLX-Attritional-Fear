@@ -1,9 +1,7 @@
 import { Faction } from "shared/classes/in game/factions/Faction";
 import { FoAClient } from "./classes/clients/FoAClient";
 
-wait(3)
-const Client = new FoAClient(game.GetService("ReplicatedStorage").FindFirstChild("API") as RemoteFunction);
-Client.PlayerProcessor.GetAllPlayers();
+const Client = new FoAClient(game.GetService("ReplicatedStorage").WaitForChild("API", 2) as RemoteFunction);
 let RegPlr = Client.PlayerProcessor.RegisterCurrentPlayerToGame();
 if(RegPlr.Returned !== undefined)
 {

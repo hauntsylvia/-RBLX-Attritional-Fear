@@ -1,8 +1,8 @@
 import { Server } from "server/classes/Server";
 import { Faction } from "shared/classes/in game/factions/Faction";
 import { FoAPlayer } from "shared/classes/in game/players/FoAPlayer";
-import { Endpoint } from "shared/classes/server helpers/Endpoint";
-import { Handler } from "shared/classes/server helpers/Handler";
+import { Endpoint } from "server/classes/Endpoint";
+import { Handler } from "server/classes/Handler";
 import { Strings } from "shared/consts/Strings";
 
 

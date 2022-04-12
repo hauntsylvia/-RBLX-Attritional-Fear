@@ -1,5 +1,6 @@
-import { Handler } from "shared/classes/server helpers/Handler";
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
+import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
+import { Handler } from "./Handler";
 import { ServerData } from "./ServerData";
 
 export class Server
@@ -23,7 +24,7 @@ export class Server
         if(typeIs(ControllerRequested, "string") && typeIs(EndpointRequested, "string"))
         {
             const Request = new ServerRequest<any>(ControllerRequested as string, EndpointRequested as string, Args);
-            let Result;
+            let Result: ServerResponse<any> | undefined;
             Server.Handlers.forEach(Handler =>
             {
                 if(Handler.Name === Request.ControllerRequested)
@@ -37,7 +38,11 @@ export class Server
                     });
                 }
             });
-            return Result;
+            return Result === undefined ? new ServerResponse<string>(false, "404") : Result;
+        }
+        else
+        {
+            return new ServerResponse<string>(false, "Malformed client data sent.");
         }
     }
 
