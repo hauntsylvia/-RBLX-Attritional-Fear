@@ -9,25 +9,14 @@ import { Record } from "../modules/Record";
 
 function GetFoAPlayerSettings (Player: Player): FoAPlayerSettings
 {
-    let Settings: FoAPlayerSettings | undefined = Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId).Value;
-    Settings = Settings ?? new FoAPlayerSettings(undefined);
-    return Settings;
+    let Settings: Record<FoAPlayerSettings> | undefined = Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId);
+    let SettingsV = Settings.Value ?? new FoAPlayerSettings(undefined);
+    return SettingsV;
 }
 
-const RecentTransactions: Map<number, DateTime> = new Map<number, DateTime>();
 function SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSettings): ServerDataSaveResponse
 {
-    if (RecentTransactions.has(Player.UserId) && (RecentTransactions.get(Player.UserId) as DateTime) <= DateTime.now())
-    {
-        let RetryAt: DateTime = DateTime.fromUnixTimestamp(os.time() + 15);
-        return new ServerDataSaveResponse(RetryAt);
-    }
-    else
-    {
-        RecentTransactions.set(Player.UserId, DateTime.fromUnixTimestamp(os.time() + 15));
-        Registers.PlayerSettingsRegister.SaveRecord(Player.UserId, new Record<FoAPlayerSettings>(true, SettingsToSave));
-        return new ServerDataSaveResponse(undefined);
-	}
+    return Registers.PlayerSettingsRegister.SaveRecord(Player.UserId, SettingsToSave);
 }
 
 const ThisHandler = new Handler(Strings.PlayerStrings.PlayerHandlerRoute,

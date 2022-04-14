@@ -3,5 +3,5 @@ import { Strings } from "./Strings";
 
 export class Registers
 {
-	static PlayerSettingsRegister = new Register(Strings.DataStrings.FoAPlayerSettingsDataStore, "-Settings");
+	static PlayerSettingsRegister = new Register(Strings.DataStrings.FoAPlayerSettingsDataStore, "-Settings", 4);
 }
