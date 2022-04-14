@@ -12,6 +12,10 @@ export enum FactionTitleKeys
 }
 export class Strings
 {
+    static DataStrings = class
+    {
+        static FoAPlayerSettingsDataStore: string = "FoA.PlayerSettings";
+	}
     static PlayerStrings = class
     {
         static PlayerHandlerRoute: string = "Players";

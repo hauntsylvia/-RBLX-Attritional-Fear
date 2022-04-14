@@ -4,6 +4,7 @@ import { FoAPlayer } from "shared/classes/in game/players/FoAPlayer";
 import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Handler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
+import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 
 
 
@@ -32,7 +33,7 @@ function RegisterPlayerToGame(Player: Player): FoAPlayer | undefined
         return P.RobloxPlayerInstance.UserId === Player.UserId;
     }))
     {
-        let NewPlayer: FoAPlayer = new FoAPlayer(Player);
+        let NewPlayer: FoAPlayer = new FoAPlayer(Player, new FoAPlayerSettings(undefined));
         Server.ServerData.CurrentActivePlayers.push(NewPlayer);
         return NewPlayer;
     }
