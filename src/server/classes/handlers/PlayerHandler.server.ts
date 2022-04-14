@@ -5,6 +5,7 @@ import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Handler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
+import { Registers } from "../../../shared/consts/Registers";
 
 
 
@@ -26,14 +27,14 @@ function RegisterPlayerFaction(Player: Player, Arg: FoAFaction): FoAFaction | un
     }
 }
 
-function RegisterPlayerToGame(Player: Player): FoAPlayer | undefined
+function GetFoAPlayerFromPlayer(Player: Player): FoAPlayer | undefined
 {
     if(!Server.ServerData.CurrentActivePlayers.some(function(P)
     {
         return P.RobloxPlayerInstance.UserId === Player.UserId;
     }))
     {
-        let NewPlayer: FoAPlayer = new FoAPlayer(Player, new FoAPlayerSettings(undefined));
+        let NewPlayer: FoAPlayer = new FoAPlayer(Player, Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId).Value ?? new FoAPlayerSettings(undefined));
         Server.ServerData.CurrentActivePlayers.push(NewPlayer);
         return NewPlayer;
     }
@@ -42,7 +43,7 @@ const PlayerHandler = new Handler(Strings.PlayerStrings.PlayerHandlerRoute,
     [
         new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions, GetAllActivePlayerFactions),
         new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, RegisterPlayerFaction),
-        new Endpoint<Player, FoAPlayer | undefined>(Strings.PlayerStrings.RegisterCurrentPlayer, RegisterPlayerToGame)
+        new Endpoint<Player, FoAPlayer | undefined>(Strings.PlayerStrings.GetFoAPlayerFromPlayer, GetFoAPlayerFromPlayer)
     ]);
 
 

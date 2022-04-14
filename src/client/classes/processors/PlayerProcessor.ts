@@ -24,6 +24,6 @@ export class PlayerProcessor extends Processor
 
     RegisterCurrentPlayerToGame(): ServerResponse<FoAPlayer>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.RegisterCurrentPlayer, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
     }
 }

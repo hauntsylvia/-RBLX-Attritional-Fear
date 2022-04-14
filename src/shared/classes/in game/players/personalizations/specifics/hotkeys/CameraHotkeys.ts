@@ -1,16 +1,16 @@
 export class CameraHotkeys
 {
-	ZoomIn: Enum.UserInputType;
-	ZoomOut: Enum.UserInputType;
+	ZoomIn: string;
+	ZoomOut: string;
 
-	LoZZoomOut: Enum.KeyCode;
-	LoZZoomIn: Enum.KeyCode;
+	LoZZoomOut: string;
+	LoZZoomIn: string;
 
-	MoveForward: Enum.KeyCode;
-	MoveBackward: Enum.KeyCode;
-	MoveLeft: Enum.KeyCode;
-	MoveRight: Enum.KeyCode;
-	constructor (ZoomIn: Enum.UserInputType, ZoomOut: Enum.UserInputType, LoZZoomOut: Enum.KeyCode, LoZZoomIn: Enum.KeyCode, MoveForward: Enum.KeyCode, MoveBackward: Enum.KeyCode, MoveLeft: Enum.KeyCode, MoveRight: Enum.KeyCode)
+	MoveForward: string;
+	MoveBackward: string;
+	MoveLeft: string;
+	MoveRight: string;
+	constructor (ZoomIn: string, ZoomOut: string, LoZZoomOut: string, LoZZoomIn: string, MoveForward: string, MoveBackward: string, MoveLeft: string, MoveRight: string)
 	{
 		this.ZoomIn = ZoomIn;
 		this.ZoomOut = ZoomOut;

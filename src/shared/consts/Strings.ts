@@ -22,7 +22,10 @@ export class Strings
 
         static GetAllActivePlayerFactions: string = "GetFactions";
         static RegisterPlayerFaction: string = "RegisterFaction";
-        static RegisterCurrentPlayer: string = "RegisterCurrentPlayer";
+        static GetFoAPlayerFromPlayer: string = "RegisterCurrentPlayer";
+
+        static GetFoAPlayerSettings: string = "GetFoAPlayerSettings";
+        static SaveFoAPlayerSettings: string = "SaveFoAPlayerSettings";
     };
     static FactionStrings = class
     {
