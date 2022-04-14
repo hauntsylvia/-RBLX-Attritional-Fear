@@ -1,11 +1,11 @@
-import { ServerDataSaveResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
 
 export class Record<T>
 {
 	Success: boolean;
-	DataResponse: ServerDataSaveResponse;
+	DataResponse: ServerDataOperationResponse;
 	Value: T | undefined;
-	constructor (Success: boolean, DataResponse: ServerDataSaveResponse, Value: T | undefined)
+	constructor (Success: boolean, DataResponse: ServerDataOperationResponse, Value: T | undefined)
 	{
 		this.Success = Success;
 		this.DataResponse = DataResponse;

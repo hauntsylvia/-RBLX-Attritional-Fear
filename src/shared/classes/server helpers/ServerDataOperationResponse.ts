@@ -1,4 +1,4 @@
-export class ServerDataSaveResponse
+export class ServerDataOperationResponse
 {
 	DataOperationExecuted: boolean;
 	RetryAt: DateTime;

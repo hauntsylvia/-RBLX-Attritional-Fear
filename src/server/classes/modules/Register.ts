@@ -1,4 +1,4 @@
-import { ServerDataSaveResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
 import { ServerData } from "../server communication/ServerData";
 import { Record } from "./Record";
 
@@ -32,7 +32,7 @@ export class Register
 		{
 			let RetryAt: DateTime = this.RecentGetTransactions.get(UserId) as DateTime;
 			print("Get request denied.");
-			return new Record<T>(false, new ServerDataSaveResponse(false, RetryAt), undefined);
+			return new Record<T>(false, new ServerDataOperationResponse(false, RetryAt), undefined);
 		}
 		else
 		{
@@ -40,17 +40,17 @@ export class Register
 			let NextOpAt: DateTime = this.RecentGetTransactions.get(UserId) as DateTime;
 			let Value: T | undefined = this.Store.GetAsync<T>(this.Key(UserId));
 			print("Record get.");
-			return new Record<T>(Value !== undefined, new ServerDataSaveResponse(true, NextOpAt), Value);
+			return new Record<T>(Value !== undefined, new ServerDataOperationResponse(true, NextOpAt), Value);
 		}
 	}
 
-	SaveRecord<T> (UserId: number, Value: T): ServerDataSaveResponse
+	SaveRecord<T> (UserId: number, Value: T): ServerDataOperationResponse
 	{
 		if (this.RecentSaveTransactions.has(UserId) && (this.RecentSaveTransactions.get(UserId) as DateTime).UnixTimestamp > DateTime.now().UnixTimestamp)
 		{
 			let RetryAt: DateTime = this.RecentSaveTransactions.get(UserId) as DateTime;
 			print("Save request denied.");
-			return new ServerDataSaveResponse(false, RetryAt);
+			return new ServerDataOperationResponse(false, RetryAt);
 		}
 		else
 		{
@@ -58,7 +58,7 @@ export class Register
 			let NextOpAt: DateTime = this.RecentSaveTransactions.get(UserId) as DateTime;
 			this.Store.SetAsync(this.Key(UserId), Value);
 			print("Record set.");
-			return new ServerDataSaveResponse(true, NextOpAt);
+			return new ServerDataOperationResponse(true, NextOpAt);
 		}
 	}
 }

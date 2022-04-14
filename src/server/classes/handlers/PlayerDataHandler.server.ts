@@ -3,7 +3,7 @@ import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Handler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
-import { ServerDataSaveResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
 import { Registers } from "../../../shared/consts/Registers";
 import { Record } from "../modules/Record";
 
@@ -14,7 +14,7 @@ function GetFoAPlayerSettings (Player: Player): FoAPlayerSettings
     return SettingsV;
 }
 
-function SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSettings): ServerDataSaveResponse
+function SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSettings): ServerDataOperationResponse
 {
     return Registers.PlayerSettingsRegister.SaveRecord(Player.UserId, SettingsToSave);
 }
@@ -22,7 +22,7 @@ function SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSetting
 const ThisHandler = new Handler(Strings.PlayerStrings.PlayerHandlerRoute,
     [
         new Endpoint<any, FoAPlayerSettings>(Strings.PlayerStrings.GetFoAPlayerSettings, GetFoAPlayerSettings),
-        new Endpoint<FoAPlayerSettings, ServerDataSaveResponse>(Strings.PlayerStrings.SaveFoAPlayerSettings, SaveFoAPlayerSettings),
+        new Endpoint<FoAPlayerSettings, ServerDataOperationResponse>(Strings.PlayerStrings.SaveFoAPlayerSettings, SaveFoAPlayerSettings),
     ]);
 
 
