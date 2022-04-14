@@ -22,7 +22,6 @@ export class Strings
     };
     static FactionStrings = class
     {
-
         static FactionTitles: Map<FactionTitleKeys, string> = new Map<FactionTitleKeys, string>(
             [
                 [FactionTitleKeys.Manufacturer, "Manufacturer"],

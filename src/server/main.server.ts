@@ -1,4 +1,4 @@
-import { Server } from "./classes/Server";
+import { Server } from "./classes/server communication/Server";
 
 Server.Main();
 

@@ -2,14 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\shared",
-    "\\src\\shared\\classes",
-    "\\src\\shared\\classes\\in game",
-    "\\src\\shared\\classes\\in game\\factions",
-    "\\src\\shared\\classes\\in game\\players",
-    "\\src\\shared\\classes\\server helpers",
-    "\\src\\shared\\consts"
+    "\\src\\server",
+    "\\src\\server\\handlers",
+    "\\src\\shared"
   ],
-  "SelectedNode": "\\src\\shared\\classes\\in game\\factions\\Faction.ts",
+  "SelectedNode": "\\src\\server\\handlers\\MainGameLoop.ts",
   "PreviewInSolutionExplorer": false
 }
