@@ -4,7 +4,7 @@ import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
-import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Processor } from "./Processor";
 
 export class PlayerProcessor extends Processor

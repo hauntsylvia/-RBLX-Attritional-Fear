@@ -3,7 +3,7 @@ import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Handler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
-import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Registers } from "../../../shared/consts/Registers";
 import { Record } from "../modules/Record";
 

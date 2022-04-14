@@ -1,4 +1,4 @@
-import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataSaveResponse";
+import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { ServerData } from "../server communication/ServerData";
 import { Record } from "./Record";
 

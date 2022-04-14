@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src\\client",
-    "\\src\\client\\classes",
-    "\\src\\client\\classes\\clients",
-    "\\src\\client\\classes\\processors",
+    "\\src",
     "\\src\\server",
     "\\src\\server\\classes",
-    "\\src\\server\\classes\\handlers",
     "\\src\\server\\classes\\modules",
-    "\\src\\shared\\classes\\in game\\players"
+    "\\src\\shared",
+    "\\src\\shared\\classes",
+    "\\src\\shared\\classes\\in game\\players",
+    "\\src\\shared\\classes\\server helpers",
+    "\\src\\shared\\consts"
   ],
-  "SelectedNode": "\\src",
+  "SelectedNode": "\\src\\shared\\classes\\server helpers\\ServerDataOperationResponse.ts",
   "PreviewInSolutionExplorer": false
 }
