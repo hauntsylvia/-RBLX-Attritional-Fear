@@ -31,6 +31,7 @@ export class Register
 		if (this.RecentGetTransactions.has(UserId) && (this.RecentGetTransactions.get(UserId) as DateTime).UnixTimestamp > DateTime.now().UnixTimestamp)
 		{
 			let RetryAt: DateTime = this.RecentGetTransactions.get(UserId) as DateTime;
+			print("Get request denied.");
 			return new Record<T>(false, new ServerDataSaveResponse(false, RetryAt), undefined);
 		}
 		else
@@ -48,13 +49,13 @@ export class Register
 		if (this.RecentSaveTransactions.has(UserId) && (this.RecentSaveTransactions.get(UserId) as DateTime).UnixTimestamp > DateTime.now().UnixTimestamp)
 		{
 			let RetryAt: DateTime = this.RecentSaveTransactions.get(UserId) as DateTime;
+			print("Save request denied.");
 			return new ServerDataSaveResponse(false, RetryAt);
 		}
 		else
 		{
 			this.RecentSaveTransactions.set(UserId, DateTime.fromUnixTimestamp(os.time() + this.MinimumTimePerRequest));
 			let NextOpAt: DateTime = this.RecentSaveTransactions.get(UserId) as DateTime;
-			let Value: T | undefined = this.Store.GetAsync<T>(this.Key(UserId));
 			this.Store.SetAsync(this.Key(UserId), Value);
 			print("Record set.");
 			return new ServerDataSaveResponse(true, NextOpAt);

@@ -1,11 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src",
+    "\\src\\client",
+    "\\src\\client\\classes",
+    "\\src\\client\\classes\\clients",
+    "\\src\\client\\classes\\processors",
     "\\src\\server",
-    "\\src\\server\\handlers",
-    "\\src\\shared"
+    "\\src\\server\\classes",
+    "\\src\\server\\classes\\handlers",
+    "\\src\\server\\classes\\modules",
+    "\\src\\shared\\classes\\in game\\players"
   ],
-  "SelectedNode": "\\src\\server\\handlers\\MainGameLoop.ts",
+  "SelectedNode": "\\src",
   "PreviewInSolutionExplorer": false
 }
