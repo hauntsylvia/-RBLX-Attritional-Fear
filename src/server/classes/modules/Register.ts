@@ -12,6 +12,7 @@ export class Register
 		this.Store = game.GetService("DataStoreService").GetDataStore(StoreName);
 		this.AppendedKey = AppendedKey;
 		this.MinimumTimePerRequest = MinimumTimePerRequest;
+		print("Register of name " + StoreName + " initialized with an mtpr of " + MinimumTimePerRequest + ".");
 	}
 
 	Store: GlobalDataStore;
@@ -37,6 +38,7 @@ export class Register
 			this.RecentGetTransactions.set(UserId, DateTime.fromUnixTimestamp(os.time() + this.MinimumTimePerRequest));
 			let NextOpAt: DateTime = this.RecentGetTransactions.get(UserId) as DateTime;
 			let Value: T | undefined = this.Store.GetAsync<T>(this.Key(UserId));
+			print("Record get.");
 			return new Record<T>(Value !== undefined, new ServerDataSaveResponse(true, NextOpAt), Value);
 		}
 	}
@@ -54,6 +56,7 @@ export class Register
 			let NextOpAt: DateTime = this.RecentSaveTransactions.get(UserId) as DateTime;
 			let Value: T | undefined = this.Store.GetAsync<T>(this.Key(UserId));
 			this.Store.SetAsync(this.Key(UserId), Value);
+			print("Record set.");
 			return new ServerDataSaveResponse(true, NextOpAt);
 		}
 	}

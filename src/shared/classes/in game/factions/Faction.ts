@@ -1,5 +1,6 @@
 import { FactionTitleKeys } from "../../../consts/Strings";
 import { FoAPlayer } from "../players/FoAPlayer";
+import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 
 export class FoAFaction
 {
@@ -7,7 +8,7 @@ export class FoAFaction
     Name: string;
     Title: FactionTitleKeys;
     Color: Color3;
-    constructor (Player: FoAPlayer, Name: string, Title: FactionTitleKeys, Color: Color3)
+    constructor (Player: SelfFoAPlayer, Name: string, Title: FactionTitleKeys, Color: Color3)
     {
         this.Player = Player;
         this.Name = Name;
