@@ -7,6 +7,7 @@ let RegPlr = Client.PlayerProcessor.GetCurrentPlayer();
 if(RegPlr.Returned !== undefined)
 {
     let Fact = Client.PlayerProcessor.RegisterFactionToGame(new FoAFaction(RegPlr.Returned, "Ratte", FactionTitleKeys.Manufacturer, Color3.fromRGB(255, 210, 255)));
+    print(RegPlr.Returned.FoAPlayerSettings);
     let A = Client.PlayerProcessor.SaveFoAPlayerSettings(RegPlr.Returned.FoAPlayerSettings);
     print(A);
 }
