@@ -4,3 +4,4 @@
 *.tsbuildinfo
 
 /.vs
+/.vscode
