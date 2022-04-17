@@ -5,7 +5,7 @@ import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPl
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
 import { LevelOfZoom } from "./LevelOfZoom";
 
-export class FoACamera
+export class FoACamera // omar phd says hi
 {
 	static ThisRenderStepLabel: string = "CameraOperation";
 
@@ -37,8 +37,12 @@ export class FoACamera
 	RightRotationVelocity: number = 0;
 	InwardVelocity: number = 0;
 
-	CameraSpeed: number = 1000;
-	CameraZoomSteps: number = 20;
+	CameraSpeed: number = 2000;
+	CameraZoomSteps: number = 30;
+
+	MinZoom: number = 10;
+	MaxZoom: number = 100;
+	MinObjectDistance: number = 5;
 
 	IsMoving ()
 	{
@@ -97,6 +101,24 @@ export class FoACamera
 		}
 	}
 
+	ConflictsWithEntity (CFrameToCheck: CFrame): CFrame
+	{
+		for (let Angle = 0; Angle < 360; Angle += 45)
+		{
+			let Ray: RaycastParams = new RaycastParams();
+			let RayResult: RaycastResult | undefined = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.mul(CFrame.Angles(0, math.rad(Angle), 0).Position), Ray);
+			if (RayResult !== undefined)
+			{
+				RayResult.Position;
+			}
+			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.mul(CFrame.Angles(math.rad(Angle), 0, 0).Position), Ray);
+			if (RayResult !== undefined)
+			{
+				RayResult.Position;
+			}
+		}
+	}
+
 	UpdateCamera (MoveTo: CFrame)
 	{
 		if (this.IsMoving())
@@ -128,6 +150,14 @@ export class FoACamera
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
 		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position);
 		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).add(new Vector3(0, CameraZoomVisualTotal, CameraZoomVisualTotal));
+		if (NewCF.Y > this.MaxZoom)
+		{
+			NewCF = NewCF.sub(new Vector3(0, NewCF.Y - this.MaxZoom, NewCF.Z - this.MaxZoom));
+		}
+		else if (NewCF.Y < this.MinZoom)
+		{
+			NewCF = NewCF.add(new Vector3(0, NewCF.Y + this.MinZoom, NewCF.Z + this.MinZoom));
+		}
 		this.UpdateCamera(NewCF);
 
 		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
