@@ -2,6 +2,7 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { Hotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { CameraHotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/hotkeys/CameraHotkeys";
 import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPlayer";
+import { CollisionCalculator } from "../../../shared/classes/util/Collisions/CollisionCalculator";
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
 import { LevelOfZoom } from "./LevelOfZoom";
 
@@ -101,40 +102,6 @@ export class FoACamera // Omar, PhD* says hi
 		}
 	}
 
-	ConflictsWithEntity (CFrameToCheck: CFrame): CFrame
-	{
-		let NegativeToPositive: number = -this.MinObjectDistance;
-		for (let Index = this.MinObjectDistance; Index <= math.abs(NegativeToPositive); Index = math.abs(NegativeToPositive))
-		{
-			let Ray: RaycastParams = new RaycastParams();
-			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
-			print(CFrameToCheck.add(new Vector3(0, this.MinObjectDistance, 0)).Position);
-			let RayResult: RaycastResult | undefined = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
-			if (RayResult !== undefined) // Y
-			{
-				print("Y");
-				return CFrameToCheck.add(new Vector3(0, this.MinObjectDistance, 0));
-			}
-			Ray = new RaycastParams();
-			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
-			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
-			if (RayResult !== undefined) // X
-			{
-				print("X");
-				return CFrameToCheck.add(new Vector3(this.MinObjectDistance, 0, 0));
-			}
-			Ray = new RaycastParams();
-			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
-			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
-			if (RayResult !== undefined) // Z
-			{
-				print("Z");
-				return CFrameToCheck.add(new Vector3(0, 0, this.MinObjectDistance));
-			}
-		}
-		return CFrameToCheck;
-	}
-
 	UpdateCamera (MoveTo: CFrame)
 	{
 		if (this.IsMoving())
@@ -161,20 +128,28 @@ export class FoACamera // Omar, PhD* says hi
 		this.ForwardVelocity = (ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0) * CameraSpeedFrame;
 		this.RightVelocity = (RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0) * CameraSpeedFrame;
 		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame;
-		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
 
+		let CollisionResult = CollisionCalculator.HasNearbyEntities(this.CurrentCamera.CFrame, this.MinObjectDistance);
+
+		this.ForwardVelocity = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Z - this.MinObjectDistance : this.ForwardVelocity;
+		this.RightVelocity = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.X - this.MinObjectDistance : this.RightVelocity;
+		this.InwardVelocity = CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y < 0 ? -0.5 : CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y > 0 ? 0.5 : this.InwardVelocity;
+
+		if (this.CurrentCamera.CFrame.Y >= this.MaxZoom)
+		{
+			this.InwardVelocity = -0.5;
+		}
+		else if (this.CurrentCamera.CFrame.Y <= this.MinZoom)
+		{
+			this.InwardVelocity = 0.5;
+		}
+
+		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
 		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position);
 		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).add(new Vector3(0, CameraZoomVisualTotal, CameraZoomVisualTotal));
-		if (NewCF.Y > this.MaxZoom)
-		{
-			NewCF = NewCF.sub(new Vector3(0, NewCF.Y - this.MaxZoom, NewCF.Z - this.MaxZoom));
-		}
-		else if (NewCF.Y < this.MinZoom)
-		{
-			NewCF = NewCF.add(new Vector3(0, NewCF.Y + this.MinZoom, NewCF.Z + this.MinZoom));
-		}
-		NewCF = this.ConflictsWithEntity(NewCF);
+
+
 		this.UpdateCamera(NewCF);
 
 		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
