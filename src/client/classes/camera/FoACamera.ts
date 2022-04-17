@@ -83,6 +83,7 @@ export class FoACamera // Omar, PhD* says hi
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);
 		this.CurrentCamera.CameraSubject = undefined;
+		this.CurrentCamera.FieldOfView = 90;
 		game.GetService("RunService").BindToRenderStep(FoACamera.ThisRenderStepLabel, Enum.RenderPriority.Camera.Value, (DT) => this.RenderStepped(DT));
 	}
 
