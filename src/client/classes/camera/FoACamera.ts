@@ -15,7 +15,6 @@ export class FoACamera
 		this.LoadNewSettings(Settings.Hotkeys);
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
-		this.CameraEndGoalPosition = this.CurrentCamera.CFrame;
 	}
 
 	LevelsOfZoom: LevelOfZoom[];
@@ -37,10 +36,14 @@ export class FoACamera
 	RightVelocity: number = 0;
 	RightRotationVelocity: number = 0;
 	InwardVelocity: number = 0;
-	CameraSpeed: number = 1000;
-	CameraZoomSensitivity: number = 50;
 
-	CameraEndGoalPosition: CFrame;
+	CameraSpeed: number = 1000;
+	CameraZoomSteps: number = 20;
+
+	IsMoving ()
+	{
+		return this.ForwardVelocity !== 0 && this.InwardVelocity !== 0 && this.RightVelocity !== 0 && this.RightRotationVelocity !== 0;
+	}
 
 	LoadNewSettings (Settings: Hotkeys)
 	{
@@ -65,7 +68,7 @@ export class FoACamera
 			this.LoadNewSettings(new Hotkeys())
 		}
 		this.CameraSpeed = Hk.CameraSpeed * this.CameraSpeed;
-		this.CameraZoomSensitivity = Hk.CameraZoomSensitivity * this.CameraZoomSensitivity;
+		this.CameraZoomSteps = Hk.CameraZoomSensitivity * this.CameraZoomSteps;
 	}
 
 	Connect ()
@@ -73,6 +76,7 @@ export class FoACamera
 		this.InputChangedConnection = this.InputService.InputChanged.Connect((Inp, GameProc) => this.MouseScrollSet(Inp, GameProc))
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);
+		this.CurrentCamera.CameraSubject = undefined;
 		game.GetService("RunService").BindToRenderStep(FoACamera.ThisRenderStepLabel, Enum.RenderPriority.Camera.Value, (DT) => this.RenderStepped(DT));
 	}
 
@@ -93,10 +97,21 @@ export class FoACamera
 		}
 	}
 
+	UpdateCamera (MoveTo: CFrame)
+	{
+		if (this.IsMoving())
+		{
+			this.CurrentCamera.CFrame = MoveTo;
+		}
+		else
+		{
+			this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.05);
+		}
+	}
+
 	RenderStepped (DeltaTime: number)
 	{
 		let CameraSpeedFrame = this.CameraSpeed * DeltaTime;
-		let CameraZoomSpeedFrame = this.CameraZoomSensitivity * DeltaTime;
 
 		let ForwardMove: boolean = this.InputService.IsKeyDown(this.MoveForward);
 		let BackwardMove: boolean = this.InputService.IsKeyDown(this.MoveBackward);
@@ -104,15 +119,18 @@ export class FoACamera
 		let LeftMove: boolean = this.InputService.IsKeyDown(this.MoveLeft);
 		let RightRotate: boolean = this.InputService.IsKeyDown(this.RotateRight);
 		let LeftRotate: boolean = this.InputService.IsKeyDown(this.RotateLeft);
-		this.ForwardVelocity = ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0;
-		this.RightVelocity = RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0;
-		this.RightRotationVelocity = RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0;
+
+		this.ForwardVelocity = (ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0) * CameraSpeedFrame;
+		this.RightVelocity = (RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0) * CameraSpeedFrame;
+		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame;
+		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
+
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
 		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position);
-		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0));
-		this.CameraEndGoalPosition = NewCF.add(new Vector3(0, this.InwardVelocity, this.InwardVelocity));
-		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(this.CameraEndGoalPosition, 0.05);
-		this.InwardVelocity = this.InwardVelocity + (0 - this.InwardVelocity) * 0.09;
+		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).add(new Vector3(0, CameraZoomVisualTotal, CameraZoomVisualTotal));
+		this.UpdateCamera(NewCF);
+
+		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
 		//this.InwardVelocity = 0;
 	}
 }
