@@ -38,16 +38,17 @@ export class FoACamera // Omar, PhD* says hi
 	RightRotationVelocity: number = 0;
 	InwardVelocity: number = 0;
 
-	CameraSpeed: number = 2000;
-	CameraZoomSteps: number = 30;
+	CameraSpeed: number = 750;
+	CameraZoomSteps: number = 20;
+	CameraYAngle: number = 0;
 
-	MinZoom: number = 10;
-	MaxZoom: number = 100;
-	MinObjectDistance: number = 20;
+	MinZoom: number = 40;
+	MaxZoom: number = 250;
+	MinObjectDistance: number = 5;
 
-	IsMoving ()
+	HasVelocity ()
 	{
-		return this.ForwardVelocity !== 0 && this.InwardVelocity !== 0 && this.RightVelocity !== 0 && this.RightRotationVelocity !== 0;
+		return this.ForwardVelocity !== 0 || this.InwardVelocity !== 0 || this.RightVelocity !== 0 || this.RightRotationVelocity !== 0;
 	}
 
 	LoadNewSettings (Settings: Hotkeys)
@@ -104,14 +105,7 @@ export class FoACamera // Omar, PhD* says hi
 
 	UpdateCamera (MoveTo: CFrame)
 	{
-		if (this.IsMoving())
-		{
-			this.CurrentCamera.CFrame = MoveTo;
-		}
-		else
-		{
-			this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.05);
-		}
+		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.2);
 	}
 
 	RenderStepped (DeltaTime: number)
@@ -127,31 +121,34 @@ export class FoACamera // Omar, PhD* says hi
 
 		this.ForwardVelocity = (ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0) * CameraSpeedFrame;
 		this.RightVelocity = (RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0) * CameraSpeedFrame;
-		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame;
+		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame / 3;
+		this.CameraYAngle += this.RightRotationVelocity;
 
 		let CollisionResult = CollisionCalculator.HasNearbyEntities(this.CurrentCamera.CFrame, this.MinObjectDistance);
 
-		this.ForwardVelocity = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Z - this.MinObjectDistance : this.ForwardVelocity;
-		this.RightVelocity = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.X - this.MinObjectDistance : this.RightVelocity;
-		this.InwardVelocity = CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y < 0 ? -0.5 : CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y > 0 ? 0.5 : this.InwardVelocity;
+		this.InwardVelocity = CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y < 0 ? 0.5 : CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y > 0 ? -0.5 : this.InwardVelocity;
 
 		if (this.CurrentCamera.CFrame.Y >= this.MaxZoom)
 		{
-			this.InwardVelocity = -0.5;
+			this.InwardVelocity = -0.25;
 		}
 		else if (this.CurrentCamera.CFrame.Y <= this.MinZoom)
 		{
-			this.InwardVelocity = 0.5;
+			this.InwardVelocity = 0.25;
 		}
 
 		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
-		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position);
-		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).add(new Vector3(0, CameraZoomVisualTotal, CameraZoomVisualTotal));
-
-
+		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position).mul(CFrame.Angles(0, math.rad(-this.CameraYAngle), 0));
+		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).mul(new CFrame(0, 0, CameraZoomVisualTotal));
 		this.UpdateCamera(NewCF);
-
+		if (this.InputService.IsKeyDown(Enum.KeyCode.U))
+		{
+			print(this.ForwardVelocity);
+			print(this.RightVelocity);
+			print(this.InwardVelocity);
+			print(this.RightRotationVelocity);
+		}
 		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
 		//this.InwardVelocity = 0;
 	}

@@ -13,7 +13,7 @@ Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys(u
 if(RegPlr.Returned !== undefined)
 {
 	while (LPlr.Character === undefined) { wait() };
-	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 60, 65), RegPlr.Returned.FoAPlayerSettings);
+	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 60, 60), RegPlr.Returned.FoAPlayerSettings);
 	Camera.Connect();
 }
 
