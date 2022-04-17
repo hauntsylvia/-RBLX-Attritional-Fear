@@ -1,15 +1,15 @@
 export class NoiseHelper
 {
-	constructor (Height: number, Width: number, Wavelength: number)
+	constructor (Height: number, Width: number, Frequency: number)
 	{
 		this.Height = Height;
 		this.Width = Width;
-		this.Wavelength = Wavelength;
+		this.Frequency = Frequency;
 	}
 
 	Height: number;
 	Width: number;
-	Wavelength: number;
+	Frequency: number;
 
 	GenerateHeightmap (Z: number): number[][]
 	{
@@ -30,10 +30,7 @@ export class NoiseHelper
 				//}
 				let nx = X / this.Width - 0.5;
 				let ny = Y / this.Height - 0.5;
-				let Noise = math.noise(nx / this.Wavelength, ny / this.Wavelength, Z);
-				Noise += this.Wavelength * math.noise(nx / this.Wavelength, ny / this.Wavelength, Z);
-				Noise += this.Wavelength * math.noise(nx / this.Wavelength, ny / this.Wavelength, Z);
-				Noise = math.pow(Noise / (1 + 0.5 + 0.25), 1.87);
+				let Noise = math.noise(nx * this.Frequency, ny * this.Frequency, Z);
 				Elevation[X][Y] = Noise + 0.5;
 			}
 		}
