@@ -42,7 +42,7 @@ export class FoACamera // Omar, PhD* says hi
 
 	MinZoom: number = 10;
 	MaxZoom: number = 100;
-	MinObjectDistance: number = 5;
+	MinObjectDistance: number = 20;
 
 	IsMoving ()
 	{
@@ -103,20 +103,36 @@ export class FoACamera // Omar, PhD* says hi
 
 	ConflictsWithEntity (CFrameToCheck: CFrame): CFrame
 	{
-		for (let Angle = 0; Angle < 360; Angle += 45)
+		let NegativeToPositive: number = -this.MinObjectDistance;
+		for (let Index = this.MinObjectDistance; Index <= math.abs(NegativeToPositive); Index = math.abs(NegativeToPositive))
 		{
 			let Ray: RaycastParams = new RaycastParams();
-			let RayResult: RaycastResult | undefined = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.mul(CFrame.Angles(0, math.rad(Angle), 0).Position), Ray);
-			if (RayResult !== undefined)
+			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
+			print(CFrameToCheck.add(new Vector3(0, this.MinObjectDistance, 0)).Position);
+			let RayResult: RaycastResult | undefined = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
+			if (RayResult !== undefined) // Y
 			{
-				RayResult.Position;
+				print("Y");
+				return CFrameToCheck.add(new Vector3(0, this.MinObjectDistance, 0));
 			}
-			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.mul(CFrame.Angles(math.rad(Angle), 0, 0).Position), Ray);
-			if (RayResult !== undefined)
+			Ray = new RaycastParams();
+			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
+			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
+			if (RayResult !== undefined) // X
 			{
-				RayResult.Position;
+				print("X");
+				return CFrameToCheck.add(new Vector3(this.MinObjectDistance, 0, 0));
+			}
+			Ray = new RaycastParams();
+			Ray.FilterType = Enum.RaycastFilterType.Blacklist;
+			RayResult = game.GetService("Workspace").Raycast(CFrameToCheck.Position, CFrameToCheck.add(new Vector3(0, Index, 0)).Position, Ray);
+			if (RayResult !== undefined) // Z
+			{
+				print("Z");
+				return CFrameToCheck.add(new Vector3(0, 0, this.MinObjectDistance));
 			}
 		}
+		return CFrameToCheck;
 	}
 
 	UpdateCamera (MoveTo: CFrame)
@@ -158,6 +174,7 @@ export class FoACamera // Omar, PhD* says hi
 		{
 			NewCF = NewCF.add(new Vector3(0, NewCF.Y + this.MinZoom, NewCF.Z + this.MinZoom));
 		}
+		NewCF = this.ConflictsWithEntity(NewCF);
 		this.UpdateCamera(NewCF);
 
 		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
