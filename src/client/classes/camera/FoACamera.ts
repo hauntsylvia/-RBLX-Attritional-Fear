@@ -12,7 +12,7 @@ export class FoACamera
 	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera | undefined)
 	{
 		this.LevelsOfZoom = [CurrentLoZ];
-		this.LoadNewSettings(Settings);
+		this.LoadNewSettings(Settings.Hotkeys);
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
 		this.CameraEndGoalPosition = this.CurrentCamera.CFrame;
@@ -30,31 +30,42 @@ export class FoACamera
 	MoveBackward!: Enum.KeyCode;
 	MoveLeft!: Enum.KeyCode;
 	MoveRight!: Enum.KeyCode;
+	RotateLeft!: Enum.KeyCode;
+	RotateRight!: Enum.KeyCode;
 
 	ForwardVelocity: number = 0;
 	RightVelocity: number = 0;
+	RightRotationVelocity: number = 0;
 	InwardVelocity: number = 0;
 	CameraSpeed: number = 1000;
-	CameraSensitivity: number = 50;
+	CameraZoomSensitivity: number = 50;
 
 	CameraEndGoalPosition: CFrame;
 
-	LoadNewSettings (Settings: FoAPlayerSettings)
+	LoadNewSettings (Settings: Hotkeys)
 	{
-		let Hk: CameraHotkeys = Settings.Hotkeys.CameraHotkeys;
+		let Hk: CameraHotkeys = Settings.CameraHotkeys;
 		let ForwardEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveForward);
 		let BackwardEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveBackward);
 		let LeftEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveLeft);
 		let RightEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveRight);
-		if (ForwardEnum !== undefined && BackwardEnum !== undefined && LeftEnum !== undefined && RightEnum !== undefined)
+		let RotateLeft = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.RotateLeft);
+		let RotateRight = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.RotateRight);
+		if (ForwardEnum !== undefined && BackwardEnum !== undefined && LeftEnum !== undefined && RightEnum !== undefined && RotateLeft !== undefined && RotateRight !== undefined)
 		{
 			this.MoveForward = ForwardEnum;
 			this.MoveBackward = BackwardEnum;
 			this.MoveLeft = LeftEnum;
 			this.MoveRight = RightEnum;
+			this.RotateLeft = RotateLeft;
+			this.RotateRight = RotateRight;
+		}
+		else
+		{
+			this.LoadNewSettings(new Hotkeys())
 		}
 		this.CameraSpeed = Hk.CameraSpeed * this.CameraSpeed;
-		this.CameraSensitivity = Hk.CameraSensitivity * this.CameraSensitivity;
+		this.CameraZoomSensitivity = Hk.CameraZoomSensitivity * this.CameraZoomSensitivity;
 	}
 
 	Connect ()
@@ -78,22 +89,27 @@ export class FoACamera
 	{
 		if (InputObject.UserInputType === Enum.UserInputType.MouseWheel && !GameProc)
 		{
-			print(InputObject.UserInputState);
-			this.InwardVelocity = (InputObject.UserInputState === Enum.UserInputState.Change ? (InputObject.Position.Z > 0 ? -this.CameraSensitivity : InputObject.Position.Z < 0 ? this.CameraSensitivity : 0) : (0));
+			this.InwardVelocity = (InputObject.UserInputState === Enum.UserInputState.Change ? (InputObject.Position.Z > 0 ? -1 : InputObject.Position.Z < 0 ? 1 : 0) : (0));
 		}
 	}
 
 	RenderStepped (DeltaTime: number)
 	{
+		let CameraSpeedFrame = this.CameraSpeed * DeltaTime;
+		let CameraZoomSpeedFrame = this.CameraZoomSensitivity * DeltaTime;
+
 		let ForwardMove: boolean = this.InputService.IsKeyDown(this.MoveForward);
 		let BackwardMove: boolean = this.InputService.IsKeyDown(this.MoveBackward);
 		let RightMove: boolean = this.InputService.IsKeyDown(this.MoveRight);
 		let LeftMove: boolean = this.InputService.IsKeyDown(this.MoveLeft);
+		let RightRotate: boolean = this.InputService.IsKeyDown(this.RotateRight);
+		let LeftRotate: boolean = this.InputService.IsKeyDown(this.RotateLeft);
 		this.ForwardVelocity = ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0;
 		this.RightVelocity = RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0;
+		this.RightRotationVelocity = RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0;
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
 		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position);
-		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity))).mul(this.CameraSpeed * DeltaTime)).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0));
+		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0));
 		this.CameraEndGoalPosition = NewCF.add(new Vector3(0, this.InwardVelocity, this.InwardVelocity));
 		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(this.CameraEndGoalPosition, 0.05);
 		this.InwardVelocity = this.InwardVelocity + (0 - this.InwardVelocity) * 0.09;
