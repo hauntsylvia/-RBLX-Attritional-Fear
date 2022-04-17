@@ -5,7 +5,7 @@ import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPl
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
 import { LevelOfZoom } from "./LevelOfZoom";
 
-export class FoACamera // omar phd says hi
+export class FoACamera // Omar, PhD* says hi
 {
 	static ThisRenderStepLabel: string = "CameraOperation";
 
