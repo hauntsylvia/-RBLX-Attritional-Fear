@@ -19,10 +19,10 @@ export class Tree implements ITerrainObject
 	}
     MinimumTemperature: number = 0;
 	MaximumTemperature: number = 1;
-	MinimumMoisture: number = 0.2;
-	MaximumMoisture: number = 0.7;
+	MinimumMoisture: number = 0;
+	MaximumMoisture: number = 1;
     MinimumElevation: number = 0.2;
-    MaximumElevation: number = 0.8;
+    MaximumElevation: number = 1;
 	BiomesAndRarity: Map<Biomes, number> = new Map<Biomes, number>([[Biomes.Forest, 0.1]]);
 	Model: Model;
 	YOffset: number;

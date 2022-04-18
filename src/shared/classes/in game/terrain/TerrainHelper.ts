@@ -1,3 +1,4 @@
+import { Biomes } from "../../../consts/Enums";
 import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
 import { NoiseHelper } from "./NoiseHelper";
 import { Biome } from "./specifics/biomes/Biome";
@@ -5,13 +6,21 @@ import { TerrainResult } from "./specifics/regions/TerrainResult";
 
 export class TerrainHelper
 {
-	constructor ()
+	constructor (SizePerCell: number)
 	{
-
+		this.SizePerCell = SizePerCell;
 	}
 
-	private FillSpotByBiome (Part: Part, CurrentTerrain: TerrainResult, Biome: Biome)
+	SizePerCell: number;
+
+	private FillSpotByBiome (Part: Part, CurrentTerrain: TerrainResult, WaterHeight: number, Biome: Biome)
 	{
+		Part.Size = Biome.BiomeEnum === Biomes.Ocean ? new Vector3(Part.Size.X, 2, Part.Size.Z) : Part.Size;
+		Part.Position = Biome.BiomeEnum === Biomes.Ocean ? new Vector3(Part.Position.X, WaterHeight, Part.Position.Z) : Part.Position;
+		if (Biome.BiomeEnum === Biomes.Beach)
+		{
+			print(Part.Size);
+		}
 		game.GetService("Workspace").Terrain.FillBlock(Part.CFrame, Part.Size, Biome.GroundMaterialDefault);
 		let C = coroutine.create(() =>
 		{
@@ -52,21 +61,17 @@ export class TerrainHelper
 						}
 					}
 				}
-				else
-				{
-					print("Requirements not met.");
-				}
 			});
 		});
 		coroutine.resume(C);
 	}
 
-	Connect (AllBiomes: Biome[])
+	Connect (WaterHeight: number, AllBiomes: Biome[], FallbackBiome?: Biome)
 	{
-		let Noise = new NoiseHelper(200, 200, 15);
-		let HeightMap = Noise.GenerateHeightmap(math.random(1, 10e6));
-		let MoistureMap = Noise.GenerateHeightmap(math.random(1, 10e6));
-		let TemperatureMap = Noise.GenerateHeightmap(math.random(1, 10e6));
+		let Noise = new NoiseHelper(200, 200);
+		let HeightMap = Noise.GenerateHeightmap(math.random(1, 10e6), 7);
+		let MoistureMap = Noise.GenerateHeightmap(math.random(1, 10e6), 7);
+		let TemperatureMap = Noise.GenerateHeightmap(math.random(1, 10e6), 1);
 		for (let X = 0; X < Noise.Height; X++)
 		{
 			let C = coroutine.create(() =>
@@ -77,8 +82,8 @@ export class TerrainHelper
 					let Moisture = MoistureMap[X][Z];
 					let Temperature = TemperatureMap[X][Z];
 
-					let Siz = new Vector3(5, Elevation * 40, 5);
-					let Pos = new Vector3((X - Noise.Height / 2) * 5, Siz.Y / 2, (Z - Noise.Width / 2) * 5);
+					let Siz = new Vector3(this.SizePerCell, Elevation * 40, this.SizePerCell);
+					let Pos = new Vector3((X - Noise.Height / 2) * this.SizePerCell, Siz.Y / 2, (Z - Noise.Width / 2) * this.SizePerCell);
 					//print(Heightmap[X][Z]);
 					let Part = new Instance("Part", game.GetService("Workspace"));
 					Part.Anchored = true;
@@ -87,21 +92,23 @@ export class TerrainHelper
 					Part.Size = Siz;
 					Part.CanCollide = false;
 					Part.Transparency = 1;
+
 					wait();
 
 					AllBiomes.forEach(B =>
 					{
-						print(Elevation);
-						print(Temperature);
-						print(Moisture);
-						if (B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture &&
-							B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
+						if (B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture && B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
 						{
-							this.FillSpotByBiome(Part, new TerrainResult(Elevation, Moisture, Temperature), B);
+							this.FillSpotByBiome(Part, new TerrainResult(Elevation, Moisture, Temperature), WaterHeight, B);
+						}
+						else if (FallbackBiome !== undefined)
+						{
+							this.FillSpotByBiome(Part, new TerrainResult(Elevation, Moisture, Temperature), WaterHeight, FallbackBiome);
 						}
 						else
 						{
-							print(Elevation);
+							print("Mins  " + (B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture));
+							print("Maxes " + (B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture));
 						}
 					});
 
