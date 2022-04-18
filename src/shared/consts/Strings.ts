@@ -41,4 +41,23 @@ export class Strings
                 [FactionTitleKeys.AirTraverser, "Air Traverser"]
             ]);
     };
+	static StorageStrings = class
+    {
+        static GetBiomeModelsFolder (): Folder
+        {
+            let F = game.GetService("ServerStorage").FindFirstChild("Biomes")?.FindFirstChild("Models");
+            if (F !== undefined && F.IsA("Folder"))
+            {
+                return F;
+            }
+            else
+            {
+                let F1 = new Instance("Folder", game.GetService("ServerStorage"));
+                F1.Name = "Biomes";
+                let F2 = new Instance("Folder", F1);
+                F2.Name = "Models";
+                return F2;
+			}
+		}
+	}
 }
