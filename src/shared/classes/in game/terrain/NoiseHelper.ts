@@ -31,7 +31,7 @@ export class NoiseHelper
 				let nx = X / this.Width - 0.5;
 				let ny = Y / this.Height - 0.5;
 				let Noise = math.noise(nx * this.Frequency, ny * this.Frequency, Z);
-				Elevation[X][Y] = Noise + 0.5;
+				Elevation[X][Y] = math.clamp(Noise + 0.5, 0, 1);
 			}
 		}
 		return Elevation;

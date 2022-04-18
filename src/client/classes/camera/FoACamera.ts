@@ -125,7 +125,7 @@ export class FoACamera // Omar, PhD* says hi
 		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame / 3;
 		this.CameraYAngle += this.RightRotationVelocity;
 
-		let CollisionResult = CollisionCalculator.HasNearbyEntities(this.CurrentCamera.CFrame, this.MinObjectDistance);
+		let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MinObjectDistance);
 
 		this.InwardVelocity = CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y < 0 ? 0.5 : CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y > 0 ? -0.5 : this.InwardVelocity;
 

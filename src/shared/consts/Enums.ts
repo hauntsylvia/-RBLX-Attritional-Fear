@@ -1,3 +1,5 @@
-export class Enums
+export enum Biomes
 {
-}
+	Ocean,
+	Forest,
+};
