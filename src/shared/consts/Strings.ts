@@ -41,18 +41,24 @@ export class Strings
                 [FactionTitleKeys.AirTraverser, "Air Traverser"]
             ]);
     };
+    static TerrainStrings = class
+    {
+        static TerrainHandlerRoute: string = "Terrain";
+
+        static GetMap: string = "GetChunk";
+	}
 	static StorageStrings = class
     {
         static GetBiomeModelsFolder (): Folder
         {
-            let F = game.GetService("ServerStorage").FindFirstChild("Biomes")?.FindFirstChild("Models");
+            let F = game.GetService("ReplicatedStorage").WaitForChild("Biomes", 5)?.WaitForChild("Models", 5);
             if (F !== undefined && F.IsA("Folder"))
             {
                 return F;
             }
             else
             {
-                let F1 = new Instance("Folder", game.GetService("ServerStorage"));
+                let F1 = new Instance("Folder", game.GetService("ReplicatedStorage"));
                 F1.Name = "Biomes";
                 let F2 = new Instance("Folder", F1);
                 F2.Name = "Models";

@@ -42,7 +42,7 @@ export class FoACamera // Omar, PhD* says hi
 	CameraZoomSteps: number = 40;
 	CameraYAngle: number = 0;
 
-	MinZoom: number = 100;
+	MinZoom: number = 300;
 	MaxZoom: number = 550;
 	MinObjectDistance: number = 5;
 

@@ -1,14 +1,19 @@
-import { Biomes } from "../../../../../consts/Enums";
+import { BiomeTypes } from "../../../../../consts/Enums";
 import { Strings } from "../../../../../consts/Strings";
+import { TerrainResult } from "../regions/TerrainResult";
 import { ITerrainObject } from "./ITerrainObject";
 
 export class Church implements ITerrainObject
 {
 	constructor (YOffset: number)
 	{
-		this.Model = Strings.StorageStrings.GetBiomeModelsFolder().FindFirstChild("Abandoned")?.FindFirstChild("Church") as Model ?? error("No church model.");
+		this.Model = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Abandoned", 5)?.WaitForChild("Church", 5) as Model ?? error("No church model.");
 		this.YOffset = YOffset;
 	}
+	GeneratedByTerrain (TerrainCell: TerrainResult, Clone: Model)
+	{
+
+    }
     MinimumTemperature: number = 0;
 	MaximumTemperature: number = 1;
 
@@ -18,7 +23,7 @@ export class Church implements ITerrainObject
 	MinimumMoisture: number = 0;
 	MaximumMoisture: number = 1;
 
-	BiomesAndRarity: Map<Biomes, number> = new Map<Biomes, number>([[Biomes.Forest, 0.001]]);
+	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.00001]]);
 	Model: Model;
 	YOffset: number;
 }

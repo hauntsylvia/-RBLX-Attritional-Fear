@@ -1,8 +1,9 @@
-import { Biomes } from "../../../../../consts/Enums";
+import { BiomeTypes } from "../../../../../consts/Enums";
+import { TerrainResult } from "../regions/TerrainResult";
 
 export interface ITerrainObject
 {
-	BiomesAndRarity: Map<Biomes, number>;
+	BiomesAndRarity: Map<BiomeTypes, number>;
 	Model: Model;
 	YOffset: number;
 	MinimumElevation: number;
@@ -11,4 +12,5 @@ export interface ITerrainObject
 	MaximumElevation: number;
 	MaximumMoisture: number;
 	MaximumTemperature: number;
+	GeneratedByTerrain (TerrainCell: TerrainResult, Clone: Model): any;
 }

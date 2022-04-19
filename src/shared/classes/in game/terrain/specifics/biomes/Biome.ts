@@ -1,17 +1,29 @@
-import { Biomes } from "../../../../../consts/Enums";
+import { BiomeTypes } from "../../../../../consts/Enums";
 import { ITerrainObject } from "../objects/ITerrainObject";
 
 export class Biome
 {
-	constructor (MinimumMoisture: number, MinimumElevation: number, MinimumTemp: number, MaximumMoisture: number, MaximumElevation: number, MaximumTemp: number, RandomObjects: ITerrainObject[], GroundMaterialDefault: Enum.Material, BiomeEnum: Biomes)
+	constructor (
+		MaximumElevation: number,
+		MinimumElevation: number,
+
+		MaximumMoisture: number,
+		MinimumMoisture: number,
+
+		MaximumTemp: number,
+		MinimumTemp: number,
+
+		RandomObjects: ITerrainObject[],
+		GroundMaterialDefault: Enum.Material, BiomeEnum: BiomeTypes)
 	{
-		this.MinimumMoisture = MinimumMoisture;
+		this.MaximumElevation = MaximumElevation;
 		this.MinimumElevation = MinimumElevation;
-		this.MinimumTemp = MinimumTemp;
 
 		this.MaximumMoisture = MaximumMoisture;
-		this.MaximumElevation = MaximumElevation;
+		this.MinimumMoisture = MinimumMoisture;
+
 		this.MaximumTemp = MaximumTemp;
+		this.MinimumTemp = MinimumTemp;
 
 		this.RandomObjects = RandomObjects;
 
@@ -19,18 +31,18 @@ export class Biome
 
 		this.BiomeEnum = BiomeEnum;
 	}
-
-	MinimumMoisture: number;
+	MaximumElevation: number;
 	MinimumElevation: number;
-	MinimumTemp: number;
 
 	MaximumMoisture: number;
-	MaximumElevation: number;
+	MinimumMoisture: number;
+
 	MaximumTemp: number;
+	MinimumTemp: number;
 
 	RandomObjects: ITerrainObject[];
 
 	GroundMaterialDefault: Enum.Material;
 
-	BiomeEnum: Biomes;
+	BiomeEnum: BiomeTypes;
 }
