@@ -12,10 +12,10 @@ let LPlr = game.GetService("Players").LocalPlayer;
 Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys(undefined)));
 if(RegPlr.Returned !== undefined)
 {
+	print("C");
 	while (LPlr.Character === undefined) { wait(); };
 	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), RegPlr.Returned.FoAPlayerSettings);
 	Camera.Connect();
-	Client.TerrainProcessor.RenderTerrain(0, 0, 200, 200);
 }
 
 export {};

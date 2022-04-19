@@ -1,21 +1,22 @@
+import { NoiseHelper } from "../../NoiseHelper";
 import { Biome } from "../biomes/Biome";
 
 export class TerrainRequest
 {
-	constructor (ElevationMap: number[][], MoistureMap: number[][], TempMap: number[][], SizePerCell: number, WaterHeight: number)
+	constructor (ElevationMap: NoiseHelper, MoistureMap: NoiseHelper, TempMap: NoiseHelper, SizePerCell: number, WaterHeight: number)
 	{
 		this.ElevationMap = ElevationMap;
 		this.MoistureMap = MoistureMap;
 		this.TempMap = TempMap;
 
 		this.SizePerCell = SizePerCell;
-		this.WaterHeight = WaterHeight;
+		this.WaterHeightOffset = WaterHeight;
 	}
 
-	ElevationMap: number[][];
-	MoistureMap: number[][];
-	TempMap: number[][];
+	ElevationMap: NoiseHelper;
+	MoistureMap: NoiseHelper;
+	TempMap: NoiseHelper;
 
 	SizePerCell: number;
-	WaterHeight: number;
+	WaterHeightOffset: number;
 }

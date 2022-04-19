@@ -34,9 +34,9 @@ export class Tree implements ITerrainObject
 			let Body = Clone.FindFirstChild("Body");
 			if (Body !== undefined && Body.IsA("MeshPart"))
 			{
-				let RandomColorR = math.clamp(81 * (TerrainCell.Elevation + 2), 81, 255);
-				let RandomColorG = math.clamp(91 * (TerrainCell.Elevation + 2), 91, 255);
-				let RandomColorB = math.clamp(68 * (TerrainCell.Elevation + 2), 68, 255);
+				let RandomColorR = math.clamp(81 * (TerrainCell.Elevation + 3), 81, 255);
+				let RandomColorG = math.clamp(91 * (TerrainCell.Elevation + 3), 91, 255);
+				let RandomColorB = math.clamp(68 * (TerrainCell.Elevation + 3), 68, 255);
 				Body.Color = Color3.fromRGB(RandomColorR, RandomColorG, RandomColorB);
 			}
 		}
@@ -47,8 +47,8 @@ export class Tree implements ITerrainObject
 	MinimumMoisture: number = 0;
 	MaximumMoisture: number = 1;
     MinimumElevation: number = 0.2;
-    MaximumElevation: number = 1;
-	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.1]]);
+	MaximumElevation: number = 1;
+	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.1], [BiomeTypes.SnowForest, 0.1]]);
 	Model: Model;
 	YOffset: number;
 }

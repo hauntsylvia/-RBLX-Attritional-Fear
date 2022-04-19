@@ -41,12 +41,6 @@ export class Strings
                 [FactionTitleKeys.AirTraverser, "Air Traverser"]
             ]);
     };
-    static TerrainStrings = class
-    {
-        static TerrainHandlerRoute: string = "Terrain";
-
-        static GetMap: string = "GetChunk";
-	}
 	static StorageStrings = class
     {
         static GetBiomeModelsFolder (): Folder
