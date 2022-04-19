@@ -3,11 +3,10 @@ import { Biome } from "../biomes/Biome";
 
 export class TerrainRequest
 {
-	constructor (ElevationMap: NoiseHelper, MoistureMap: NoiseHelper, TempMap: NoiseHelper, SizePerCell: number, WaterHeight: number)
+	constructor (ElevationMap: NoiseHelper, MoistureMap: NoiseHelper, SizePerCell: number, WaterHeight: number)
 	{
 		this.ElevationMap = ElevationMap;
 		this.MoistureMap = MoistureMap;
-		this.TempMap = TempMap;
 
 		this.SizePerCell = SizePerCell;
 		this.WaterHeightOffset = WaterHeight;
@@ -15,7 +14,6 @@ export class TerrainRequest
 
 	ElevationMap: NoiseHelper;
 	MoistureMap: NoiseHelper;
-	TempMap: NoiseHelper;
 
 	SizePerCell: number;
 	WaterHeightOffset: number;

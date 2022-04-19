@@ -18,15 +18,21 @@ export class NoiseHelper
 		return 2 * (0.5 - math.abs(0.5 - (math.noise(nx, ny, Z) + 0.5)));
 	}
 
-	GenerateTemperatureHeightmap (): number[][]
+	GenerateTemperatureMap (): number[][]
 	{
+		let NewMap: number[][] = [];
+		let EquatorAtY: number = this.Height / 2;
 		for (let X = 0; X < this.Width; X++)
 		{
+			NewMap[X] = [];
 			for (let Y = 0; Y < this.Height; Y++)
 			{
-
+				let DistanceFromEq = math.abs(Y - EquatorAtY);
+				let Inv = (EquatorAtY - DistanceFromEq);
+				NewMap[X][Y] = math.clamp(Inv / EquatorAtY, 0, 1);
 			}
 		}
+		return NewMap;
 	}
 
 	GenerateHeightmap (Z: number, Exponent: number): number[][]

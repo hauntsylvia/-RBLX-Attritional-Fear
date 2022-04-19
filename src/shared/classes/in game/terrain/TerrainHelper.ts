@@ -18,7 +18,7 @@ export class TerrainHelper
 
 		this.ElevationMap = Maps.ElevationMap;
 		this.MoistureMap = Maps.MoistureMap;
-		this.TempMap = Maps.TempMap;
+		this.TempMap = Maps.ElevationMap.GenerateTemperatureMap();
 
 		this.XWidth = this.ElevationMap.Map.size();
 		this.ElevationMap.Map.forEach(Arr =>
@@ -37,7 +37,7 @@ export class TerrainHelper
 
 	private ElevationMap: NoiseHelper;
 	private MoistureMap: NoiseHelper;
-	private TempMap: NoiseHelper;
+	private TempMap: number[][];
 
 	private FillSpotByBiome (Part: Part, CurrentTerrain: TerrainResult, WaterHeightOffset: number)
 	{
@@ -120,9 +120,9 @@ export class TerrainHelper
 				for (let Z = Zp; Z < this.ZWidth && Z < Zpt; Z++)
 				{
 					let Elevation = this.ElevationMap.Map[X][Z];
-					let FakeElevation = this.SizePerCell * (Elevation * 20);
+					let FakeElevation = this.SizePerCell * (Elevation * 40);
 					let Moisture = this.MoistureMap.Map[X][Z];
-					let Temperature = this.TempMap.Map[X][Z];
+					let Temperature = this.TempMap[X][Z];
 					let Siz = new Vector3(this.SizePerCell, this.SizePerCell * 2, this.SizePerCell);
 					let Pos = new Vector3((X - this.XWidth / 2) * this.SizePerCell, FakeElevation, (Z - this.ZWidth / 2) * this.SizePerCell);
 					let Part = new Instance("Part", game.GetService("Workspace"));

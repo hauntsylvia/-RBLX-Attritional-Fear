@@ -4,6 +4,8 @@ export enum BiomeTypes
 	Forest,
 	SnowForest,
 	Beach,
+	Lake,
+	MountainTop
 };
 
 export enum TreeTypes
