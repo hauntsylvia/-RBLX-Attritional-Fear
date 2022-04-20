@@ -27,6 +27,13 @@ export class Strings
         static GetFoAPlayerSettings: string = "GetFoAPlayerSettings";
         static SaveFoAPlayerSettings: string = "SaveFoAPlayerSettings";
     };
+    static TerrainStrings = class
+    {
+        static TerrainHandlerRoute = "Terrain";
+
+        static GetMapData = "GetMapData";
+        static GetChunkOfTerrain = "GetChunk";
+	}
     static FactionStrings = class
     {
         static FactionTitles: Map<FactionTitleKeys, string> = new Map<FactionTitleKeys, string>(

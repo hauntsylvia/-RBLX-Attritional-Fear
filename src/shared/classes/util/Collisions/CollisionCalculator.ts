@@ -2,29 +2,32 @@ import { CollisionCalculatorResult } from "./CollisionCalculatorResult";
 
 export class CollisionCalculator
 {
-	private static Calculate (CFrameTC: CFrame, Distance: number, InstancesToIgnore: Instance[] = []): RaycastResult | undefined
+	private static Calculate (StartingPoint: CFrame, DistanceAhead: number, Params: RaycastParams): RaycastResult | undefined
 	{
-		let Ray = new RaycastParams();
-		Ray.FilterType = Enum.RaycastFilterType.Blacklist;
-		Ray.FilterDescendantsInstances = InstancesToIgnore;
-		let Max = CFrameTC.mul(new Vector3(0, 0, -Distance));
-		let ToPoint = Max.sub(CFrameTC.Position).Unit.mul(Distance);
-		let RayResult = game.GetService("Workspace").Raycast(CFrameTC.mul(new CFrame(0, 0, -Distance)).Position, ToPoint, Ray);
+		//let Max = StartingPoint.mul(new Vector3(0, 0, -DistanceAhead));
+		//let ToPoint = Max.sub(StartingPoint.Position).Unit.mul(DistanceAhead);
+		//let RayResult = game.GetService("Workspace").Raycast(StartingPoint.mul(new CFrame(0, 0, -DistanceAhead)).Position, ToPoint, Params);
+		let EndPosition = StartingPoint.mul(new CFrame(0, 0, -DistanceAhead));
+		let RayResult = game.GetService("Workspace").Raycast(StartingPoint.Position, EndPosition.Position, Params);
 		return RayResult;
 	}
 
-	static CalculateAhead (CFrameToCheck: CFrame, Distance: number, InstancesToIgnore: Instance[] = []): CollisionCalculatorResult
+	static CalculateAhead (CFrameToCheck: CFrame, Distance: number, Params: RaycastParams): CollisionCalculatorResult
 	{
-		let RayResult = CollisionCalculator.Calculate(CFrameToCheck, Distance, InstancesToIgnore);
-		return new CollisionCalculatorResult(true, RayResult);
+		let RayResult = CollisionCalculator.Calculate(CFrameToCheck, Distance, Params);
+		return new CollisionCalculatorResult(RayResult !== undefined, RayResult);
 	}
 
 	static CalculateByBoundingBox (PositionToCheck: CFrame, BoundingBox: Vector3, InstancesToIgnore: Instance[] = []): BasePart[]
 	{
-		let Part = new Instance("Part", game.GetService("Workspace"));
-		Part.Name = "Bounding - Collision Calculator";
+		let Part = new Instance("Part");
+		Part.Name = "Bounding";
 		Part.Size = BoundingBox;
 		Part.CFrame = PositionToCheck;
+		Part.Parent = game.GetService("Workspace");
+		Part.Anchored = true;
+		Part.Transparency = 1;
+
 		let Final: BasePart[] = [];
 		let Touching = Part.GetTouchingParts();
 		Touching.forEach(T =>
@@ -42,7 +45,6 @@ export class CollisionCalculator
 				Final.push(T);
 			}
 		});
-		Part.CanCollide = false;
 		Part.Destroy();
 		return Final;
 	}

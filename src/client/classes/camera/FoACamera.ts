@@ -42,9 +42,8 @@ export class FoACamera // Omar, PhD* says hi
 	CameraZoomSteps: number = 40;
 	CameraYAngle: number = 0;
 
-	MinZoom: number = 150;
+	MinZoom: number = 10;
 	MaxZoom: number = 350;
-	MinObjectDistance: number = 5;
 
 	HasVelocity ()
 	{
@@ -125,17 +124,18 @@ export class FoACamera // Omar, PhD* says hi
 		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame / 3;
 		this.CameraYAngle += this.RightRotationVelocity;
 
-		let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MinObjectDistance);
+		let Ray = new RaycastParams();
+		let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MaxZoom * 4, Ray);
+		let CurrentMin = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MinZoom : this.MinZoom;
+		let CurrentMax = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MaxZoom : this.MaxZoom;
 
-		this.InwardVelocity = CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y < 0 ? 0.5 : CollisionResult.Result !== undefined && CollisionResult.Result.Position.Y - this.CurrentCamera.CFrame.Y > 0 ? -0.5 : this.InwardVelocity;
-
-		if (this.CurrentCamera.CFrame.Y >= this.MaxZoom)
+		if (this.CurrentCamera.CFrame.Y >= CurrentMax)
 		{
-			this.InwardVelocity = -0.25;
+			this.InwardVelocity = -0.5;
 		}
-		else if (this.CurrentCamera.CFrame.Y <= this.MinZoom)
+		else if (this.CurrentCamera.CFrame.Y <= CurrentMin)
 		{
-			this.InwardVelocity = 0.25;
+			this.InwardVelocity = 0.5;
 		}
 
 		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);

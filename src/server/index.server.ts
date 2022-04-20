@@ -10,11 +10,4 @@ import { Server } from "./classes/server communication/Server";
 
 Server.Main();
 
-let R = new Random();
-let EleMapZ = R.NextInteger(1, 10 ^ 6);
-let EleMap = new NoiseHelper(EleMapZ, 200, 200, 2);
-let MoistureMap = new NoiseHelper(R.NextInteger(1, 10 ^ 6), 200, 200, 2);
-const THelper = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, 5, 3))
-THelper.Render(0, 0, 200, 200, Biomes.AllBiomes, Biomes.FallbackBiome, 0.3);
-
 export {};

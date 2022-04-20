@@ -1,3 +1,4 @@
+import { Biomes } from "../../../consts/Biomes";
 import { BiomeTypes } from "../../../consts/Enums";
 import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
 import { ModelResizer } from "../../util/ModelResizer";
@@ -13,57 +14,51 @@ export class TerrainHelper
 	{
 		this.TerrainReq = Maps;
 
-		this.SizePerCell = Maps.SizePerCell;
-		this.WaterHeightOffset = Maps.WaterHeightOffset;
-
-		this.ElevationMap = Maps.ElevationMap;
-		this.MoistureMap = Maps.MoistureMap;
-		this.TempMap = Maps.ElevationMap.GenerateTemperatureMap();
-
-		this.XWidth = this.ElevationMap.Map.size();
-		this.ElevationMap.Map.forEach(Arr =>
+		this.XWidth = Maps.ElevationMap.Map.size();
+		Maps.ElevationMap.Map.forEach(Arr =>
 		{
 			this.ZWidth++;
 		});
+		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
 	}
 
 	TerrainReq: TerrainRequest;
 
-	SizePerCell: number;
-	WaterHeightOffset: number;
-
 	XWidth: number = 0;
 	ZWidth: number = 0;
 
-	private ElevationMap: NoiseHelper;
-	private MoistureMap: NoiseHelper;
 	private TempMap: number[][];
 
-	private FillSpotByBiome (Part: Part, CurrentTerrain: TerrainResult, WaterHeightOffset: number)
+	PaintObjectsByBiome (CurrentTerrain: TerrainResult)
 	{
-		let BB = CurrentTerrain.Biome;
-		Part.Size = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Size.X, WaterHeightOffset, Part.Size.Z) : Part.Size;
-		Part.Position = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
-		game.GetService("Workspace").Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
-		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
-		let C = coroutine.create(() =>
-		{
-			let Choice = new Random().NextNumber(0, 5);
-			BB.RandomObjects.forEach(Obj =>
-			{
-				if (Choice > 0 && Obj.Model !== undefined)
-				{
-					let Clone = Obj.Model.Clone();
-					Clone.Name = Obj.Model.Name;
+		let FakeElevation = this.TerrainReq.SizePerCell * (CurrentTerrain.Elevation * 40);
+		let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
+		let Pos = new Vector3((CurrentTerrain.X - this.XWidth / 2) * this.TerrainReq.SizePerCell, FakeElevation, (CurrentTerrain.Z - this.ZWidth / 2) * this.TerrainReq.SizePerCell);
+		let Part = new Instance("Part", game.GetService("Workspace"));
+		Part.Anchored = true;
+		Part.Name = "TerrainPart";
+		Part.Position = Pos;
+		Part.Size = Siz;
+		Part.CanCollide = false;
+		Part.Transparency = 1;
 
-					let Spawned = false;
-					let BaseE = (BB.MinimumElevation + BB.MaximumElevation);
+		let Choice = new Random().NextNumber(0, 5);
+		CurrentTerrain.Biome.RandomObjects.forEach(Obj =>
+		{
+			if (Choice > 0 && Obj.Model !== undefined)
+			{
+				let Clone = Obj.Model.Clone();
+				Clone.Name = Obj.Model.Name;
+				Choice -= (Obj.BiomesAndRarity.get(CurrentTerrain.Biome.BiomeEnum) ?? 0) * this.TerrainReq.SizePerCell;
+				if (Choice <= 0)
+				{
+					let BaseE = (CurrentTerrain.Biome.MinimumElevation + CurrentTerrain.Biome.MaximumElevation);
 					let MinElevation = BaseE * Obj.MinimumElevation;
 					let MaxElevation = BaseE * Obj.MaximumElevation;
-					let BaseM = (BB.MinimumMoisture + BB.MaximumMoisture);
+					let BaseM = (CurrentTerrain.Biome.MinimumMoisture + CurrentTerrain.Biome.MaximumMoisture);
 					let MinM = BaseM * Obj.MinimumMoisture;
 					let MaxM = BaseM * Obj.MaximumMoisture;
-					let BaseT = (BB.MinimumTemp + BB.MaximumTemp);
+					let BaseT = (CurrentTerrain.Biome.MinimumTemp + CurrentTerrain.Biome.MaximumTemp);
 					let MinT = BaseT * Obj.MinimumTemperature;
 					let MaxT = BaseT * Obj.MaximumTemperature;
 					if (MaxElevation >= CurrentTerrain.Elevation && MinElevation <= CurrentTerrain.Elevation &&
@@ -80,31 +75,40 @@ export class TerrainHelper
 						let Collision = CollisionCalculator.CalculateByBoundingBox(EndCFrame, BoundingBox, ForgetAbout);
 						if (Collision.isEmpty())
 						{
-							Choice -= (Obj.BiomesAndRarity.get(BB.BiomeEnum) ?? 0) * this.SizePerCell;
-							if (Choice <= 0)
-							{
-								Obj.GeneratedByTerrain(CurrentTerrain, Clone);
-								Clone.Parent = game.GetService("Workspace");
-								Spawned = true;
-								Clone.Parent = game.GetService("Workspace");
-								Clone.SetPrimaryPartCFrame(EndCFrame/*.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0))*/);
-							}
+							Clone.SetPrimaryPartCFrame(EndCFrame/*.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0))*/);
+							Obj.GeneratedByTerrain(CurrentTerrain, Clone);
+							Clone.Parent = game.GetService("Workspace");
 						}
 					}
-
-					if (!Spawned)
-					{
-						Clone.Destroy();
-					}
-					
 				}
-			});
+			}
 		});
-		coroutine.resume(C);
 	}
 
-	Render (Xp: number, Zp: number, Xpt: number, Zpt: number, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = 0.8)
+	FillTerrainByBiome (CurrentTerrain: TerrainResult)
 	{
+		let FakeElevation = this.TerrainReq.SizePerCell * (CurrentTerrain.Elevation * 40);
+
+		let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
+		let Pos = new Vector3((CurrentTerrain.X - this.XWidth / 2) * this.TerrainReq.SizePerCell, FakeElevation, (CurrentTerrain.Z - this.ZWidth / 2) * this.TerrainReq.SizePerCell);
+
+		let Part = new Instance("Part", game.GetService("Workspace"));
+		Part.Anchored = true;
+		Part.Name = "TerrainPart";
+		Part.Position = Pos;
+		Part.Size = Siz;
+		Part.CanCollide = false;
+		Part.Transparency = 1;
+		let BB = CurrentTerrain.Biome;
+		Part.Size = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
+		Part.Position = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
+		game.GetService("Workspace").Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
+		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
+	}
+
+	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = Biomes.ModelSize): TerrainResult[]
+	{
+		let T: TerrainResult[] = [];
 		print(Xp);
 		AllBiomes.forEach(B =>
 		{
@@ -115,47 +119,35 @@ export class TerrainHelper
 		});
 		for (let X = Xp; X < this.XWidth && X < Xpt; X++)
 		{
-			let C = coroutine.create(() =>
+			for (let Z = Zp; Z < this.ZWidth && Z < Zpt; Z++)
 			{
-				for (let Z = Zp; Z < this.ZWidth && Z < Zpt; Z++)
+				let TR: TerrainResult | undefined = undefined;
+				let Elevation = this.TerrainReq.ElevationMap.Map[X][Z];
+				let Moisture = this.TerrainReq.MoistureMap.Map[X][Z];
+				let Temperature = this.TempMap[X][Z];
+				let RCFrame = CFrame.Angles(0, math.rad(math.random(-360, 360)), 0);
+
+				let BiomeFilled = false;
+				AllBiomes.forEach(B =>
 				{
-					let Elevation = this.ElevationMap.Map[X][Z];
-					let FakeElevation = this.SizePerCell * (Elevation * 40);
-					let Moisture = this.MoistureMap.Map[X][Z];
-					let Temperature = this.TempMap[X][Z];
-					let Siz = new Vector3(this.SizePerCell, this.SizePerCell * 2, this.SizePerCell);
-					let Pos = new Vector3((X - this.XWidth / 2) * this.SizePerCell, FakeElevation, (Z - this.ZWidth / 2) * this.SizePerCell);
-					let Part = new Instance("Part", game.GetService("Workspace"));
-					Part.Anchored = true;
-					Part.Name = "TerrainPart";
-					Part.Position = Pos;
-					Part.Size = Siz;
-					Part.CanCollide = false;
-					Part.Transparency = 1;
-					
-					let BiomeFilled = false;
-
-					AllBiomes.forEach(B =>
+					if (!BiomeFilled && B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture && B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
 					{
-						if (!BiomeFilled && B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture && B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
-						{
-							BiomeFilled = true;
-							this.FillSpotByBiome(Part, new TerrainResult(Elevation, Moisture, Temperature, X, Z, B), this.WaterHeightOffset);
-						}
-					});
-
-					
-					if (!BiomeFilled && FallbackBiome !== undefined)
-					{
-						this.FillSpotByBiome(Part, new TerrainResult(Elevation, Moisture, Temperature, X, Z, FallbackBiome), this.WaterHeightOffset);
+						BiomeFilled = true;
+						TR = new TerrainResult(Elevation, Moisture, Temperature, X, Z, B, RCFrame, this.TerrainReq.WaterHeightOffset);
 					}
+				});
 
-					wait();
-					Part.Destroy();
+				if (!BiomeFilled && FallbackBiome !== undefined)
+				{
+					TR = new TerrainResult(Elevation, Moisture, Temperature, X, Z, FallbackBiome, RCFrame, this.TerrainReq.WaterHeightOffset);
 				}
-			});
-			coroutine.resume(C);
-			wait();
+
+				if (TR !== undefined)
+				{
+					T.push(TR);
+				}
+			}
 		}
+		return T;
 	}
 }

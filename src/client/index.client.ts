@@ -16,6 +16,8 @@ if(RegPlr.Returned !== undefined)
 	while (LPlr.Character === undefined) { wait(); };
 	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), RegPlr.Returned.FoAPlayerSettings);
 	Camera.Connect();
+
+	Client.TerrainProcessor.RenderTerrain(0, 0, 100, 100, 10);
 }
 
 export {};

@@ -23,4 +23,5 @@ export class Biomes
 		];
 	
 	static FallbackBiome = new Biome(0, 0, 0, 1, 0.1, 1, [], Enum.Material.Water, BiomeTypes.Ocean);
+	static ModelSize = 0.3;
 }
