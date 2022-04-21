@@ -43,7 +43,7 @@ export class FoACamera // Omar, PhD* says hi
 	CameraYAngle: number = 0;
 
 	MinZoom: number = 10;
-	MaxZoom: number = 350;
+	MaxZoom: number = 1000;
 
 	HasVelocity ()
 	{

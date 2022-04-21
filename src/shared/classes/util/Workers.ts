@@ -1,3 +1,5 @@
+import { Sleep } from "./Sleep";
+
 export class Workers
 {
 	constructor (Threads: thread[])
@@ -19,8 +21,8 @@ export class Workers
 				while (coroutine.status(this.Threads[A]) !== "dead") { wait(); }
 				Alive--;
 			}));
-			while (Alive > WorkerMax) { wait(1); }
-			wait(1 / 30);
+			while (Alive > WorkerMax) { wait(); }
+			wait();
 		}
 	}
 }
