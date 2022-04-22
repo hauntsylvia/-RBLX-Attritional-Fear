@@ -35,7 +35,10 @@ export class TerrainHelper
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
 		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
-		this.Terrain = this.GetTerrain(-(this.XWidth / 2), -(this.XWidth / 2), (this.XWidth / 2), (this.XWidth / 2));
+		if (game.GetService("RunService").IsServer())
+		{
+			this.Terrain = this.GetTerrain(-(this.XWidth / 2), -(this.XWidth / 2), (this.XWidth / 2), (this.XWidth / 2));
+		}
 
 		print("Constructed.");
 	}
@@ -50,7 +53,7 @@ export class TerrainHelper
 
 	private TempMap: number[][];
 
-	Terrain: TerrainResult[];
+	Terrain: TerrainResult[] = [];
 
 	FrameSteps: number = 5;
 
@@ -123,16 +126,17 @@ export class TerrainHelper
 		}
 	}
 
-	FillTerrainByBiome (CurrentTerrain: TerrainResult[], WorkerCount: number)
+	GetThreadsForTerrainFilling (CurrentTerrain: TerrainResult[]): thread[]
 	{
 		let Threads: thread[] = [];
 		for (let Index = 0; Index < CurrentTerrain.size(); Index += 50)
 		{
 			let Thread = coroutine.create(() =>
 			{
-
+				let Sleeper = new Sleep(25);
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
+					Sleeper.Step();
 					let Terrain = CurrentTerrain[ThisOffset];
 
 					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
@@ -159,20 +163,21 @@ export class TerrainHelper
 			});
 			Threads.push(Thread);
 		}
-		let ThreadHandler = new Workers(Threads);
-		ThreadHandler.Split(WorkerCount, new Sleep(2));
+		return Threads;
 		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
 	GetCachedTerrain (X: number, Z: number, XTo: number, ZTo: number): TerrainResult[]
 	{
+		let T = os.clock();
 		let Filtered = this.Terrain.filter(T => T.X >= X && T.Z >= Z && T.X <= XTo && T.Z <= ZTo);
+		print(os.clock() - T);
 		return Filtered;
 	}
 
 	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
 	// to the center of the real world space.
-	private GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
+	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
 		let Stepper = new Sleep(14000);
 		let T: TerrainResult[] = [];

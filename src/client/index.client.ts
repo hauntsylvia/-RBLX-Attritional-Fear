@@ -19,46 +19,31 @@ if(RegPlr.Returned !== undefined)
 	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), RegPlr.Returned.FoAPlayerSettings);
 	Camera.Connect();
 	//let T = os.clock();
-	//let RenderReq = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-150, -150, 150, 150), 100);
 	//RenderReq?.WaitUntilDone();
 	//print(os.clock() - T);
 	let LastCF: CFrame = Camera.CurrentCamera.CFrame;
-	let RenderAmount = 50;
-	let ChunkSize = 50;
-	let IdleRenderer: RenderTerrainResult = new RenderTerrainResult([]);
+	let RenderAmount = 200;
+	let ChunkSize = 400;
+	//let RenderReq = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-150, -150, 150, 150), 50);
+	//RenderReq?.Run();
 	while(true)
 	{
-		print("A");
-
-		let NewCF = Camera.CurrentCamera.CFrame.mul(new CFrame(0, 0, -300));
+		let NewCF = Camera.CurrentCamera.CFrame.mul(new CFrame(0, 0, -Camera.CurrentCamera.CFrame.Position.Y));
 		let X = math.round(NewCF.X - RenderAmount);
 		let Z = math.round(NewCF.Position.Z - RenderAmount);
 		let XTo = math.round(NewCF.Position.X + RenderAmount);
 		let ZTo = math.round(NewCF.Position.Z + RenderAmount);
+		LastCF = NewCF;
 		if (!Camera.HasVelocity() || LastCF.Position.sub(NewCF.Position).Magnitude > 15)
 		{
-			LastCF = NewCF;
-			if (IdleRenderer.Dead())
-			{
-				let N = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(X, Z, XTo, ZTo), ChunkSize, 10);
-				if (N !== undefined)
-				{
-					IdleRenderer = N;
-					N.Run();
-				}
-				RenderAmount = RenderAmount * 5;
-			}
+			Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(X, Z, XTo, ZTo), ChunkSize);
+			RenderAmount = RenderAmount * Camera.CurrentCamera.CFrame.Position.Y / 4;
 		}
 		else
 		{
-			RenderAmount = 50;
-			IdleRenderer.Kill();
-			let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(NewCF.Position.X - 50, NewCF.Position.Z - 50, NewCF.Position.X + 50, NewCF.Position.Z + 50), ChunkSize / 2, 50);
-			if (R !== undefined)
-			{
-				R?.Run();
-				while (!R.Dead()) { wait(); }
-			}
+			RenderAmount = 200;
+			Client.TerrainProcessor.StopCurrentRendering();
+			Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(X, Z, XTo, ZTo), ChunkSize);
 		}
 		wait();
 	};

@@ -8,55 +8,24 @@ export class RenderTerrainResult
 	}
 
 	Threads: thread[];
-	Running: boolean = false;
 	ThreadsKilled: boolean = false;
 
 	Kill ()
 	{
-		this.Running = false;
 		this.ThreadsKilled = true;
-	}
-
-	private Work ()
-	{
-		new Workers(this.Threads).Split(5);
-	}
-
-	Run ()
-	{
-		this.Running = true;
-		this.Threads.forEach(T =>
-		{
-			if (!this.ThreadsKilled && coroutine.status(T) !== "dead")
-			{
-				coroutine.resume(T);
-			}
-			else
-			{
-				this.Running = false;
-			}
-		});
 	}
 
 	WaitUntilDone ()
 	{
-		this.Running = true;
-		this.Threads.forEach(T =>
+		new Workers(this.Threads).Split(1);
+	}
+
+	Run ()
+	{
+		coroutine.resume(coroutine.create(() =>
 		{
-			if (coroutine.status(T) === "suspended")
-			{
-				coroutine.resume(T);
-			}
-			while (coroutine.status(T) !== "dead")
-			{
-				if (this.ThreadsKilled)
-				{
-					this.Running = false;
-					break;
-				}
-				game.GetService("RunService").Heartbeat.Wait();
-			}
-		});
+			this.WaitUntilDone();
+		}));
 	}
 
 	Dead (): boolean

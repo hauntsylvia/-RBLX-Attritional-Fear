@@ -9,6 +9,7 @@ import { TerrainRequest } from "../../../shared/classes/in game/terrain/specific
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
 import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHelper";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
+import { Sleep } from "../../../shared/classes/util/Sleep";
 import { AllBiomes, FallbackBiome, ModelSize } from "../../../shared/consts/Biomes";
 import { RenderTerrainResult } from "../processor results/RenderTerrainResult";
 import { Processor } from "./Processor";
@@ -26,6 +27,8 @@ export class TerrainProcessor extends Processor
 
     TerrainHelper: TerrainHelper;
 
+    KillThreads: boolean = false;
+
     GetMapData (): TerrainRequest
     {
         wait(5);
@@ -33,26 +36,30 @@ export class TerrainProcessor extends Processor
         return MapData.Returned ?? this.GetMapData();
     }
 
-    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number, WorkerCount: number,): RenderTerrainResult | undefined
+    StopCurrentRendering ()
     {
-        let ToReturn = new RenderTerrainResult([]);
-        let Threads: thread[] = [];
-        let Thr = coroutine.create(() =>
+        this.KillThreads = true;
+	}
+
+    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number)
+    {
+        this.KillThreads = false;
+        let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
+        for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
         {
-            let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
-            for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
+            for (let BufferedZ = S.ZPoint; BufferedZ <= S.ZToPoint; BufferedZ += ChunkSize)
             {
-                for (let BufferedZ = S.ZPoint; BufferedZ <= S.ZToPoint; BufferedZ += ChunkSize)
+                if (!this.KillThreads)
                 {
-                    if (!ToReturn.ThreadsKilled)
+                    let CachedTerrain = this.TerrainHelper.GetTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize);
+                    let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(CachedTerrain);
+                    Thr.forEach(T =>
                     {
-                        this.TerrainHelper.FillTerrainByBiome(this.TerrainHelper.GetCachedTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize), WorkerCount);
-					}
-				}
-			}
-        });
-        Threads.push(Thr);
-        ToReturn.Threads = Threads;
-        return ToReturn;
+                        coroutine.resume(T);
+                        new Sleep(5).Step();
+                    });
+                }
+            }
+        }
     }
 }
