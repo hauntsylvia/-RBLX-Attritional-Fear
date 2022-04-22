@@ -39,10 +39,10 @@ export class FoACamera // Omar, PhD* says hi
 	InwardVelocity: number = 0;
 
 	CameraSpeed: number = 750;
-	CameraZoomSteps: number = 40;
+	CameraZoomSteps: number = 80;
 	CameraYAngle: number = 0;
 
-	MinZoom: number = 10;
+	MinZoom: number = 20;
 	MaxZoom: number = 1000;
 
 	HasVelocity ()

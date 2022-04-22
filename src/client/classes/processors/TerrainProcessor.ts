@@ -9,7 +9,8 @@ import { TerrainRequest } from "../../../shared/classes/in game/terrain/specific
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
 import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHelper";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
-import { AllBiomes, FallbackBiome } from "../../../shared/consts/Biomes";
+import { AllBiomes, FallbackBiome, ModelSize } from "../../../shared/consts/Biomes";
+import { RenderTerrainResult } from "../processor results/RenderTerrainResult";
 import { Processor } from "./Processor";
 
 export class TerrainProcessor extends Processor
@@ -17,30 +18,59 @@ export class TerrainProcessor extends Processor
     constructor (Instance: RemoteFunction)
     {
         super(Instance);
+        this.MapData = this.GetMapData() ?? error("No map data.");
+        this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, ModelSize);
     }
 
-    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number = 50, WorkerCount: number = 10): any
+    MapData: TerrainRequest;
+
+    TerrainHelper: TerrainHelper;
+
+    AlreadyRendered: TerrainResult[] = [];
+
+    GetMapData (): TerrainRequest | undefined
     {
-        let TRequest = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
-        if (TRequest.Success && TRequest.Returned !== undefined)
+        let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
+        return MapData.Returned;
+	}
+
+    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number = 50, WorkerCount: number = 10): RenderTerrainResult | undefined
+    {
+        let Threads: thread[] = [];
+        let Thr = coroutine.create(() =>
         {
-            let THelper = new TerrainHelper(TRequest.Returned, AllBiomes, FallbackBiome);
             for (let BufferedX = Req.XPoint; BufferedX < Req.XToPoint; BufferedX += ChunkSize)
             {
                 for (let BufferedZ = Req.ZPoint; BufferedZ < Req.ZToPoint; BufferedZ += ChunkSize)
                 {
                     let ChunkRequest = this.MakeRequest<TerrainResult[]>(new ServerRequest<ServerTerrainRequest>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetChunkOfTerrain,
-                        new ServerTerrainRequest(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize)));
+                        new ServerTerrainRequest(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize, this.MapData.SizePerCell)));
                     if (ChunkRequest.Success && ChunkRequest.Returned !== undefined)
                     {
                         let Chunk = ChunkRequest.Returned;
-                        coroutine.resume(coroutine.create(() =>
+                        for (let CellIndex = 0; CellIndex < Chunk.size(); CellIndex++)
                         {
-                            THelper.FillTerrainByBiome(Chunk, WorkerCount);
-                        }));
+                            let Cell = Chunk[CellIndex];
+                            let RenderedCell = this.AlreadyRendered.find(V => V.X === BufferedX && V.Z === BufferedZ);
+                            if (RenderedCell !== undefined)
+                            {
+                                print("Already rendered!");
+                                Chunk.remove(CellIndex);
+                            }
+                        }
+                        this.TerrainHelper.FillTerrainByBiome(Chunk, WorkerCount);
+                        Chunk.forEach(Cell =>
+                        {
+                            this.AlreadyRendered.push(Cell);
+                        });
                     }
                 }
             }
-		}
+        });
+        Threads.push(Thr);
+        if (Threads !== undefined)
+        {
+            return new RenderTerrainResult(Threads);
+        }
     }
 }

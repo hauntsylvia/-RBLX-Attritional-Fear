@@ -47,82 +47,72 @@ export class TerrainHelper
 
 	private TempMap: number[][];
 
-	PaintObjectsByBiome (CurrentTerrain: TerrainResult[], WorkerCount: number)
+	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-
-		let Threads: thread[] = [];
-		for (let Index = 0; Index < CurrentTerrain.size(); Index += 50)
+		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
-			let Thread = coroutine.create(() =>
+			let Terrain = CurrentTerrain[ThisOffset];
+			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 			{
-				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
-				{
-					let Terrain = CurrentTerrain[ThisOffset];
+				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
 
-					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
-					let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
-					let Pos = new Vector3((Terrain.X - this.XWidth / 2) * this.TerrainReq.SizePerCell, FakeElevation, (Terrain.Z - this.ZWidth / 2) * this.TerrainReq.SizePerCell);
-					let Part = new Instance("Part", game.GetService("Workspace"));
-					Part.Anchored = true;
-					Part.Name = "TerrainPart";
-					Part.Position = Pos;
-					Part.Size = Siz;
-					Part.CanCollide = false;
-					Part.Transparency = 1;
-					let Choice = new Random().NextNumber(0, 1);
-					Terrain.Biome.RandomObjects.forEach(Obj =>
+				let ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
+				ForgetAbout.push(game.GetService("Workspace").Terrain);
+				let Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
+				if (Collision.isEmpty())
+				{
+					Clone.Parent = game.GetService("Workspace");
+					Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
+					Clone.SetPrimaryPartCFrame(Terrain.SpawnModelAt.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0)));
+				}
+				else
+				{
+					Clone.Destroy();
+				}
+				game.GetService("RunService").Heartbeat.Wait();
+			}
+		}
+	}
+
+	ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[])
+	{
+		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
+		{
+			let Terrain = CurrentTerrain[ThisOffset];
+
+			let Choice = new Random().NextNumber(0, 1);
+			Terrain.Biome.RandomObjects.forEach(Obj =>
+			{
+				if (Choice > 0 && Obj.Model !== undefined)
+				{
+					Choice -= (Obj.BiomesAndRarity.get(Terrain.Biome.BiomeEnum) ?? 0);
+					if (Choice <= 0)
 					{
-						if (Choice > 0 && Obj.Model !== undefined)
+						let BaseE = (Terrain.Biome.MinimumElevation + Terrain.Biome.MaximumElevation);
+						let MinElevation = BaseE * Obj.MinimumElevation;
+						let MaxElevation = BaseE * Obj.MaximumElevation;
+						let BaseM = (Terrain.Biome.MinimumMoisture + Terrain.Biome.MaximumMoisture);
+						let MinM = BaseM * Obj.MinimumMoisture;
+						let MaxM = BaseM * Obj.MaximumMoisture;
+						let BaseT = (Terrain.Biome.MinimumTemp + Terrain.Biome.MaximumTemp);
+						let MinT = BaseT * Obj.MinimumTemperature;
+						let MaxT = BaseT * Obj.MaximumTemperature;
+						if (MaxElevation >= Terrain.Elevation && MinElevation <= Terrain.Elevation &&
+							MaxM >= Terrain.Moisture && MinM <= Terrain.Moisture &&
+							MaxT >= Terrain.Temperature && MinT <= Terrain.Temperature)
 						{
-							let Clone = Obj.Model.Clone();
-							Clone.Name = Obj.Model.Name;
-							let Spawned = false;
-							Choice -= (Obj.BiomesAndRarity.get(Terrain.Biome.BiomeEnum) ?? 0);
-							if (Choice <= 0)
-							{
-								Clone.Parent = game.GetService("Workspace");
-								let BaseE = (Terrain.Biome.MinimumElevation + Terrain.Biome.MaximumElevation);
-								let MinElevation = BaseE * Obj.MinimumElevation;
-								let MaxElevation = BaseE * Obj.MaximumElevation;
-								let BaseM = (Terrain.Biome.MinimumMoisture + Terrain.Biome.MaximumMoisture);
-								let MinM = BaseM * Obj.MinimumMoisture;
-								let MaxM = BaseM * Obj.MaximumMoisture;
-								let BaseT = (Terrain.Biome.MinimumTemp + Terrain.Biome.MaximumTemp);
-								let MinT = BaseT * Obj.MinimumTemperature;
-								let MaxT = BaseT * Obj.MaximumTemperature;
-								if (MaxElevation >= Terrain.Elevation && MinElevation <= Terrain.Elevation &&
-									MaxM >= Terrain.Moisture && MinM <= Terrain.Moisture &&
-									MaxT >= Terrain.Temperature && MinT <= Terrain.Temperature)
-								{
-									let BoundingBox = Clone.GetExtentsSize();
-									let TopOfPart = Part.Position.add(new Vector3(0, (Part.Size.Y / 2) + Obj.YOffset, 0));
-									let BottomOfModel = BoundingBox.sub(new Vector3(0, BoundingBox.Y / 2, 0));
-									let EndCFrame = new CFrame(TopOfPart.add(BottomOfModel));
-									let ForgetAbout = Clone.GetChildren();
-									ForgetAbout.push(Part);
-									ForgetAbout.push(game.GetService("Workspace").Terrain);
-									let Collision = CollisionCalculator.CalculateByBoundingBox(EndCFrame, BoundingBox, ForgetAbout);
-									if (Collision.isEmpty())
-									{
-										Clone.SetPrimaryPartCFrame(EndCFrame/*.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0))*/);
-										Obj.GeneratedByTerrain(Terrain, Clone);
-										Spawned = true;
-									}
-								}
-							}
-							if (!Spawned)
-							{
-								Clone.Destroy();
-							}
+
+							let BoundingBox = Obj.Model.GetExtentsSize();
+							let TopOfPart = Terrain.RealPosition.Position.add(new Vector3(0, ((this.TerrainReq.SizePerCell * 2) / 2) + Obj.YOffset, 0));
+							let BottomOfModel = BoundingBox.sub(new Vector3(0, BoundingBox.Y / 2, 0));
+							let EndCFrame = new CFrame(TopOfPart.add(BottomOfModel));
+							Terrain.ModelToSpawnHere = Obj;
+							Terrain.SpawnModelAt = EndCFrame;
 						}
-					});
-					Part.Destroy();
+					}
 				}
 			});
-			Threads.push(Thread);
 		}
-		let ThreadHandler = new Workers(Threads);
-		ThreadHandler.Split(WorkerCount);
 	}
 
 	FillTerrainByBiome (CurrentTerrain: TerrainResult[], WorkerCount: number)
@@ -138,8 +128,8 @@ export class TerrainHelper
 
 					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
 
+					let Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
 					let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
-					let Pos = new Vector3((Terrain.X - this.XWidth / 2) * this.TerrainReq.SizePerCell, FakeElevation, (Terrain.Z - this.ZWidth / 2) * this.TerrainReq.SizePerCell);
 
 					let Part = new Instance("Part", game.GetService("Workspace"));
 					Part.Anchored = true;
@@ -164,19 +154,25 @@ export class TerrainHelper
 		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
+	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
+	// to the center of the real world space.
 	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
 		let T: TerrainResult[] = [];
-		print(Xp);
-		for (let X = Xp; X < this.XWidth && X < Xpt; X++)
+		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < this.XWidth && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
-			for (let Z = Zp; Z < this.ZWidth && Z < Zpt; Z++)
+			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
+			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < this.ZWidth && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
+				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
 				let TR: TerrainResult | undefined = undefined;
-				let Elevation = this.TerrainReq.ElevationMap.Map[X][Z];
-				let Moisture = this.TerrainReq.MoistureMap.Map[X][Z];
-				let Temperature = this.TempMap[X][Z];
+				let Elevation = this.TerrainReq.ElevationMap.Map[NormalX][NormalZ];
+				let FakeElevation = this.TerrainReq.SizePerCell * (Elevation * 40);
+				let Moisture = this.TerrainReq.MoistureMap.Map[NormalX][NormalZ];
+				let Temperature = this.TempMap[NormalX][NormalZ];
+
 				let RCFrame = CFrame.Angles(0, math.rad(math.random(-360, 360)), 0);
+				let Pos = new CFrame(RealWorldRequestedX * this.TerrainReq.SizePerCell, FakeElevation, RealWorldRequestedZ * this.TerrainReq.SizePerCell);
 
 				let BiomeFilled = false;
 				this.Biomes.forEach(B =>
@@ -184,20 +180,25 @@ export class TerrainHelper
 					if (!BiomeFilled && B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture && B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
 					{
 						BiomeFilled = true;
-						TR = new TerrainResult(Elevation, Moisture, Temperature, X, Z, B, RCFrame, this.TerrainReq.WaterHeightOffset);
+						TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, B, RCFrame, this.TerrainReq.WaterHeightOffset);
 					}
 				});
 
 				if (!BiomeFilled && this.FallbackBiome !== undefined)
 				{
-					TR = new TerrainResult(Elevation, Moisture, Temperature, X, Z, this.FallbackBiome, RCFrame, this.TerrainReq.WaterHeightOffset);
+					TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, this.FallbackBiome, RCFrame, this.TerrainReq.WaterHeightOffset);
 				}
+
 
 				if (TR !== undefined)
 				{
 					T.push(TR);
 				}
 			}
+		}
+		if (game.GetService("RunService").IsServer())
+		{
+			this.ModifyTerrainWithObjects(T);
 		}
 		return T;
 	}

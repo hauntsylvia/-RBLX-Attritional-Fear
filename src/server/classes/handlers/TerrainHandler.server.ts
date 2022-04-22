@@ -19,18 +19,19 @@ let Size = 1200;
 let Z = R.NextInteger(5, 10 ^ 26);
 let EleMap = new NoiseHelper(Z, Size, Size, 2, 5);
 let MoistureMap = new NoiseHelper(Z, Size, Size, 12, 2);
-const THelper = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, 5, 3), AllBiomes, FallbackBiome, ModelSize);
+let Scale = 5;
+const THelper = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
 
 function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[]
 {
-    let TX = Req.XPoint + EleMap.Height / 2;
-    let TZ = Req.ZPoint + EleMap.Width / 2;
-    let ToTX = Req.XToPoint + EleMap.Height / 2;
-    let ToTZ = Req.ZToPoint + EleMap.Width / 2;
+    let TX = Req.XPoint;
+    let TZ = Req.ZPoint;
+    let ToTX = Req.XToPoint;
+    let ToTZ = Req.ZToPoint;
     let Terrain = THelper.GetTerrain(TX, TZ, ToTX, ToTZ,);
     coroutine.resume(coroutine.create(() =>
     {
-        THelper.PaintObjectsByBiome(Terrain, 100);
+        THelper.PaintObjectsByBiome(Terrain);
     }));
     return Terrain;
 }

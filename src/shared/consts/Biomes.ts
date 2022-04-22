@@ -17,6 +17,6 @@ const AllBiomes: Biome[] =
 	];
 	
 const FallbackBiome = new Biome(0, 0, 0, 1, 0.1, 1, [], Enum.Material.Water, BiomeTypes.Ocean);
-const ModelSize = 0.3;
+const ModelSize = 0.5;
 
 export { AllBiomes, FallbackBiome, ModelSize };
