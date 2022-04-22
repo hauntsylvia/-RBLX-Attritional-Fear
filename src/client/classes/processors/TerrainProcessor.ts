@@ -56,7 +56,7 @@ export class TerrainProcessor extends Processor
                     Thr.forEach(T =>
                     {
                         coroutine.resume(T);
-                        new Sleep(5).Step();
+                        game.GetService("RunService").Heartbeat.Wait();
                     });
                 }
             }

@@ -133,7 +133,7 @@ export class TerrainHelper
 		{
 			let Thread = coroutine.create(() =>
 			{
-				let Sleeper = new Sleep(25);
+				let Sleeper = new Sleep(6);
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
 					Sleeper.Step();
@@ -185,10 +185,10 @@ export class TerrainHelper
 		let OffsetXWidthMax = (this.XWidth / 2);
 		let OffsetZWidthMin = -(this.ZWidth / 2);
 		let OffsetZWidthMax = (this.ZWidth / 2);
-		for (let RealWorldRequestedX = Xp; RealWorldRequestedX <= OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
+		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX > OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
 			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
-			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ <= OffsetZWidthMax && RealWorldRequestedZ >= OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
+			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < OffsetZWidthMax && RealWorldRequestedZ > OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
 				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
 				let TR: TerrainResult | undefined = undefined;
