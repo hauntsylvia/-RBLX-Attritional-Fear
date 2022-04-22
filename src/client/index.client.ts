@@ -1,4 +1,5 @@
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
+import { Server } from "../server/classes/server communication/Server";
 import { FoAPlayerSettings } from "../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Hotkeys } from "../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { ServerTerrainRequest } from "../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
@@ -18,39 +19,45 @@ if(RegPlr.Returned !== undefined)
 	let Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), RegPlr.Returned.FoAPlayerSettings);
 	Camera.Connect();
 	//let RenderReq = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-100, -100, 100, 100), 50, 10);
-	let LastCf: CFrame = Camera.CurrentCamera.CFrame;
-	let LastRender: RenderTerrainResult = new RenderTerrainResult([]);
-	let ChunkSize = 50;
-	let RenderAmount = 250;
-	while (true)
+	let LastCF: CFrame = Camera.CurrentCamera.CFrame;
+	let ChunkSize = 0;
+	let RenderAmount = 50;
+	let IdleRenderer: RenderTerrainResult = new RenderTerrainResult([]);
+	while(true)
 	{
-		RenderAmount = Camera.HasVelocity() ? 50 : RenderAmount < 1000 ? RenderAmount + 50 : RenderAmount;
-		let X = math.round(LastCf.X - RenderAmount);
-		let Z = math.round(LastCf.Position.Z - RenderAmount);
-		let XTo = math.round(LastCf.X + RenderAmount * 2);
-		let ZTo = math.round(LastCf.Position.Z + RenderAmount * 2);
-		let NewCf = Camera.CurrentCamera.CFrame;
-		let NewRender = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(X, Z, XTo, ZTo), ChunkSize, 100);
-		if (!Camera.HasVelocity())
+		ChunkSize = Camera.HasVelocity() ? 75 : 75;
+		let NewCF = Camera.CurrentCamera.CFrame.mul(new CFrame(0, 0, -300));
+		let X = math.round(NewCF.X - RenderAmount);
+		let Z = math.round(NewCF.Position.Z - RenderAmount);
+		let XTo = math.round(NewCF.Position.X + RenderAmount);
+		let ZTo = math.round(NewCF.Position.Z + RenderAmount);
+		if (!Camera.HasVelocity() || LastCF.Position.sub(NewCF.Position).Magnitude > 15)
 		{
-			ChunkSize = 50;
-			RenderAmount += 250;
-			if (NewRender !== undefined && (LastRender.ThreadsKilled || LastRender.Dead() || !LastRender.Running))
+			LastCF = NewCF;
+			if (IdleRenderer.Dead())
 			{
-				LastRender = NewRender;
-				LastRender.Run();
+				let N = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(X, Z, XTo, ZTo), ChunkSize, 100);
+				if (N !== undefined)
+				{
+					IdleRenderer = N;
+					N.Run();
+				}
+				RenderAmount += 300;
 			}
 		}
 		else
 		{
-			LastCf = NewCf;
-			ChunkSize = 25;
-			RenderAmount = 100;
-			LastRender.Kill();
-			NewRender?.WaitUntilDone();
+			RenderAmount = 300;
+			IdleRenderer.Kill();
+			let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(NewCF.Position.X - 50, NewCF.Position.Z - 50, NewCF.Position.X + 50, NewCF.Position.Z + 50), 100, 100);
+			if (R !== undefined)
+			{
+				R?.Run();
+				while (!R.Dead()) { wait(); }
+			}
 		}
-		wait(0.1);
-	}
+		wait();
+	};
 }
 
 export {};

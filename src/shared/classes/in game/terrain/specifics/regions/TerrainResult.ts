@@ -3,7 +3,7 @@ import { ITerrainObject } from "../objects/ITerrainObject";
 
 export class TerrainResult
 {
-	constructor (RealPosition: CFrame, Elevation: number, Moisture: number, Temperature: number, X: number, Z: number, Biome: Biome, RandomCellAngle: CFrame, WaterHeight: number)
+	constructor (RealPosition: CFrame, Elevation: number, Moisture: number, Temperature: number, X: number, Z: number, Biome: Biome, WaterHeight: number)
 	{
 		this.RealPosition = RealPosition;
 		this.Elevation = Elevation;

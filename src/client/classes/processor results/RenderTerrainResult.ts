@@ -13,10 +13,6 @@ export class RenderTerrainResult
 	{
 		this.Running = false;
 		this.ThreadsKilled = true;
-		this.Threads.forEach(VictimThread =>
-		{
-			coroutine.close(VictimThread);
-		});
 	}
 
 	Run ()
@@ -27,6 +23,7 @@ export class RenderTerrainResult
 			if (!this.ThreadsKilled && coroutine.status(T) !== "dead")
 			{
 				coroutine.resume(T);
+				game.GetService("RunService").Heartbeat.Wait();
 			}
 			else
 			{
@@ -40,6 +37,10 @@ export class RenderTerrainResult
 		this.Running = true;
 		this.Threads.forEach(T =>
 		{
+			if (coroutine.status(T) === "suspended")
+			{
+				coroutine.resume(T);
+			}
 			while (coroutine.status(T) !== "dead")
 			{
 				if (this.ThreadsKilled)

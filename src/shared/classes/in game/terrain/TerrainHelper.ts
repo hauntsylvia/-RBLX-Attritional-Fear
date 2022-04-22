@@ -35,6 +35,9 @@ export class TerrainHelper
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
 		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
+		this.Terrain = this.GetTerrain(-(this.XWidth / 2), -(this.XWidth / 2), (this.XWidth / 2), (this.XWidth / 2));
+
+		print("Constructed.");
 	}
 
 	TerrainReq: TerrainRequest;
@@ -47,11 +50,17 @@ export class TerrainHelper
 
 	private TempMap: number[][];
 
+	Terrain: TerrainResult[];
+
+	FrameSteps: number = 5;
+
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
+		let Stepper = new Sleep(120);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
+			//this.AlreadyRendered.push(new Vector2(Terrain.X, Terrain.Z));
 			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 			{
 				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
@@ -69,8 +78,8 @@ export class TerrainHelper
 				{
 					Clone.Destroy();
 				}
-				game.GetService("RunService").Heartbeat.Wait();
 			}
+			Stepper.Step();
 		}
 	}
 
@@ -79,7 +88,6 @@ export class TerrainHelper
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
-
 			let Choice = new Random().NextNumber(0, 1);
 			Terrain.Biome.RandomObjects.forEach(Obj =>
 			{
@@ -117,6 +125,7 @@ export class TerrainHelper
 
 	FillTerrainByBiome (CurrentTerrain: TerrainResult[], WorkerCount: number)
 	{
+		let Stepper = new Sleep(1000);
 		let Threads: thread[] = [];
 		for (let Index = 0; Index < CurrentTerrain.size(); Index += 50)
 		{
@@ -124,6 +133,8 @@ export class TerrainHelper
 			{
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
+					Stepper.Step();
+
 					let Terrain = CurrentTerrain[ThisOffset];
 
 					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
@@ -145,6 +156,7 @@ export class TerrainHelper
 					game.GetService("Workspace").Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
 					//game.GetService("Workspace").Terrain.FillRegion(new Region3(Part.Position.div(2), Part.Size).ExpandToGrid(4), 4, BB.GroundMaterialDefault);
 					Part.Destroy();
+						//this.AlreadyRendered.push(new Vector2(Terrain.X, Terrain.Z));
 				}
 			});
 			Threads.push(Thread);
@@ -154,15 +166,26 @@ export class TerrainHelper
 		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
+	GetCachedTerrain (X: number, Z: number, XTo: number, ZTo: number): TerrainResult[]
+	{
+		let Filtered = this.Terrain.filter(T => T.X >= X && T.Z >= Z && T.X <= XTo && T.Z <= ZTo);
+		return Filtered;
+	}
+
 	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
 	// to the center of the real world space.
-	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
+	private GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
+		let Stepper = new Sleep(10000);
 		let T: TerrainResult[] = [];
-		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < this.XWidth && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
+		let OffsetXWidthMin = -(this.XWidth / 2);
+		let OffsetXWidthMax = (this.XWidth / 2);
+		let OffsetZWidthMin = -(this.ZWidth / 2);
+		let OffsetZWidthMax = (this.ZWidth / 2);
+		for (let RealWorldRequestedX = Xp; RealWorldRequestedX <= OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
 			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
-			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < this.ZWidth && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
+			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ <= OffsetZWidthMax && RealWorldRequestedZ >= OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
 				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
 				let TR: TerrainResult | undefined = undefined;
@@ -180,18 +203,19 @@ export class TerrainHelper
 					if (!BiomeFilled && B.MinimumElevation <= Elevation && B.MinimumTemp <= Temperature && B.MinimumMoisture <= Moisture && B.MaximumElevation >= Elevation && B.MaximumTemp >= Temperature && B.MaximumMoisture >= Moisture)
 					{
 						BiomeFilled = true;
-						TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, B, RCFrame, this.TerrainReq.WaterHeightOffset);
+						TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, B, this.TerrainReq.WaterHeightOffset);
 					}
 				});
 
 				if (!BiomeFilled && this.FallbackBiome !== undefined)
 				{
-					TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, this.FallbackBiome, RCFrame, this.TerrainReq.WaterHeightOffset);
+					TR = new TerrainResult(Pos, Elevation, Moisture, Temperature, RealWorldRequestedX, RealWorldRequestedZ, this.FallbackBiome, this.TerrainReq.WaterHeightOffset);
 				}
 
 
 				if (TR !== undefined)
 				{
+					Stepper.Step();
 					T.push(TR);
 				}
 			}

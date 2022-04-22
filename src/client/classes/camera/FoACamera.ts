@@ -37,6 +37,7 @@ export class FoACamera // Omar, PhD* says hi
 	RightVelocity: number = 0;
 	RightRotationVelocity: number = 0;
 	InwardVelocity: number = 0;
+	ImmediateInwardVelocity: number = 0;
 
 	CameraSpeed: number = 750;
 	CameraZoomSteps: number = 80;
@@ -47,7 +48,7 @@ export class FoACamera // Omar, PhD* says hi
 
 	HasVelocity ()
 	{
-		return this.ForwardVelocity !== 0 || this.InwardVelocity !== 0 || this.RightVelocity !== 0 || this.RightRotationVelocity !== 0;
+		return this.ForwardVelocity !== 0 || this.ImmediateInwardVelocity !== 0 || this.RightVelocity !== 0 || this.RightRotationVelocity !== 0;
 	}
 
 	LoadNewSettings (Settings: Hotkeys)
@@ -138,6 +139,8 @@ export class FoACamera // Omar, PhD* says hi
 			this.InwardVelocity = 0.5;
 		}
 
+		this.ImmediateInwardVelocity = this.InwardVelocity;
+
 		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
 		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
 		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position).mul(CFrame.Angles(0, math.rad(-this.CameraYAngle), 0));
@@ -145,12 +148,9 @@ export class FoACamera // Omar, PhD* says hi
 		this.UpdateCamera(NewCF);
 		if (this.InputService.IsKeyDown(Enum.KeyCode.U))
 		{
-			print(this.ForwardVelocity);
-			print(this.RightVelocity);
 			print(this.InwardVelocity);
-			print(this.RightRotationVelocity);
 		}
-		this.InwardVelocity = this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5;
-		//this.InwardVelocity = 0;
+		this.InwardVelocity = this.InwardVelocity > -5 ? this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5 : 0;
+		this.ImmediateInwardVelocity = 0;
 	}
 }

@@ -19,28 +19,28 @@ let Size = 1200;
 let Z = R.NextInteger(5, 10 ^ 26);
 let EleMap = new NoiseHelper(Z, Size, Size, 2, 5);
 let MoistureMap = new NoiseHelper(Z, Size, Size, 12, 2);
-let Scale = 5;
-const THelper = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
+let Scale = 10;
 
-function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[]
+function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
 {
-    let TX = Req.XPoint;
-    let TZ = Req.ZPoint;
-    let ToTX = Req.XToPoint;
-    let ToTZ = Req.ZToPoint;
-    let Terrain = THelper.GetTerrain(TX, TZ, ToTX, ToTZ,);
-    coroutine.resume(coroutine.create(() =>
+    if (THelper !== undefined)
     {
-        THelper.PaintObjectsByBiome(Terrain);
-    }));
-    return Terrain;
+        let TX = Req.XPoint;
+        let TZ = Req.ZPoint;
+        let ToTX = Req.XToPoint;
+        let ToTZ = Req.ZToPoint;
+        let Terrain = THelper.GetCachedTerrain(TX, TZ, ToTX, ToTZ);
+        return Terrain;
+	}
 }
 
-function GetMapData (Player: Player): TerrainRequest
+function GetMapData (Player: Player): TerrainRequest | undefined
 {
-    return THelper.TerrainReq;
+    if (THelper !== undefined)
+    {
+        return THelper.TerrainReq;
+    }
 }
-
 const PlayerHandler = new Handler(Strings.TerrainStrings.TerrainHandlerRoute,
     [
         new Endpoint(Strings.TerrainStrings.GetMapData, GetMapData),
@@ -49,5 +49,13 @@ const PlayerHandler = new Handler(Strings.TerrainStrings.TerrainHandlerRoute,
 
 
 Server.RegisterHandler(PlayerHandler);
+
+const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
+
+coroutine.resume(coroutine.create(() =>
+{
+    THelper.PaintObjectsByBiome(THelper.Terrain);
+}));
+
 
 export { };

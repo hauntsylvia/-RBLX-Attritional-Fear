@@ -3,7 +3,7 @@ import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 
 export class Endpoint<ExpectedArg, ReturnOnSuccess>
 {
-    constructor(Route: string, OnRoutedTo: (Player: Player, Arg: ExpectedArg) => ReturnOnSuccess)
+    constructor (Route: string, OnRoutedTo: (Player: Player, Arg: ExpectedArg) => ReturnOnSuccess | undefined)
     {
         this.Route = Route;
         this.OnRoutedTo = OnRoutedTo;
@@ -11,7 +11,7 @@ export class Endpoint<ExpectedArg, ReturnOnSuccess>
 
     Route: string;
 
-    OnRoutedTo: (Player: Player, Arg: ExpectedArg) => ReturnOnSuccess;
+    OnRoutedTo: (Player: Player, Arg: ExpectedArg) => ReturnOnSuccess | undefined;
 
     Invoke(Player: Player, Arg: ExpectedArg): ServerResponse<ReturnOnSuccess>
     {

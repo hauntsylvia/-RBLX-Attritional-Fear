@@ -18,7 +18,7 @@ export class TerrainProcessor extends Processor
     constructor (Instance: RemoteFunction)
     {
         super(Instance);
-        this.MapData = this.GetMapData() ?? error("No map data.");
+        this.MapData = this.GetMapData();
         this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, ModelSize);
     }
 
@@ -26,16 +26,17 @@ export class TerrainProcessor extends Processor
 
     TerrainHelper: TerrainHelper;
 
-    AlreadyRendered: TerrainResult[] = [];
-
-    GetMapData (): TerrainRequest | undefined
+    GetMapData (): TerrainRequest
     {
+        wait(1);
         let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
-        return MapData.Returned;
-	}
+        return MapData.Returned ?? this.GetMapData();
+    }
+
 
     RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number = 50, WorkerCount: number = 10): RenderTerrainResult | undefined
     {
+        let ToReturn = new RenderTerrainResult([]);
         let Threads: thread[] = [];
         let Thr = coroutine.create(() =>
         {
@@ -43,34 +44,26 @@ export class TerrainProcessor extends Processor
             {
                 for (let BufferedZ = Req.ZPoint; BufferedZ < Req.ZToPoint; BufferedZ += ChunkSize)
                 {
-                    let ChunkRequest = this.MakeRequest<TerrainResult[]>(new ServerRequest<ServerTerrainRequest>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetChunkOfTerrain,
-                        new ServerTerrainRequest(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize, this.MapData.SizePerCell)));
-                    if (ChunkRequest.Success && ChunkRequest.Returned !== undefined)
+                    if (!ToReturn.ThreadsKilled)
                     {
-                        let Chunk = ChunkRequest.Returned;
-                        for (let CellIndex = 0; CellIndex < Chunk.size(); CellIndex++)
-                        {
-                            let Cell = Chunk[CellIndex];
-                            let RenderedCell = this.AlreadyRendered.find(V => V.X === BufferedX && V.Z === BufferedZ);
-                            if (RenderedCell !== undefined)
-                            {
-                                print("Already rendered!");
-                                Chunk.remove(CellIndex);
-                            }
-                        }
-                        this.TerrainHelper.FillTerrainByBiome(Chunk, WorkerCount);
-                        Chunk.forEach(Cell =>
-                        {
-                            this.AlreadyRendered.push(Cell);
-                        });
-                    }
+                        //let ChunkRequest = this.MakeRequest<TerrainResult[]>(new ServerRequest<ServerTerrainRequest>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetChunkOfTerrain,
+                        //    new ServerTerrainRequest(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize, this.MapData.SizePerCell)));
+                        //print(ChunkRequest.Returned?.size());
+                        //coroutine.resume(coroutine.create(() =>
+                        //{
+                        //    if (ChunkRequest.Success && ChunkRequest.Returned !== undefined)
+                        //    {
+                        //        let Chunk = ChunkRequest.Returned;
+                        //        this.TerrainHelper.FillTerrainByBiome(Chunk, WorkerCount);
+                        //    }
+                        //}));
+                        this.TerrainHelper.FillTerrainByBiome(this.TerrainHelper.GetCachedTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize), WorkerCount);
+					}
                 }
             }
         });
         Threads.push(Thr);
-        if (Threads !== undefined)
-        {
-            return new RenderTerrainResult(Threads);
-        }
+        ToReturn.Threads = Threads;
+        return ToReturn;
     }
 }
