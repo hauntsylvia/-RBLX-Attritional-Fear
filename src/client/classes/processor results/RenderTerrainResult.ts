@@ -1,3 +1,5 @@
+import { Workers } from "../../../shared/classes/util/Workers";
+
 export class RenderTerrainResult
 {
 	constructor (Threads: thread[])
@@ -15,6 +17,11 @@ export class RenderTerrainResult
 		this.ThreadsKilled = true;
 	}
 
+	private Work ()
+	{
+		new Workers(this.Threads).Split(5);
+	}
+
 	Run ()
 	{
 		this.Running = true;
@@ -23,7 +30,6 @@ export class RenderTerrainResult
 			if (!this.ThreadsKilled && coroutine.status(T) !== "dead")
 			{
 				coroutine.resume(T);
-				game.GetService("RunService").Heartbeat.Wait();
 			}
 			else
 			{

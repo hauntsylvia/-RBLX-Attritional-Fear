@@ -56,7 +56,7 @@ export class TerrainHelper
 
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-		let Stepper = new Sleep(120);
+		let Stepper = new Sleep(200);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
@@ -125,16 +125,14 @@ export class TerrainHelper
 
 	FillTerrainByBiome (CurrentTerrain: TerrainResult[], WorkerCount: number)
 	{
-		let Stepper = new Sleep(1000);
 		let Threads: thread[] = [];
 		for (let Index = 0; Index < CurrentTerrain.size(); Index += 50)
 		{
 			let Thread = coroutine.create(() =>
 			{
+
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
-					Stepper.Step();
-
 					let Terrain = CurrentTerrain[ThisOffset];
 
 					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
@@ -162,7 +160,7 @@ export class TerrainHelper
 			Threads.push(Thread);
 		}
 		let ThreadHandler = new Workers(Threads);
-		ThreadHandler.Split(WorkerCount);
+		ThreadHandler.Split(WorkerCount, new Sleep(2));
 		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
@@ -176,7 +174,7 @@ export class TerrainHelper
 	// to the center of the real world space.
 	private GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
-		let Stepper = new Sleep(10000);
+		let Stepper = new Sleep(14000);
 		let T: TerrainResult[] = [];
 		let OffsetXWidthMin = -(this.XWidth / 2);
 		let OffsetXWidthMax = (this.XWidth / 2);

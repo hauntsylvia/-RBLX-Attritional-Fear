@@ -28,39 +28,28 @@ export class TerrainProcessor extends Processor
 
     GetMapData (): TerrainRequest
     {
-        wait(1);
+        wait(5);
         let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
         return MapData.Returned ?? this.GetMapData();
     }
 
-
-    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number = 50, WorkerCount: number = 10): RenderTerrainResult | undefined
+    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number, WorkerCount: number,): RenderTerrainResult | undefined
     {
         let ToReturn = new RenderTerrainResult([]);
         let Threads: thread[] = [];
         let Thr = coroutine.create(() =>
         {
-            for (let BufferedX = Req.XPoint; BufferedX < Req.XToPoint; BufferedX += ChunkSize)
+            let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
+            for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
             {
-                for (let BufferedZ = Req.ZPoint; BufferedZ < Req.ZToPoint; BufferedZ += ChunkSize)
+                for (let BufferedZ = S.ZPoint; BufferedZ <= S.ZToPoint; BufferedZ += ChunkSize)
                 {
                     if (!ToReturn.ThreadsKilled)
                     {
-                        //let ChunkRequest = this.MakeRequest<TerrainResult[]>(new ServerRequest<ServerTerrainRequest>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetChunkOfTerrain,
-                        //    new ServerTerrainRequest(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize, this.MapData.SizePerCell)));
-                        //print(ChunkRequest.Returned?.size());
-                        //coroutine.resume(coroutine.create(() =>
-                        //{
-                        //    if (ChunkRequest.Success && ChunkRequest.Returned !== undefined)
-                        //    {
-                        //        let Chunk = ChunkRequest.Returned;
-                        //        this.TerrainHelper.FillTerrainByBiome(Chunk, WorkerCount);
-                        //    }
-                        //}));
                         this.TerrainHelper.FillTerrainByBiome(this.TerrainHelper.GetCachedTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize), WorkerCount);
 					}
-                }
-            }
+				}
+			}
         });
         Threads.push(Thr);
         ToReturn.Threads = Threads;

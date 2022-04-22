@@ -9,7 +9,7 @@ export class Workers
 
 	Threads: thread[];
 
-	Split (WorkerMax: number)
+	Split (WorkerMax: number, Stepper?: Sleep)
 	{
 		let Alive = 0;
 		for (let A = 0; A < this.Threads.size(); A++)
@@ -21,8 +21,8 @@ export class Workers
 				while (coroutine.status(this.Threads[A]) !== "dead") { wait(); }
 				Alive--;
 			}));
-			while (Alive > WorkerMax) { wait(); }
-			wait();
+			while (Alive > WorkerMax) { Stepper !== undefined ? Stepper.Step() : wait(); }
+			Stepper !== undefined ? Stepper.Step() : wait();
 		}
 	}
 }
