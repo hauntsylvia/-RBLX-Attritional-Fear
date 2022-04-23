@@ -79,6 +79,9 @@ export class FoACamera // Omar, PhD* says hi
 
 	Connect ()
 	{
+		let LPlr = game.GetService("Players").LocalPlayer;
+		while ((LPlr.Character ?? LPlr.CharacterAdded.Wait()) === undefined) { wait(); }
+		wait(1);
 		this.InputChangedConnection = this.InputService.InputChanged.Connect((Inp, GameProc) => this.MouseScrollSet(Inp, GameProc))
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);

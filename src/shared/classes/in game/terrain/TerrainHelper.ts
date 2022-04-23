@@ -27,33 +27,23 @@ export class TerrainHelper
 				});
 			});
 		}
-		this.XWidth = Maps.ElevationMap.Map.size();
-		Maps.ElevationMap.Map.forEach(Arr =>
-		{
-			this.ZWidth++;
-		});
+		this.XWidth = Maps.ElevationMap.Height;
+		this.ZWidth = Maps.ElevationMap.Width
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
 		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
-		if (game.GetService("RunService").IsServer())
-		{
-			this.Terrain = this.GetTerrain(-(this.XWidth / 2), -(this.XWidth / 2), (this.XWidth / 2), (this.XWidth / 2));
-		}
-
 		print("Constructed.");
 	}
 
 	TerrainReq: TerrainRequest;
 
 	XWidth: number = 0;
-	ZWidth: number = 0;
+	ZWidth: number = 0; // because for this width we count the number of arrays, and arrays r indexed by 0 not 1 (# elements - 1)
 
 	Biomes: Biome[];
 	FallbackBiome: Biome;
 
 	private TempMap: number[][];
-
-	Terrain: TerrainResult[] = [];
 
 	FrameSteps: number = 5;
 
@@ -167,14 +157,6 @@ export class TerrainHelper
 		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
-	GetCachedTerrain (X: number, Z: number, XTo: number, ZTo: number): TerrainResult[]
-	{
-		let T = os.clock();
-		let Filtered = this.Terrain.filter(T => T.X >= X && T.Z >= Z && T.X <= XTo && T.Z <= ZTo);
-		print(os.clock() - T);
-		return Filtered;
-	}
-
 	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
 	// to the center of the real world space.
 	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
@@ -183,12 +165,14 @@ export class TerrainHelper
 		let T: TerrainResult[] = [];
 		let OffsetXWidthMin = -(this.XWidth / 2);
 		let OffsetXWidthMax = (this.XWidth / 2);
+
 		let OffsetZWidthMin = -(this.ZWidth / 2);
 		let OffsetZWidthMax = (this.ZWidth / 2);
-		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX > OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
+
+		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
 			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
-			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < OffsetZWidthMax && RealWorldRequestedZ > OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
+			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < OffsetZWidthMax && RealWorldRequestedZ >= OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
 				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
 				let TR: TerrainResult | undefined = undefined;
@@ -197,7 +181,6 @@ export class TerrainHelper
 				let Moisture = this.TerrainReq.MoistureMap.Map[NormalX][NormalZ];
 				let Temperature = this.TempMap[NormalX][NormalZ];
 
-				let RCFrame = CFrame.Angles(0, math.rad(math.random(-360, 360)), 0);
 				let Pos = new CFrame(RealWorldRequestedX * this.TerrainReq.SizePerCell, FakeElevation, RealWorldRequestedZ * this.TerrainReq.SizePerCell);
 
 				let BiomeFilled = false;

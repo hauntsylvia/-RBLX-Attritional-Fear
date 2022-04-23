@@ -29,7 +29,7 @@ function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): Terra
         let TZ = Req.ZPoint;
         let ToTX = Req.XToPoint;
         let ToTZ = Req.ZToPoint;
-        let Terrain = THelper.GetCachedTerrain(TX, TZ, ToTX, ToTZ);
+        let Terrain = THelper.GetTerrain(TX, TZ, ToTX, ToTZ);
         return Terrain;
 	}
 }
@@ -52,10 +52,8 @@ Server.RegisterHandler(PlayerHandler);
 
 const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
 
-coroutine.resume(coroutine.create(() =>
-{
-    THelper.PaintObjectsByBiome(THelper.Terrain);
-}));
+let Terrain = THelper.GetTerrain(-(Size / 2), -(Size / 2), Size / 2, Size / 2);
+THelper.PaintObjectsByBiome(Terrain);
 
 
 export { };

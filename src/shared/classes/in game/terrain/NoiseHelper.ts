@@ -28,10 +28,10 @@ export class NoiseHelper
 	{
 		let NewMap: number[][] = [];
 		let EquatorAtY: number = Height / 2;
-		for (let X = 0; X < Width; X++)
+		for (let X = 0; X < Height; X++)
 		{
 			NewMap[X] = [];
-			for (let Y = 0; Y < Height; Y++)
+			for (let Y = 0; Y < Width; Y++)
 			{
 				let DistanceFromEq = math.abs(Y - EquatorAtY);
 				let Inv = (EquatorAtY - DistanceFromEq);
@@ -43,7 +43,7 @@ export class NoiseHelper
 
 	static GenerateHeightmap (Height: number, Width: number, Frequency: number, Z: number, Exponent: number): number[][]
 	{
-		let Elevation: number[][] = [[]];
+		let Elevation: number[][] = [];
 		for (let X = 0; X < Height; X++)
 		{
 			Elevation[X] = [];

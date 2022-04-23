@@ -1,13 +1,16 @@
+import { Sleep } from "../../../shared/classes/util/Sleep";
 import { Workers } from "../../../shared/classes/util/Workers";
 
 export class RenderTerrainResult
 {
-	constructor (Threads: thread[])
+	constructor (Threads: thread[], S: Sleep)
 	{
 		this.Threads = Threads;
+		this.S = S;
 	}
 
 	Threads: thread[];
+	S: Sleep;
 	ThreadsKilled: boolean = false;
 
 	Kill ()
@@ -17,7 +20,7 @@ export class RenderTerrainResult
 
 	WaitUntilDone ()
 	{
-		new Workers(this.Threads).Split(1);
+		new Workers(this.Threads).Split(1, this.S);
 	}
 
 	Run ()

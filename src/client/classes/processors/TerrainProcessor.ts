@@ -31,7 +31,7 @@ export class TerrainProcessor extends Processor
 
     GetMapData (): TerrainRequest
     {
-        wait(5);
+        wait(2);
         let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
         return MapData.Returned ?? this.GetMapData();
     }
@@ -41,8 +41,10 @@ export class TerrainProcessor extends Processor
         this.KillThreads = true;
 	}
 
-    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number)
+    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number): RenderTerrainResult
     {
+        let Sleeper = new Sleep(1);
+        let Result = new RenderTerrainResult([], Sleeper);
         this.KillThreads = false;
         let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
         for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
@@ -55,11 +57,11 @@ export class TerrainProcessor extends Processor
                     let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(CachedTerrain);
                     Thr.forEach(T =>
                     {
-                        coroutine.resume(T);
-                        game.GetService("RunService").Heartbeat.Wait();
+                        Result.Threads.push(T);
                     });
                 }
             }
         }
+        return Result;
     }
 }

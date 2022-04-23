@@ -14,15 +14,18 @@ export class Workers
 		let Alive = 0;
 		for (let A = 0; A < this.Threads.size(); A++)
 		{
-			coroutine.resume(this.Threads[A]);
-			Alive++;
-			coroutine.resume(coroutine.create(() =>
+			if (coroutine.status(this.Threads[A]) === "suspended")
 			{
-				while (coroutine.status(this.Threads[A]) !== "dead") { wait(); }
-				Alive--;
-			}));
-			while (Alive > WorkerMax) { Stepper !== undefined ? Stepper.Step() : wait(); }
-			Stepper !== undefined ? Stepper.Step() : wait();
+				coroutine.resume(this.Threads[A]);
+				Alive++;
+				coroutine.resume(coroutine.create(() =>
+				{
+					while (coroutine.status(this.Threads[A]) !== "dead") { wait(); }
+					Alive--;
+				}));
+				while (Alive > WorkerMax) { Stepper !== undefined ? Stepper.Step() : wait(); }
+				Stepper !== undefined ? Stepper.Step() : wait();
+			}
 		}
 	}
 }
