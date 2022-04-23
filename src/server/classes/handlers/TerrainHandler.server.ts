@@ -19,7 +19,7 @@ let Size = 1200;
 let Z = R.NextInteger(5, 10 ^ 26);
 let EleMap = new NoiseHelper(Z, Size, Size, 2, 5);
 let MoistureMap = new NoiseHelper(Z, Size, Size, 12, 2);
-let Scale = 6;
+let Scale = 10;
 
 function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
 {
@@ -53,7 +53,7 @@ Server.RegisterHandler(PlayerHandler);
 const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
 
 let Terrain = THelper.GetTerrain(-(Size / 2), -(Size / 2), Size / 2, Size / 2);
-THelper.PaintObjectsByBiome(Terrain);
+//THelper.PaintObjectsByBiome(Terrain);
 
 
 export { };

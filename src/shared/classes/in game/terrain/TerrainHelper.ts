@@ -122,7 +122,7 @@ export class TerrainHelper
 		{
 			let Thread = coroutine.create(() =>
 			{
-				let Sleeper = new Sleep(6);
+				let Sleeper = new Sleep(1);
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
 					Sleeper.Step();

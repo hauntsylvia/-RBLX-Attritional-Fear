@@ -10,7 +10,7 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
 
-const SizeStartingArea = 32000;
+const SizeStartingArea = 2000;
 
 print("Constructing client . .");
 const Client = new FoAClient(game.GetService("ReplicatedStorage").WaitForChild("API", 2) as RemoteFunction);
@@ -19,14 +19,16 @@ print("Client constructed.");
 
 print("Loading spawn . .");
 let Time = os.clock();
-let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SizeStartingArea, -SizeStartingArea, SizeStartingArea, SizeStartingArea), 5, 25);
+let ChunkSize = 1;
+let FrameSkips = 90;
+let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SizeStartingArea, -SizeStartingArea, SizeStartingArea, SizeStartingArea), FrameSkips, ChunkSize);
 StartingArea.WaitUntilDone();
-print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea*2 + "x" + SizeStartingArea*2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell  +"]");
+print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea * 2 + "x" + SizeStartingArea * 2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
 print("Spawn loaded.");
 
 
-print("Connecting camera chunker . .");
-Client.TerrainChunker.Connect();
-print("Camera chunker connected.");
+//print("Connecting camera chunker . .");
+//Client.TerrainChunker.Connect();
+//print("Camera chunker connected.");
 
 export {};
