@@ -3,14 +3,12 @@ import { Workers } from "../../../shared/classes/util/Workers";
 
 export class RenderTerrainResult
 {
-	constructor (Threads: thread[], S: Sleep)
+	constructor (Threads: thread[])
 	{
 		this.Threads = Threads;
-		this.S = S;
 	}
 
 	Threads: thread[];
-	S: Sleep;
 	ThreadsKilled: boolean = false;
 
 	Kill ()
@@ -20,15 +18,10 @@ export class RenderTerrainResult
 
 	WaitUntilDone ()
 	{
-		new Workers(this.Threads).Split(1, this.S);
-	}
-
-	Run ()
-	{
-		coroutine.resume(coroutine.create(() =>
+		while (!this.Dead())
 		{
-			this.WaitUntilDone();
-		}));
+			wait();
+		}
 	}
 
 	Dead (): boolean

@@ -41,22 +41,26 @@ export class TerrainProcessor extends Processor
         this.KillThreads = true;
 	}
 
-    RenderTerrain (Req: ServerTerrainRequest, ChunkSize: number): RenderTerrainResult
+    RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number): RenderTerrainResult
     {
-        let Sleeper = new Sleep(1);
-        let Result = new RenderTerrainResult([], Sleeper);
+        let Sleeper = new Sleep(FramesToSkipPerThread);
+        let Result = new RenderTerrainResult([]);
         this.KillThreads = false;
         let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
         for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
         {
+            BufferedX = BufferedX > BufferedX + ChunkSize ? BufferedX + ChunkSize : BufferedX;
             for (let BufferedZ = S.ZPoint; BufferedZ <= S.ZToPoint; BufferedZ += ChunkSize)
             {
-                if (!this.KillThreads)
+                BufferedZ = BufferedZ > BufferedZ + ChunkSize ? BufferedZ + ChunkSize : BufferedZ;
+                if (!this.KillThreads && !Result.ThreadsKilled)
                 {
                     let CachedTerrain = this.TerrainHelper.GetTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize);
                     let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(CachedTerrain);
                     Thr.forEach(T =>
                     {
+                        coroutine.resume(T);
+                        FramesToSkipPerThread >= 1 ? Sleeper.Step() : game.GetService("RunService").Heartbeat.Wait();
                         Result.Threads.push(T);
                     });
                 }

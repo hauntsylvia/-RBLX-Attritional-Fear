@@ -19,7 +19,7 @@ let Size = 1200;
 let Z = R.NextInteger(5, 10 ^ 26);
 let EleMap = new NoiseHelper(Z, Size, Size, 2, 5);
 let MoistureMap = new NoiseHelper(Z, Size, Size, 12, 2);
-let Scale = 5;
+let Scale = 6;
 
 function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
 {

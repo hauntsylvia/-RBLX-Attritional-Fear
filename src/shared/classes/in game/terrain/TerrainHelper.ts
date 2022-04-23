@@ -32,7 +32,6 @@ export class TerrainHelper
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
 		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
-		print("Constructed.");
 	}
 
 	TerrainReq: TerrainRequest;
@@ -161,7 +160,7 @@ export class TerrainHelper
 	// to the center of the real world space.
 	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
-		let Stepper = new Sleep(14000);
+		let Stepper = new Sleep(7000);
 		let T: TerrainResult[] = [];
 		let OffsetXWidthMin = -(this.XWidth / 2);
 		let OffsetXWidthMax = (this.XWidth / 2);

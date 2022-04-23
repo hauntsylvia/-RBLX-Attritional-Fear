@@ -13,7 +13,6 @@ export class FoAClient
         this.Camera.Connect();
         this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
         this.TerrainChunker = new TerrainFollower(this.Camera, this.TerrainProcessor, 100, 50);
-        this.TerrainChunker.Connect();
     }
 
     PlayerProcessor: PlayerProcessor;

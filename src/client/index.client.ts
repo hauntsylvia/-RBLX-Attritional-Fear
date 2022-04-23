@@ -10,17 +10,23 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
 
+const SizeStartingArea = 32000;
+
+print("Constructing client . .");
 const Client = new FoAClient(game.GetService("ReplicatedStorage").WaitForChild("API", 2) as RemoteFunction);
 Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys()));
+print("Client constructed.");
 
-Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-400, -400, 400, 400), 200).Run();
-
-while (Client.TerrainProcessor.RenderingThreadCount > 0)
-{
-	print("Loading spawn . . .");
-	wait(5);
-}
-
+print("Loading spawn . .");
+let Time = os.clock();
+let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SizeStartingArea, -SizeStartingArea, SizeStartingArea, SizeStartingArea), 5, 25);
+StartingArea.WaitUntilDone();
+print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea*2 + "x" + SizeStartingArea*2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell  +"]");
 print("Spawn loaded.");
+
+
+print("Connecting camera chunker . .");
+Client.TerrainChunker.Connect();
+print("Camera chunker connected.");
 
 export {};
