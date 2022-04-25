@@ -2,14 +2,14 @@ import { Sleep } from "../../util/Sleep";
 
 export class NoiseHelper
 {
-	constructor (Z: number, Height: number, Width: number, Frequency: number, Exponent: number)
+	constructor (Z: number, Height: number, Width: number, Frequency: number, Exponent: number, Sleeper: Sleep)
 	{
 		this.Height = Height;
 		this.Width = Width;
 		this.Frequency = Frequency;
 		this.Z = Z;
 		this.Exponent = Exponent;
-		this.Map = NoiseHelper.GenerateHeightmap(Height, Width, Frequency, Z, Exponent);
+		this.Map = NoiseHelper.GenerateHeightmap(Height, Width, Frequency, Z, Exponent, Sleeper);
 	}
 
 	Height: number;
@@ -24,7 +24,7 @@ export class NoiseHelper
 		return 2 * (0.5 - math.abs(0.5 - (math.noise(nx, ny, Z) + 0.5)));
 	}
 
-	static GenerateTemperatureMap (Height: number, Width: number): number[][]
+	static GenerateTemperatureMap (Height: number, Width: number, Sleeper: Sleep): number[][]
 	{
 		let NewMap: number[][] = [];
 		let EquatorAtY: number = Height / 2;
@@ -33,6 +33,7 @@ export class NoiseHelper
 			NewMap[X] = [];
 			for (let Y = 0; Y < Width; Y++)
 			{
+				Sleeper.Step();
 				let DistanceFromEq = math.abs(Y - EquatorAtY);
 				let Inv = (EquatorAtY - DistanceFromEq);
 				NewMap[X][Y] = math.clamp(Inv / EquatorAtY, 0, 1);
@@ -41,7 +42,7 @@ export class NoiseHelper
 		return NewMap;
 	}
 
-	static GenerateHeightmap (Height: number, Width: number, Frequency: number, Z: number, Exponent: number): number[][]
+	static GenerateHeightmap (Height: number, Width: number, Frequency: number, Z: number, Exponent: number, Sleeper: Sleep): number[][]
 	{
 		let Elevation: number[][] = [];
 		for (let X = 0; X < Height; X++)
@@ -49,6 +50,7 @@ export class NoiseHelper
 			Elevation[X] = [];
 			for (let Y = 0; Y < Width; Y++)
 			{
+				Sleeper.Step();
 				//this.Elevation[X][Y] = [];
 				//for (let Z = 0; Z < Width; Z++)
 				//{

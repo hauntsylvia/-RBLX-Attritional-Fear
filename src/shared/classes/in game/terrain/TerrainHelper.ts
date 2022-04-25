@@ -13,7 +13,7 @@ export class TerrainHelper
 {
 	static ModelsResized = false;
 
-	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = ModelSize)
+	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = ModelSize, Sleeper: Sleep)
 	{
 		this.TerrainReq = Maps;
 		if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
@@ -31,7 +31,7 @@ export class TerrainHelper
 		this.ZWidth = Maps.ElevationMap.Width
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
-		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width);
+		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width, Sleeper);
 	}
 
 	TerrainReq: TerrainRequest;

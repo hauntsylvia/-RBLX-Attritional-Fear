@@ -20,7 +20,7 @@ export class TerrainProcessor extends Processor
     {
         super(Instance);
         this.MapData = this.GetMapData();
-        this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, ModelSize);
+        this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, ModelSize, new Sleep(500000));
     }
 
     MapData: TerrainRequest;

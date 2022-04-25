@@ -10,21 +10,43 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
 
-const SizeStartingArea = 2000;
+const SizeStartingArea = 4000;
 
+print("Waiting for server to be ready . .");
+const RemFunctionAPI = game.GetService("ReplicatedStorage").WaitForChild("API") as RemoteFunction;
+print("Server is accepting requests.");
 print("Constructing client . .");
-const Client = new FoAClient(game.GetService("ReplicatedStorage").WaitForChild("API", 2) as RemoteFunction);
-Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys()));
+const Client = new FoAClient(RemFunctionAPI);
 print("Client constructed.");
+let Self = Client.PlayerProcessor.GetCurrentPlayer();
+if (Self.Success && Self.Returned !== undefined)
+{
+	Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys()));
+	print("Registering faction . .");
+	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new FoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255)));
+	if (Faction.Success && Faction.Returned !== undefined)
+	{
+		print("Faction registered.");
+		let SpawnLoc = Faction.Returned.SpawnLocation;
 
-print("Loading spawn . .");
-let Time = os.clock();
-let ChunkSize = 1;
-let FrameSkips = 90;
-let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SizeStartingArea, -SizeStartingArea, SizeStartingArea, SizeStartingArea), FrameSkips, ChunkSize);
-StartingArea.WaitUntilDone();
-print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea * 2 + "x" + SizeStartingArea * 2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
-print("Spawn loaded.");
+		print("Loading spawn . .");
+		let Time = os.clock();
+		let ChunkSize = 1;
+		let FrameSkips = 120;
+		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SpawnLoc.X * 2, -SpawnLoc.X * 2, SpawnLoc.Z * 2, SpawnLoc.Z * 2), FrameSkips, ChunkSize);
+		StartingArea.WaitUntilDone();
+		print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea * 2 + "x" + SizeStartingArea * 2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
+		print("Spawn loaded.");
+	}
+	else
+	{
+		print("Faction could not be registered.");
+	}
+}
+else
+{
+	print("No self player.");
+}
 
 
 //print("Connecting camera chunker . .");

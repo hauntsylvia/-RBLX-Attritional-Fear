@@ -6,6 +6,7 @@ import { Handler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Registers } from "../../../shared/consts/Registers";
+import { ServerData } from "../server communication/ServerData";
 
 
 
@@ -17,13 +18,16 @@ function GetAllActivePlayerFactions (Player: Player, Arg: any): FoAFaction[]
 
 function RegisterPlayerFaction(Player: Player, Arg: FoAFaction): FoAFaction | undefined
 {
-    if(!Server.ServerData.CurrentActiveFactions.some(function(Faction)
+    if (!Server.ServerData.CurrentActiveFactions.some(Faction => Faction.Player.RobloxPlayerInstance.UserId === Player.UserId))
     {
-        return Faction.Player.RobloxPlayerInstance.UserId === Player.UserId;
-    }) && Arg.Player.RobloxPlayerInstance.UserId === Player.UserId)
-    {
-        Server.ServerData.CurrentActiveFactions.push(Arg);
-        return Arg;
+        let SFoAPlayer = Server.ServerData.CurrentActivePlayers.find(S => S.RobloxPlayerInstance.UserId === Player.UserId);
+        if (SFoAPlayer !== undefined)
+        {
+            let TerrSize = ServerData.TerrainData.Size / 2;
+            let NewFac = new FoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(math.random(-TerrSize, TerrSize / 2), 50, math.random(-TerrSize / 2, TerrSize / 2)), Arg.Title, Arg.Color);
+            Server.ServerData.CurrentActiveFactions.push(NewFac);
+            return NewFac;
+		}
     }
 }
 

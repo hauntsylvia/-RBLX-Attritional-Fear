@@ -39,12 +39,29 @@ export class FoACamera // Omar, PhD* says hi
 	InwardVelocity: number = 0;
 	ImmediateInwardVelocity: number = 0;
 
+	CanHaveVelocity: boolean = true;
+
 	CameraSpeed: number = 750;
 	CameraZoomSteps: number = 80;
 	CameraYAngle: number = 0;
 
 	MinZoom: number = 20;
 	MaxZoom: number = 1000;
+
+	DisableVelocity ()
+	{
+		this.ForwardVelocity = 0;
+		this.RightVelocity = 0;
+		this.RightRotationVelocity = 0;
+		this.InwardVelocity = 0;
+		this.ImmediateInwardVelocity = 0;
+		this.CanHaveVelocity = false;
+	}
+
+	EnableVelocity ()
+	{
+		this.CanHaveVelocity = true;
+	}
 
 	HasVelocity ()
 	{
@@ -107,6 +124,15 @@ export class FoACamera // Omar, PhD* says hi
 		}
 	}
 
+	MoveCamera (MoveTo: CFrame)
+	{
+		this.DisableVelocity();
+		let T = game.GetService("TweenService").Create(this.CurrentCamera, new TweenInfo(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0), { CFrame: MoveTo });
+		T.Play();
+		while (T.PlaybackState !== Enum.PlaybackState.Completed && T.PlaybackState !== Enum.PlaybackState.Cancelled && T.PlaybackState !== Enum.PlaybackState.Paused) { }
+		this.EnableVelocity();
+	}
+
 	UpdateCamera (MoveTo: CFrame)
 	{
 		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.2);
@@ -114,46 +140,49 @@ export class FoACamera // Omar, PhD* says hi
 
 	RenderStepped (DeltaTime: number)
 	{
-		let CameraSpeedFrame = this.CameraSpeed * DeltaTime;
-
-		let ForwardMove: boolean = this.InputService.IsKeyDown(this.MoveForward);
-		let BackwardMove: boolean = this.InputService.IsKeyDown(this.MoveBackward);
-		let RightMove: boolean = this.InputService.IsKeyDown(this.MoveRight);
-		let LeftMove: boolean = this.InputService.IsKeyDown(this.MoveLeft);
-		let RightRotate: boolean = this.InputService.IsKeyDown(this.RotateRight);
-		let LeftRotate: boolean = this.InputService.IsKeyDown(this.RotateLeft);
-
-		this.ForwardVelocity = (ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0) * CameraSpeedFrame;
-		this.RightVelocity = (RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0) * CameraSpeedFrame;
-		this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame / 3;
-		this.CameraYAngle += this.RightRotationVelocity;
-
-		let Ray = new RaycastParams();
-		let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MaxZoom * 4, Ray);
-		let CurrentMin = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MinZoom : this.MinZoom;
-		let CurrentMax = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MaxZoom : this.MaxZoom;
-
-		if (this.CurrentCamera.CFrame.Y >= CurrentMax)
+		if (this.CanHaveVelocity)
 		{
-			this.InwardVelocity = -0.5;
-		}
-		else if (this.CurrentCamera.CFrame.Y <= CurrentMin)
-		{
-			this.InwardVelocity = 0.5;
-		}
+			let CameraSpeedFrame = this.CameraSpeed * DeltaTime;
 
-		this.ImmediateInwardVelocity = this.InwardVelocity;
+			let ForwardMove: boolean = this.InputService.IsKeyDown(this.MoveForward);
+			let BackwardMove: boolean = this.InputService.IsKeyDown(this.MoveBackward);
+			let RightMove: boolean = this.InputService.IsKeyDown(this.MoveRight);
+			let LeftMove: boolean = this.InputService.IsKeyDown(this.MoveLeft);
+			let RightRotate: boolean = this.InputService.IsKeyDown(this.RotateRight);
+			let LeftRotate: boolean = this.InputService.IsKeyDown(this.RotateLeft);
 
-		let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
-		let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
-		let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position).mul(CFrame.Angles(0, math.rad(-this.CameraYAngle), 0));
-		let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).mul(new CFrame(0, 0, CameraZoomVisualTotal));
-		this.UpdateCamera(NewCF);
-		if (this.InputService.IsKeyDown(Enum.KeyCode.U))
-		{
-			print(this.InwardVelocity);
+			this.ForwardVelocity = (ForwardMove && !BackwardMove ? 1 : !ForwardMove && BackwardMove ? -1 : 0) * CameraSpeedFrame;
+			this.RightVelocity = (RightMove && !LeftMove ? 1 : !RightMove && LeftMove ? -1 : 0) * CameraSpeedFrame;
+			this.RightRotationVelocity = (RightRotate && !LeftRotate ? 1 : !RightRotate && LeftRotate ? -1 : 0) * CameraSpeedFrame / 3;
+			this.CameraYAngle += this.RightRotationVelocity;
+
+			let Ray = new RaycastParams();
+			let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MaxZoom * 4, Ray);
+			let CurrentMin = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MinZoom : this.MinZoom;
+			let CurrentMax = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MaxZoom : this.MaxZoom;
+
+			if (this.CurrentCamera.CFrame.Y >= CurrentMax)
+			{
+				this.InwardVelocity = -0.5;
+			}
+			else if (this.CurrentCamera.CFrame.Y <= CurrentMin)
+			{
+				this.InwardVelocity = 0.5;
+			}
+
+			this.ImmediateInwardVelocity = this.InwardVelocity;
+
+			let CameraZoomVisualTotal = this.InwardVelocity * this.CameraZoomSteps;// * (DeltaTime * 6.25);
+			let CurrentLoZ: LevelOfZoom = this.LevelsOfZoom[0];
+			let CurrentCF: CFrame = new CFrame(this.CurrentCamera.CFrame.Position).mul(CFrame.Angles(0, math.rad(-this.CameraYAngle), 0));
+			let NewCF: CFrame = new CFrame((CurrentCF.LookVector.mul(this.ForwardVelocity).add(CurrentCF.RightVector.mul(this.RightVelocity)))).mul(CurrentCF).mul(CFrame.Angles(math.rad(-CurrentLoZ.CameraAngle), 0, 0)).mul(new CFrame(0, 0, CameraZoomVisualTotal));
+			this.UpdateCamera(NewCF);
+			if (this.InputService.IsKeyDown(Enum.KeyCode.U))
+			{
+				print(this.InwardVelocity);
+			}
+			this.InwardVelocity = this.InwardVelocity > -5 ? this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5 : 0;
+			this.ImmediateInwardVelocity = 0;
 		}
-		this.InwardVelocity = this.InwardVelocity > -5 ? this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5 : 0;
-		this.ImmediateInwardVelocity = 0;
 	}
 }

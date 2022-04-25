@@ -12,14 +12,8 @@ import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHe
 import { AllBiomes, FallbackBiome, ModelSize } from "../../../shared/consts/Biomes";
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
 import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
-
-
-let R = new Random();
-let Size = 1200;
-let Z = R.NextInteger(5, 10 ^ 26);
-let EleMap = new NoiseHelper(Z, Size, Size, 2, 5);
-let MoistureMap = new NoiseHelper(Z, Size, Size, 12, 2);
-let Scale = 10;
+import { ServerData } from "../server communication/ServerData";
+import { Sleep } from "../../../shared/classes/util/Sleep";
 
 function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
 {
@@ -50,9 +44,9 @@ const PlayerHandler = new Handler(Strings.TerrainStrings.TerrainHandlerRoute,
 
 Server.RegisterHandler(PlayerHandler);
 
-const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(EleMap, MoistureMap, Scale, 3), AllBiomes, FallbackBiome, ModelSize);
+const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(ServerData.TerrainData.EleMap, ServerData.TerrainData.MoistureMap, ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(50000));
 
-let Terrain = THelper.GetTerrain(-(Size / 2), -(Size / 2), Size / 2, Size / 2);
+let Terrain = THelper.GetTerrain(-(ServerData.TerrainData.Size / 2), -(ServerData.TerrainData.Size / 2), ServerData.TerrainData.Size / 2, ServerData.TerrainData.Size / 2);
 //THelper.PaintObjectsByBiome(Terrain);
 
 
