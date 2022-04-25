@@ -1,7 +1,7 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "../../../shared/consts/Strings";
-import { IHandler } from "./Handler";
+import { IHandler } from "../handlers/IHandler";
 import { ServerData } from "./ServerData";
 
 export class Server
@@ -18,6 +18,8 @@ export class Server
         Server.AvailableListeners = new Instance("Folder");
         Server.AvailableListeners.Name = Strings.AvailableServicesFolderName;
         Server.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
+
+        this.RegisterHandlers();
     }
 
     static ServerData: ServerData;
@@ -55,16 +57,20 @@ export class Server
         }
     }
 
-    static RegisterHandler(Handler: IHandler)
+    static RegisterHandlers()
     {
-        Server.Handlers.push(Handler);
-        coroutine.resume(coroutine.create(() =>
+        IHandler.GetImplementations().forEach(Handler =>
         {
-            wait(2);
-            let Expose = new Instance("BoolValue");
-            Expose.Name = Handler.Name;
-            Expose.Value = true;
-            Expose.Parent = this.AvailableListeners;
-        }));
+            print("A!");
+            let Imp = new Handler();
+            Server.Handlers.push(Imp);
+            coroutine.resume(coroutine.create(() =>
+            {
+                let Expose = new Instance("BoolValue");
+                Expose.Name = Imp.Name;
+                Expose.Value = true;
+                Expose.Parent = this.AvailableListeners;
+            }));
+        });
     }
 }

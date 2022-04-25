@@ -2,7 +2,6 @@ import { Server } from "server/classes/server communication/Server";
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { Endpoint } from "server/classes/server communication/Endpoint";
-import { IHandler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Registers } from "../../../shared/consts/Registers";
@@ -15,8 +14,10 @@ import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/sp
 import { ServerData } from "../server communication/ServerData";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 import { SNumbers } from "../../../shared/consts/SNumbers";
+import { IHandler } from "../handlers/IHandler";
 
-export class TerrainHandler implements IHandler
+@IHandler.Register
+export class TerrainHandler
 {
     constructor ()
     {
@@ -60,5 +61,3 @@ export class TerrainHandler implements IHandler
         }
     }
 }
-
-Server.RegisterHandler(new TerrainHandler());

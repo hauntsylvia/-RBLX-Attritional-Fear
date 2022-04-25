@@ -1,13 +1,14 @@
 import { Server } from "server/classes/server communication/Server";
 import { Endpoint } from "server/classes/server communication/Endpoint";
-import { IHandler } from "server/classes/server communication/Handler";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Registers } from "../../../shared/consts/Registers";
 import { Record } from "../modules/Record";
+import { IHandler } from "../handlers/IHandler";
 
-export class PlayerDataHandler implements IHandler
+@IHandler.Register
+export class PlayerDataHandler
 {
     constructor ()
     {
@@ -36,5 +37,3 @@ export class PlayerDataHandler implements IHandler
     }
 
 }
-
-Server.RegisterHandler(new PlayerDataHandler());

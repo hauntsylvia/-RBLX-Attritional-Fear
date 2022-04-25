@@ -13,7 +13,7 @@ export class ServerData
 
 class ServerTerrainData
 {
-    Size: number = 5400;
+    Size: number = 1200;
     Z: number = new Random().NextInteger(5, 10 ^ 26);
     EleMap: NoiseHelper = new NoiseHelper(this.Z, this.Size, this.Size, 2, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
     MoistureMap: NoiseHelper = new NoiseHelper(this.Z, this.Size, this.Size, 12, 2, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
