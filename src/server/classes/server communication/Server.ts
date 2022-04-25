@@ -58,5 +58,9 @@ export class Server
     static RegisterHandler(Handler: Handler)
     {
         Server.Handlers.push(Handler);
+        let Expose = new Instance("BoolValue");
+        Expose.Name = Handler.Name;
+        Expose.Value = true;
+        Expose.Parent = this.AvailableListeners;
     }
 }
