@@ -15,6 +15,8 @@ import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/sp
 import { ServerData } from "../server communication/ServerData";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 
+const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(Server.ServerData.TerrainData.EleMap, Server.ServerData.TerrainData.MoistureMap, Server.ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(50000));
+
 function GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
 {
     if (THelper !== undefined)
@@ -44,10 +46,8 @@ const PlayerHandler = new Handler(Strings.TerrainStrings.TerrainHandlerRoute,
 
 Server.RegisterHandler(PlayerHandler);
 
-const THelper: TerrainHelper | undefined = new TerrainHelper(new TerrainRequest(ServerData.TerrainData.EleMap, ServerData.TerrainData.MoistureMap, ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(50000));
-
-let Terrain = THelper.GetTerrain(-(ServerData.TerrainData.Size / 2), -(ServerData.TerrainData.Size / 2), ServerData.TerrainData.Size / 2, ServerData.TerrainData.Size / 2);
-//THelper.PaintObjectsByBiome(Terrain);
+let Terrain = THelper.GetTerrain(-(Server.ServerData.TerrainData.Size / 2), -(Server.ServerData.TerrainData.Size / 2), Server.ServerData.TerrainData.Size / 2, Server.ServerData.TerrainData.Size / 2);
+THelper.PaintObjectsByBiome(Terrain);
 
 
 export { };

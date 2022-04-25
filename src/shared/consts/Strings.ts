@@ -12,6 +12,7 @@ export enum FactionTitleKeys
 }
 export class Strings
 {
+    static AvailableServicesFolderName = "Available Services";
     static DataStrings = class
     {
         static FoAPlayerSettingsDataStore: string = "FoA.PlayerSettings";

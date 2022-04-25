@@ -13,7 +13,7 @@ export class FoAClient
         this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), (this.PlayerProcessor.GetCurrentPlayer().Returned?.FoAPlayerSettings ?? error("No player returned from server.")));
         this.Camera.Connect();
         this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
-        this.TerrainChunker = new TerrainFollower(this.Camera, this.TerrainProcessor, 100, 50);
+        this.TerrainChunker = new TerrainFollower(this.Camera, this.TerrainProcessor, 100, 50, 5);
     }
 
     PlayerProcessor: PlayerProcessor;

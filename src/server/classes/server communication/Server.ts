@@ -1,25 +1,32 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
+import { Strings } from "../../../shared/consts/Strings";
 import { Handler } from "./Handler";
 import { ServerData } from "./ServerData";
 
 export class Server
 {
+    static Main()
+    {
+        Server.ServerData = new ServerData();
+
+        Server.APIListener = new Instance("RemoteFunction");
+        Server.APIListener.Name = "API";
+        Server.APIListener.OnServerInvoke = this.OnInvoke;
+
+        Server.APIListener.Parent = game.GetService("ReplicatedStorage");
+        Server.AvailableListeners = new Instance("Folder");
+        Server.AvailableListeners.Name = Strings.AvailableServicesFolderName;
+        Server.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
+    }
+
     static ServerData: ServerData;
 
     static APIListener: RemoteFunction;
 
     static Handlers: Handler[] = new Array<Handler>();
 
-    static Main()
-    {
-        Server.ServerData = new ServerData();
-        Server.APIListener = new Instance("RemoteFunction");
-        Server.APIListener.Name = "API";
-        Server.APIListener.OnServerInvoke = this.OnInvoke;
-        wait(1);
-        Server.APIListener.Parent = game.GetService("ReplicatedStorage");
-    }
+    static AvailableListeners: Folder;
 
     static OnInvoke(this: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
     {

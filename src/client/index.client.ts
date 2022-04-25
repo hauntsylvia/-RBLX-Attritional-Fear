@@ -28,11 +28,13 @@ if (Self.Success && Self.Returned !== undefined)
 		print("Faction registered.");
 		let SpawnLoc = Faction.Returned.SpawnLocation;
 
+		Client.Camera.MoveCamera(new CFrame(SpawnLoc, Client.Camera.CurrentCamera.CFrame.LookVector));
+
 		print("Loading spawn . .");
-		let Time = os.clock();
 		let ChunkSize = 1;
 		let FrameSkips = 120;
-		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-SpawnLoc.X * 2, -SpawnLoc.X * 2, SpawnLoc.Z * 2, SpawnLoc.Z * 2), FrameSkips, ChunkSize);
+		let Time = os.clock();
+		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-(SpawnLoc.X * 2), -(SpawnLoc.X * 2), SpawnLoc.Z * 2, SpawnLoc.Z * 2), FrameSkips, ChunkSize);
 		StartingArea.WaitUntilDone();
 		print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea * 2 + "x" + SizeStartingArea * 2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
 		print("Spawn loaded.");

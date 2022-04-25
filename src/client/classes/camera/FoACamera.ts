@@ -132,7 +132,7 @@ export class FoACamera // Omar, PhD* says hi
 		this.DisableVelocity();
 		let T = game.GetService("TweenService").Create(this.CurrentCamera, new TweenInfo(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0), { CFrame: MoveTo });
 		T.Play();
-		while (T.PlaybackState !== Enum.PlaybackState.Completed && T.PlaybackState !== Enum.PlaybackState.Cancelled && T.PlaybackState !== Enum.PlaybackState.Paused) { }
+		while (T.PlaybackState !== Enum.PlaybackState.Completed && T.PlaybackState !== Enum.PlaybackState.Cancelled && T.PlaybackState !== Enum.PlaybackState.Paused) { wait(); }
 		this.EnableVelocity();
 	}
 

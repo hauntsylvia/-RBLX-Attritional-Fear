@@ -168,6 +168,11 @@ export class TerrainHelper
 		let OffsetZWidthMin = -(this.ZWidth / 2);
 		let OffsetZWidthMax = (this.ZWidth / 2);
 
+		Xp = Xp < OffsetXWidthMin ? OffsetXWidthMin : Xp;
+		Zp = Zp < OffsetZWidthMin ? OffsetZWidthMin : Zp;
+		Xpt = Xpt > OffsetXWidthMax ? OffsetXWidthMax : Xpt;
+		Zpt = Zpt > OffsetZWidthMax ? OffsetZWidthMax : Zpt;
+
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
 			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)

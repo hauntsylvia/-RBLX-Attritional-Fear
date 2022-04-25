@@ -7,12 +7,14 @@ export class ServerData
 {
     CurrentActiveFactions: FoAFaction[] = new Array<FoAFaction>();
     CurrentActivePlayers: SelfFoAPlayer[] = new Array<SelfFoAPlayer>();
-    static TerrainData = class ServerTerrainData
-    {
-        static Size = 1200;
-        static Z = new Random().NextInteger(5, 10 ^ 26);
-        static EleMap = new NoiseHelper(ServerTerrainData.Z, ServerTerrainData.Size, ServerTerrainData.Size, 2, 5, new Sleep(50000));
-        static MoistureMap = new NoiseHelper(ServerTerrainData.Z, ServerTerrainData.Size, ServerTerrainData.Size, 12, 2, new Sleep(50000));
-        static Scale = 5;
-    }
+    TerrainData = new ServerTerrainData();
+}
+
+class ServerTerrainData
+{
+    Size: number = 1400;
+    Z: number = new Random().NextInteger(5, 10 ^ 26);
+    EleMap: NoiseHelper = new NoiseHelper(this.Z, this.Size, this.Size, 2, 5, new Sleep(80000));
+    MoistureMap: NoiseHelper = new NoiseHelper(this.Z, this.Size, this.Size, 12, 2, new Sleep(80000));
+    Scale: number = 5;
 }
