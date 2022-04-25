@@ -1,7 +1,7 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "../../../shared/consts/Strings";
-import { IHandler } from "../handlers/IHandler";
+import { Handler } from "../handlers/Handler";
 import { ServerData } from "./ServerData";
 
 export class Server
@@ -13,20 +13,18 @@ export class Server
         Server.APIListener = new Instance("RemoteFunction");
         Server.APIListener.Name = "API";
         Server.APIListener.OnServerInvoke = this.OnInvoke;
-
         Server.APIListener.Parent = game.GetService("ReplicatedStorage");
+
         Server.AvailableListeners = new Instance("Folder");
         Server.AvailableListeners.Name = Strings.AvailableServicesFolderName;
         Server.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
-
+        print("B");
         this.RegisterHandlers();
     }
 
     static ServerData: ServerData;
 
     static APIListener: RemoteFunction;
-
-    static Handlers: IHandler[] = new Array<IHandler>();
 
     static AvailableListeners: Folder;
 
@@ -36,7 +34,7 @@ export class Server
         {
             const Request = new ServerRequest<any>(ControllerRequested as string, EndpointRequested as string, Args);
             let Result: ServerResponse<any> | undefined;
-            Server.Handlers.forEach(Handler =>
+            Handler.Implementations.forEach(Handler =>
             {
                 if(Handler.Name === Request.ControllerRequested)
                 {
@@ -59,15 +57,13 @@ export class Server
 
     static RegisterHandlers()
     {
-        IHandler.GetImplementations().forEach(Handler =>
+        Handler.Implementations.forEach(Handler =>
         {
-            print("A!");
-            let Imp = new Handler();
-            Server.Handlers.push(Imp);
+            Handler.ServerRegistering(Server.ServerData);
             coroutine.resume(coroutine.create(() =>
             {
                 let Expose = new Instance("BoolValue");
-                Expose.Name = Imp.Name;
+                Expose.Name = Handler.Name;
                 Expose.Value = true;
                 Expose.Parent = this.AvailableListeners;
             }));

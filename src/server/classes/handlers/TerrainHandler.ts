@@ -14,33 +14,32 @@ import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/sp
 import { ServerData } from "../server communication/ServerData";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 import { SNumbers } from "../../../shared/consts/SNumbers";
-import { IHandler } from "../handlers/IHandler";
+import { Handler } from "./Handler";
 
-@IHandler.Register
-export class TerrainHandler
+export class TerrainHandler extends Handler
 {
+    static __AddToImps = Handler.Implementations.add(new TerrainHandler());
     constructor ()
     {
-        this.Endpoints =
+        super(TerrainHandler.Name, TerrainHandler.Endpoints);
+        TerrainHandler.THelper = new TerrainHelper(new TerrainRequest(Server.ServerData.TerrainData.EleMap, Server.ServerData.TerrainData.MoistureMap, Server.ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+        TerrainHandler.Terrain = TerrainHandler.THelper.GetTerrain(-(Server.ServerData.TerrainData.Size / 2), -(Server.ServerData.TerrainData.Size / 2), Server.ServerData.TerrainData.Size / 2, Server.ServerData.TerrainData.Size / 2);
+        TerrainHandler.THelper.PaintObjectsByBiome(TerrainHandler.Terrain);
+    }
+
+    static Name: string = Strings.TerrainStrings.TerrainHandlerRoute;
+
+    static Endpoints: Endpoint<any, any>[] =
         [
             new Endpoint(Strings.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
             new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
         ];
-        this.THelper = new TerrainHelper(new TerrainRequest(Server.ServerData.TerrainData.EleMap, Server.ServerData.TerrainData.MoistureMap, Server.ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
 
-        this.Terrain = this.THelper.GetTerrain(-(Server.ServerData.TerrainData.Size / 2), -(Server.ServerData.TerrainData.Size / 2), Server.ServerData.TerrainData.Size / 2, Server.ServerData.TerrainData.Size / 2);
-        this.THelper.PaintObjectsByBiome(this.Terrain);
-    }
+    static THelper: TerrainHelper;
 
-    Name: string = Strings.TerrainStrings.TerrainHandlerRoute;
+    static Terrain: TerrainResult[];
 
-    Endpoints: Endpoint<any, any>[];
-
-    THelper: TerrainHelper;
-
-    Terrain: TerrainResult[];
-
-    GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
+    static GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
     {
         if (this.THelper !== undefined)
         {
@@ -53,11 +52,16 @@ export class TerrainHandler
         }
     }
 
-    GetMapData (Player: Player): TerrainRequest | undefined
+    static GetMapData (Player: Player): TerrainRequest | undefined
     {
         if (this.THelper !== undefined)
         {
             return this.THelper.TerrainReq;
         }
+    }
+
+    ServerRegistering (Data: ServerData)
+    {
+
     }
 }

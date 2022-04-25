@@ -6,31 +6,31 @@ import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Registers } from "../../../shared/consts/Registers";
 import { ServerData } from "../server communication/ServerData";
-import { IHandler } from "../handlers/IHandler"
+import { Handler } from "./Handler";
 
-@IHandler.Register
-export class PlayerHandler
+export class PlayerHandler extends Handler
 {
+    static __AddToImps = Handler.Implementations.add(new PlayerHandler());
     constructor ()
     {
-        this.Endpoints =
-        [
-            new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions, (Player: Player) => this.GetAllActivePlayerFactions(Player)),
-            new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
-            new Endpoint<Player, SelfFoAPlayer | undefined>(Strings.PlayerStrings.GetFoAPlayerFromPlayer, (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
-        ];
+        super(PlayerHandler.Name, PlayerHandler.Endpoints);
 	}
 
-    Name: string = Strings.PlayerStrings.PlayerHandlerRoute;
+    static Name: string = Strings.PlayerStrings.PlayerHandlerRoute;
 
-    Endpoints: Endpoint<any, any>[];
+    static Endpoints: Endpoint<any, any>[] =
+    [
+        new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions, (Player: Player) => this.GetAllActivePlayerFactions(Player)),
+        new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
+        new Endpoint<Player, SelfFoAPlayer | undefined>(Strings.PlayerStrings.GetFoAPlayerFromPlayer, (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
+    ];
 
-    GetAllActivePlayerFactions (Player: Player): FoAFaction[]
+    static GetAllActivePlayerFactions (Player: Player): FoAFaction[]
     {
         return Server.ServerData.CurrentActiveFactions;
     }
 
-    RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
+    static RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
     {
         if (!Server.ServerData.CurrentActiveFactions.some(Faction => Faction.Player.RobloxPlayerInstance.UserId === Player.UserId))
         {
@@ -45,7 +45,7 @@ export class PlayerHandler
         }
     }
 
-    GetFoAPlayerFromPlayer (Player: Player): SelfFoAPlayer | undefined
+    static GetFoAPlayerFromPlayer (Player: Player): SelfFoAPlayer | undefined
     {
         let MatchingFoAPlayer = Server.ServerData.CurrentActivePlayers.find(P => P.RobloxPlayerInstance.UserId === Player.UserId);
         if (MatchingFoAPlayer === undefined)
@@ -58,5 +58,10 @@ export class PlayerHandler
         {
             return MatchingFoAPlayer;
         }
+    }
+
+    ServerRegistering (Data: ServerData)
+    {
+
     }
 }
