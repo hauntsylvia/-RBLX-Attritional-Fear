@@ -10,8 +10,6 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
 
-const SizeStartingArea = 4000;
-
 print("Waiting for server to be ready . .");
 print("Server is accepting requests.");
 print("Constructing client . .");
@@ -33,10 +31,17 @@ if (Self.Success && Self.Returned !== undefined)
 		print("Loading spawn . .");
 		let ChunkSize = 1;
 		let FrameSkips = 120;
+		let StartPos =	new Vector2((SpawnLoc.X - 2000), (SpawnLoc.Z - 2000));
+		let EndPos =	new Vector2((SpawnLoc.X + 2000), (SpawnLoc.Z + 2000));
+		print(StartPos.X);
+		print(StartPos.Y);
+		print(EndPos.X);
+		print(EndPos.Y);
 		let Time = os.clock();
-		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(-(SpawnLoc.X * 2), -(SpawnLoc.X * 2), SpawnLoc.Z * 2, SpawnLoc.Z * 2), FrameSkips, ChunkSize);
+		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
 		StartingArea.WaitUntilDone();
-		print("[" + (os.clock() - Time) + "] seconds to load [" + SizeStartingArea * 2 + "x" + SizeStartingArea * 2 + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
+		let Studs = StartPos.sub(EndPos).Magnitude;
+		print("[" + (os.clock() - Time) + "] seconds to load [" + Studs + "x" + Studs + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
 		print("Spawn loaded.");
 	}
 	else

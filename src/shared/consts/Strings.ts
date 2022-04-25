@@ -20,6 +20,7 @@ export class Strings
     static PlayerStrings = class
     {
         static PlayerHandlerRoute: string = "Players";
+        static PlayerDataHandlerRoute: string = "Player.Data";
 
         static GetAllActivePlayerFactions: string = "GetFactions";
         static RegisterPlayerFaction: string = "RegisterFaction";

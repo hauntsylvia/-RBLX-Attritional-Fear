@@ -1,7 +1,7 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "../../../shared/consts/Strings";
-import { Handler } from "./Handler";
+import { IHandler } from "./Handler";
 import { ServerData } from "./ServerData";
 
 export class Server
@@ -24,7 +24,7 @@ export class Server
 
     static APIListener: RemoteFunction;
 
-    static Handlers: Handler[] = new Array<Handler>();
+    static Handlers: IHandler[] = new Array<IHandler>();
 
     static AvailableListeners: Folder;
 
@@ -51,16 +51,20 @@ export class Server
         }
         else
         {
-            return new ServerResponse<string>(false, "Malformed client data was sent. Fix it.");
+            return new ServerResponse<string>(false, "Client sent invalid data.");
         }
     }
 
-    static RegisterHandler(Handler: Handler)
+    static RegisterHandler(Handler: IHandler)
     {
         Server.Handlers.push(Handler);
-        let Expose = new Instance("BoolValue");
-        Expose.Name = Handler.Name;
-        Expose.Value = true;
-        Expose.Parent = this.AvailableListeners;
+        coroutine.resume(coroutine.create(() =>
+        {
+            wait(2);
+            let Expose = new Instance("BoolValue");
+            Expose.Name = Handler.Name;
+            Expose.Value = true;
+            Expose.Parent = this.AvailableListeners;
+        }));
     }
 }
