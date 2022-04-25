@@ -6,8 +6,9 @@ import { TerrainProcessor } from "../processors/TerrainProcessor";
 
 export class FoAClient
 {
-    constructor(RemoteFunction: RemoteFunction)
+    constructor()
     {
+        let RemoteFunction = this.WaitForServer();
         this.PlayerProcessor = new PlayerProcessor(RemoteFunction);
         this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), (this.PlayerProcessor.GetCurrentPlayer().Returned?.FoAPlayerSettings ?? error("No player returned from server.")));
         this.Camera.Connect();
@@ -23,4 +24,9 @@ export class FoAClient
 
     TerrainChunker: TerrainFollower;
 
+    WaitForServer (): RemoteFunction
+    {
+        let RemoteFunction = game.GetService("ReplicatedStorage").WaitForChild("API", 60) as RemoteFunction;
+        return RemoteFunction;
+	}
 }

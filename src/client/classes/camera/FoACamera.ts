@@ -16,6 +16,7 @@ export class FoACamera // Omar, PhD* says hi
 		this.LoadNewSettings(Settings.Hotkeys);
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
+		this.Player = game.GetService("Players").LocalPlayer;
 	}
 
 	LevelsOfZoom: LevelOfZoom[];
@@ -25,6 +26,8 @@ export class FoACamera // Omar, PhD* says hi
 	InputChangedConnection: RBXScriptConnection | undefined;
 
 	InputService: UserInputService;
+
+	Player: Player;
 
 	MoveForward!: Enum.KeyCode;
 	MoveBackward!: Enum.KeyCode;

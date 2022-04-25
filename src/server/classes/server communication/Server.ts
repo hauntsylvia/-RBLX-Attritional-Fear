@@ -14,9 +14,11 @@ export class Server
     static Main()
     {
         Server.ServerData = new ServerData();
-        Server.APIListener = new Instance("RemoteFunction", game.GetService("ReplicatedStorage"));
+        Server.APIListener = new Instance("RemoteFunction");
         Server.APIListener.Name = "API";
         Server.APIListener.OnServerInvoke = this.OnInvoke;
+        wait(1);
+        Server.APIListener.Parent = game.GetService("ReplicatedStorage");
     }
 
     static OnInvoke(this: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
@@ -42,7 +44,7 @@ export class Server
         }
         else
         {
-            return new ServerResponse<string>(false, "Malformed client data sent.");
+            return new ServerResponse<string>(false, "Malformed client data was sent. Fix it.");
         }
     }
 

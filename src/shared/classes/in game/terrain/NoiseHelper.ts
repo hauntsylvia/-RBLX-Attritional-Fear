@@ -33,7 +33,8 @@ export class NoiseHelper
 			NewMap[X] = [];
 			for (let Y = 0; Y < Width; Y++)
 			{
-				Sleeper.Step();
+				/*Sleeper.Step();*/
+
 				let DistanceFromEq = math.abs(Y - EquatorAtY);
 				let Inv = (EquatorAtY - DistanceFromEq);
 				NewMap[X][Y] = math.clamp(Inv / EquatorAtY, 0, 1);
@@ -50,7 +51,8 @@ export class NoiseHelper
 			Elevation[X] = [];
 			for (let Y = 0; Y < Width; Y++)
 			{
-				Sleeper.Step();
+				/*Sleeper.Step();*/
+
 				//this.Elevation[X][Y] = [];
 				//for (let Z = 0; Z < Width; Z++)
 				//{

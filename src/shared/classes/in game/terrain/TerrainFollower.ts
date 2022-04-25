@@ -5,25 +5,30 @@ import { ServerTerrainRequest } from "./specifics/regions/ServerTerrainRequest";
 
 export class TerrainFollower
 {
-	constructor (Camera: FoACamera, TerrainP: TerrainProcessor, RenderAmount: number = 100, ChunkSize: number = 50)
+	constructor (Camera: FoACamera, TerrainP: TerrainProcessor, RenderAmount: number = 100, ChunkSize: number = 50, MagnitudeBeforeRequestingContentStream: number = 15)
 	{
 		this.Follow = Camera;
 		this.TerrainP = TerrainP;
 		this.RenderAmount = RenderAmount;
 		this.ChunkSize = ChunkSize;
+		this.MagnitudeBeforeRequestingContentStream = MagnitudeBeforeRequestingContentStream;
 	}
 
 	Follow: FoACamera;
 	TerrainP: TerrainProcessor;
 	RenderAmount: number;
 	ChunkSize: number;
+	MagnitudeBeforeRequestingContentStream: number;
+	private Kill: boolean = false;
+	private LastPositionBeforeMagChange: Vector3 = Vector3.zero;
 
 	Connect ()
 	{
+		this.Kill = false;
 		coroutine.resume(coroutine.create(() =>
 		{
 			let LastCF = new CFrame(0, 0, 0);
-			while (true)
+			while (!this.Kill)
 			{
 				let NewCF = this.Follow.CurrentCamera.CFrame;
 				if (this.Follow.HasVelocity() || LastCF.Position.sub(NewCF.Position).Magnitude > 15)
@@ -51,10 +56,21 @@ export class TerrainFollower
 				wait();
 			}
 		}));
+		coroutine.resume(coroutine.create(() =>
+		{
+			let Plr = game.GetService("Players").LocalPlayer;
+			if (this.Follow.CurrentCamera.CFrame.Position.sub(this.LastPositionBeforeMagChange).Magnitude > this.MagnitudeBeforeRequestingContentStream)
+			{
+				this.LastPositionBeforeMagChange = this.Follow.CurrentCamera.CFrame.Position;
+				print("Requesting stream . .");
+				Plr.RequestStreamAroundAsync(this.Follow.CurrentCamera.CFrame.Position);
+				print("Stream requested.");
+			}
+		}));
 	}
 
 	Disconnect ()
 	{
-
+		this.Kill = true;
 	}
 }

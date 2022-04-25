@@ -33,15 +33,18 @@ function RegisterPlayerFaction(Player: Player, Arg: FoAFaction): FoAFaction | un
 
 function GetFoAPlayerFromPlayer(Player: Player): SelfFoAPlayer | undefined
 {
-    if(!Server.ServerData.CurrentActivePlayers.some(function(P)
-    {
-        return P.RobloxPlayerInstance.UserId === Player.UserId;
-    }))
+    let MatchingFoAPlayer = Server.ServerData.CurrentActivePlayers.find(P => P.RobloxPlayerInstance.UserId === Player.UserId);
+    print("A");
+    if (MatchingFoAPlayer === undefined)
     {
         let NewPlayer: SelfFoAPlayer = new SelfFoAPlayer(Player, Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId).Value ?? new FoAPlayerSettings(undefined));
         Server.ServerData.CurrentActivePlayers.push(NewPlayer);
         return NewPlayer;
     }
+    else
+    {
+        return MatchingFoAPlayer;
+	}
 }
 const PlayerHandler = new Handler(Strings.PlayerStrings.PlayerHandlerRoute, 
     [

@@ -13,10 +13,9 @@ import { RenderTerrainResult } from "./classes/processor results/RenderTerrainRe
 const SizeStartingArea = 4000;
 
 print("Waiting for server to be ready . .");
-const RemFunctionAPI = game.GetService("ReplicatedStorage").WaitForChild("API") as RemoteFunction;
 print("Server is accepting requests.");
 print("Constructing client . .");
-const Client = new FoAClient(RemFunctionAPI);
+const Client = new FoAClient();
 print("Client constructed.");
 let Self = Client.PlayerProcessor.GetCurrentPlayer();
 if (Self.Success && Self.Returned !== undefined)
