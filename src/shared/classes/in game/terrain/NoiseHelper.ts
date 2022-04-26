@@ -45,6 +45,7 @@ export class NoiseHelper
 
 	static GenerateHeightmap (Height: number, Width: number, Frequency: number, Z: number, Exponent: number, Sleeper: Sleep): number[][]
 	{
+		print("Noisy!");
 		let Elevation: number[][] = [];
 		for (let X = 0; X < Height; X++)
 		{
@@ -76,6 +77,7 @@ export class NoiseHelper
 				Elevation[X][Y] = math.clamp(E, 0, 1);
 			}
 		}
+		print("Quiet.");
 		return Elevation;
 	}
 }

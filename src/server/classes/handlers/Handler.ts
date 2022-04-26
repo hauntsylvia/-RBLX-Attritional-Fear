@@ -1,22 +1,12 @@
 import { Endpoint } from "../server communication/Endpoint";
 import { ServerData } from "../server communication/ServerData";
+import { PlayerDataHandler } from "./PlayerDataHandler";
 
-export class Handler
+export interface IHandler
 {
-    static Implementations: Set<Handler> = new Set();
-
-    constructor (Name: string, Endpoints: Endpoint<any, any>[])
-    {
-        this.Name = Name;
-        this.Endpoints = Endpoints;
-    }
-
-    ServerRegistering (Data: ServerData)
-    {
-        print(this.Name + " was registered as an API controller!");
-	}
-
     Name: string;
 
     Endpoints: Endpoint<any, any>[];
+
+    ServerRegistering (ServerData: ServerData): any;
 }

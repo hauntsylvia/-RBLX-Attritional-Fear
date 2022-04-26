@@ -16,6 +16,7 @@ print("Constructing client . .");
 const Client = new FoAClient();
 print("Client constructed.");
 let Self = Client.PlayerProcessor.GetCurrentPlayer();
+print(Self.Success);
 if (Self.Success && Self.Returned !== undefined)
 {
 	Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys()));

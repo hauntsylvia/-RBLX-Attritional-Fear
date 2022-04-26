@@ -22,8 +22,11 @@ export class Processor
         if (!this.ServiceAvailable(ServerRequest.ControllerRequested))
         {
             wait(3);
-            this.MakeRequest(ServerRequest);
+            return this.MakeRequest(ServerRequest);
+        }
+        else
+        {
+            return this.Instance.InvokeServer(ServerRequest.ControllerRequested, ServerRequest.EndpointRequested, ServerRequest.Arguments);
 		}
-        return this.Instance.InvokeServer(ServerRequest.ControllerRequested, ServerRequest.EndpointRequested, ServerRequest.Arguments);
     }
 }

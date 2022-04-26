@@ -6,52 +6,51 @@ import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Registers } from "../../../shared/consts/Registers";
 import { ServerData } from "../server communication/ServerData";
-import { Handler } from "./Handler";
+import { IHandler } from "./Handler";
 
-export class PlayerHandler extends Handler
+export class PlayerHandler implements IHandler
 {
-    static __AddToImps = Handler.Implementations.add(new PlayerHandler());
-    constructor ()
+    Name: string = Strings.PlayerStrings.PlayerHandlerRoute;
+
+    Endpoints =
+        [
+            new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions,
+                (Player: Player) => this.GetAllActivePlayerFactions(Player)),
+            new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction,
+                (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
+            new Endpoint<any, SelfFoAPlayer>(Strings.PlayerStrings.GetFoAPlayerFromPlayer,
+                (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
+        ]
+
+    ServerData!: ServerData;
+
+    GetAllActivePlayerFactions (Player: Player): FoAFaction[]
     {
-        super(PlayerHandler.Name, PlayerHandler.Endpoints);
-	}
-
-    static Name: string = Strings.PlayerStrings.PlayerHandlerRoute;
-
-    static Endpoints: Endpoint<any, any>[] =
-    [
-        new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions, (Player: Player) => this.GetAllActivePlayerFactions(Player)),
-        new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction, (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
-        new Endpoint<Player, SelfFoAPlayer | undefined>(Strings.PlayerStrings.GetFoAPlayerFromPlayer, (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
-    ];
-
-    static GetAllActivePlayerFactions (Player: Player): FoAFaction[]
-    {
-        return Server.ServerData.CurrentActiveFactions;
+        return this.ServerData.CurrentActiveFactions;
     }
 
-    static RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
+    RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
     {
-        if (!Server.ServerData.CurrentActiveFactions.some(Faction => Faction.Player.RobloxPlayerInstance.UserId === Player.UserId))
+        if (!this.ServerData.CurrentActiveFactions.some(Faction => Faction.Player.RobloxPlayerInstance.UserId === Player.UserId))
         {
-            let SFoAPlayer = Server.ServerData.CurrentActivePlayers.find(S => S.RobloxPlayerInstance.UserId === Player.UserId);
+            let SFoAPlayer = this.ServerData.CurrentActivePlayers.find(S => S.RobloxPlayerInstance.UserId === Player.UserId);
             if (SFoAPlayer !== undefined)
             {
-                let TerrSize = Server.ServerData.TerrainData.Size / 2;
+                let TerrSize = this.ServerData.TerrainData.Size / 2;
                 let NewFac = new FoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(math.random(-TerrSize, TerrSize / 2), 50, math.random(-TerrSize / 2, TerrSize / 2)), Arg.Title, Arg.Color);
-                Server.ServerData.CurrentActiveFactions.push(NewFac);
+                this.ServerData.CurrentActiveFactions.push(NewFac);
                 return NewFac;
             }
         }
     }
 
-    static GetFoAPlayerFromPlayer (Player: Player): SelfFoAPlayer | undefined
+    GetFoAPlayerFromPlayer (Player: Player): SelfFoAPlayer
     {
-        let MatchingFoAPlayer = Server.ServerData.CurrentActivePlayers.find(P => P.RobloxPlayerInstance.UserId === Player.UserId);
+        let MatchingFoAPlayer = this.ServerData.CurrentActivePlayers.find(P => P.RobloxPlayerInstance.UserId === Player.UserId);
         if (MatchingFoAPlayer === undefined)
         {
             let NewPlayer: SelfFoAPlayer = new SelfFoAPlayer(Player, Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId).Value ?? new FoAPlayerSettings(undefined));
-            Server.ServerData.CurrentActivePlayers.push(NewPlayer);
+            this.ServerData.CurrentActivePlayers.push(NewPlayer);
             return NewPlayer;
         }
         else
@@ -62,6 +61,6 @@ export class PlayerHandler extends Handler
 
     ServerRegistering (Data: ServerData)
     {
-
+        this.ServerData = Data;
     }
 }

@@ -5,34 +5,27 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Registers } from "../../../shared/consts/Registers";
 import { Record } from "../modules/Record";
-import { Handler } from "./Handler";
+import { IHandler } from "./Handler";
 import { ServerData } from "../server communication/ServerData";
 
-export class PlayerDataHandler extends Handler
+export class PlayerDataHandler implements IHandler
 {
-    static __AddToImps = Handler.Implementations.add(new PlayerDataHandler());
+    Name: string = Strings.PlayerStrings.PlayerDataHandlerRoute;
 
-    constructor ()
-    {
-        super(PlayerDataHandler.Name, PlayerDataHandler.Endpoints);
-    }
-
-    static Name: string = Strings.PlayerStrings.PlayerDataHandlerRoute;
-
-    static Endpoints: Endpoint<any, any>[] = 
+    Endpoints: Endpoint<any, any>[] =
     [
         new Endpoint<any, FoAPlayerSettings>(Strings.PlayerStrings.GetFoAPlayerSettings, (Player: Player) => this.GetFoAPlayerSettings(Player)),
         new Endpoint<FoAPlayerSettings, ServerDataOperationResponse>(Strings.PlayerStrings.SaveFoAPlayerSettings, (Player: Player, S: FoAPlayerSettings) => this.SaveFoAPlayerSettings(Player, S)),
     ];
 
-    static GetFoAPlayerSettings (Player: Player): FoAPlayerSettings
+    GetFoAPlayerSettings (Player: Player): FoAPlayerSettings
     {
         let Settings: Record<FoAPlayerSettings> | undefined = Registers.PlayerSettingsRegister.GetRecord<FoAPlayerSettings>(Player.UserId);
         let SettingsV = Settings.Value ?? new FoAPlayerSettings(undefined);
         return SettingsV;
     }
 
-    static SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSettings): ServerDataOperationResponse
+    SaveFoAPlayerSettings (Player: Player, SettingsToSave: FoAPlayerSettings): ServerDataOperationResponse
     {
         return Registers.PlayerSettingsRegister.SaveRecord(Player.UserId, SettingsToSave);
     }

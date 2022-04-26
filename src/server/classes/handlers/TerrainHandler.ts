@@ -14,32 +14,23 @@ import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/sp
 import { ServerData } from "../server communication/ServerData";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 import { SNumbers } from "../../../shared/consts/SNumbers";
-import { Handler } from "./Handler";
+import { IHandler } from "./Handler";
 
-export class TerrainHandler extends Handler
+export class TerrainHandler implements IHandler
 {
-    static __AddToImps = Handler.Implementations.add(new TerrainHandler());
-    constructor ()
-    {
-        super(TerrainHandler.Name, TerrainHandler.Endpoints);
-        TerrainHandler.THelper = new TerrainHelper(new TerrainRequest(Server.ServerData.TerrainData.EleMap, Server.ServerData.TerrainData.MoistureMap, Server.ServerData.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-        TerrainHandler.Terrain = TerrainHandler.THelper.GetTerrain(-(Server.ServerData.TerrainData.Size / 2), -(Server.ServerData.TerrainData.Size / 2), Server.ServerData.TerrainData.Size / 2, Server.ServerData.TerrainData.Size / 2);
-        TerrainHandler.THelper.PaintObjectsByBiome(TerrainHandler.Terrain);
-    }
+    Name: string = Strings.TerrainStrings.TerrainHandlerRoute;
 
-    static Name: string = Strings.TerrainStrings.TerrainHandlerRoute;
+    Endpoints =
+    [
+        new Endpoint(Strings.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
+        new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
+    ]
 
-    static Endpoints: Endpoint<any, any>[] =
-        [
-            new Endpoint(Strings.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
-            new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
-        ];
+    THelper!: TerrainHelper;
 
-    static THelper: TerrainHelper;
+    Terrain!: TerrainResult[];
 
-    static Terrain: TerrainResult[];
-
-    static GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
+    GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
     {
         if (this.THelper !== undefined)
         {
@@ -52,7 +43,7 @@ export class TerrainHandler extends Handler
         }
     }
 
-    static GetMapData (Player: Player): TerrainRequest | undefined
+    GetMapData (Player: Player): TerrainRequest | undefined
     {
         if (this.THelper !== undefined)
         {
@@ -62,6 +53,11 @@ export class TerrainHandler extends Handler
 
     ServerRegistering (Data: ServerData)
     {
-
+        this.THelper = new TerrainHelper(new TerrainRequest(Data.TerrainData.EleMap, Data.TerrainData.MoistureMap, Data.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+        this.Terrain = this.THelper.GetTerrain(-(Data.TerrainData.Size / 2), -(Data.TerrainData.Size / 2), Data.TerrainData.Size / 2, Data.TerrainData.Size / 2);
+        coroutine.resume(coroutine.create(() =>
+        {
+            this.THelper.PaintObjectsByBiome(this.Terrain);
+        }));
     }
 }

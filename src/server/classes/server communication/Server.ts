@@ -1,40 +1,54 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "../../../shared/consts/Strings";
-import { Handler } from "../handlers/Handler";
+import { IHandler } from "../handlers/Handler";
+import { PlayerDataHandler } from "../handlers/PlayerDataHandler";
+import { PlayerHandler } from "../handlers/PlayerHandler";
+import { TerrainHandler } from "../handlers/TerrainHandler";
 import { ServerData } from "./ServerData";
 
 export class Server
 {
-    static Main()
+    constructor()
     {
-        Server.ServerData = new ServerData();
+        this.ServerData = new ServerData();
 
-        Server.APIListener = new Instance("RemoteFunction");
-        Server.APIListener.Name = "API";
-        Server.APIListener.OnServerInvoke = this.OnInvoke;
-        Server.APIListener.Parent = game.GetService("ReplicatedStorage");
+        this.AvailableListeners = new Instance("Folder");
+        this.AvailableListeners.Name = Strings.AvailableServicesFolderName;
+        this.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
 
-        Server.AvailableListeners = new Instance("Folder");
-        Server.AvailableListeners.Name = Strings.AvailableServicesFolderName;
-        Server.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
-        print("B");
+        this.APIListener = new Instance("RemoteFunction");
+        this.APIListener.Name = "API";
+        this.APIListener.OnServerInvoke = (Player: Player, Controller: unknown, Endpoint: unknown, Arg: unknown) =>
+        {
+            return this.OnInvoke(Player, Controller, Endpoint, Arg);
+        };
+        this.APIListener.Parent = game.GetService("ReplicatedStorage");
+
         this.RegisterHandlers();
     }
 
-    static ServerData: ServerData;
+    UnavailableHandlers: IHandler[] =
+        [
+            new PlayerDataHandler(),
+            new PlayerHandler(),
+            new TerrainHandler(),
+        ];
+    AvailableHandlers: IHandler[] = [];
 
-    static APIListener: RemoteFunction;
+    ServerData: ServerData;
 
-    static AvailableListeners: Folder;
+    APIListener: RemoteFunction;
 
-    static OnInvoke(this: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
+    AvailableListeners: Folder;
+
+    OnInvoke(Player: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
     {
         if(typeIs(ControllerRequested, "string") && typeIs(EndpointRequested, "string"))
         {
             const Request = new ServerRequest<any>(ControllerRequested as string, EndpointRequested as string, Args);
             let Result: ServerResponse<any> | undefined;
-            Handler.Implementations.forEach(Handler =>
+            this.AvailableHandlers.forEach(Handler =>
             {
                 if(Handler.Name === Request.ControllerRequested)
                 {
@@ -42,12 +56,13 @@ export class Server
                     {
                         if(Endpoint.Route === Request.EndpointRequested)
                         {
-                            Result = Endpoint.Invoke(this, Request.Arguments);
+                            Result = Endpoint.Invoke(Player, Request.Arguments);
                         }
                     });
                 }
             });
-            return Result === undefined ? new ServerResponse<string>(false, "404") : Result;
+            Result = Result ?? new ServerResponse<string>(false, "404");
+            return Result;
         }
         else
         {
@@ -55,13 +70,16 @@ export class Server
         }
     }
 
-    static RegisterHandlers()
+    RegisterHandlers()
     {
-        Handler.Implementations.forEach(Handler =>
+        this.UnavailableHandlers.forEach(Handler =>
         {
-            Handler.ServerRegistering(Server.ServerData);
             coroutine.resume(coroutine.create(() =>
             {
+                print(Handler.Name + " is initializing . .");
+                Handler.ServerRegistering(this.ServerData);
+                print(Handler.Name + " has initialized.");
+                this.AvailableHandlers.push(Handler);
                 let Expose = new Instance("BoolValue");
                 Expose.Name = Handler.Name;
                 Expose.Value = true;
