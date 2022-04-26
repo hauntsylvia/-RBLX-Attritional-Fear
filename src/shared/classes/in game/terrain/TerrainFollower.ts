@@ -1,23 +1,29 @@
 import { FoACamera } from "../../../../client/classes/camera/FoACamera";
 import { FoAClient } from "../../../../client/classes/clients/FoAClient";
+import { RenderTerrainResult } from "../../../../client/classes/processor results/RenderTerrainResult";
 import { TerrainProcessor } from "../../../../client/classes/processors/TerrainProcessor";
+import { ChunkSettings } from "../players/personalizations/specifics/ChunkSettings";
+import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 import { ServerTerrainRequest } from "./specifics/regions/ServerTerrainRequest";
 
 export class TerrainFollower
 {
-	constructor (Camera: FoACamera, TerrainP: TerrainProcessor, RenderAmount: number = 100, ChunkSize: number = 50, TimePerContentStreamUpdate: number = 15)
+	constructor (Camera: FoACamera, TerrainP: TerrainProcessor, Settings?: ChunkSettings, ChunkSize: number = 50)
 	{
 		this.Follow = Camera;
 		this.TerrainP = TerrainP;
-		this.RenderAmount = RenderAmount;
+		this.Settings = Settings ?? new ChunkSettings();
+		this.RenderAmount = this.Settings.ChunkDistancePerCycle;
 		this.ChunkSize = ChunkSize;
-		this.TimePerContentStreamUpdate = TimePerContentStreamUpdate;
+		this.TimePerContentStreamUpdate = this.Settings.SecondsPerCycle;
 		this.Plr = game.GetService("Players").LocalPlayer;;
 	}
 
 	Follow: FoACamera;
 
 	TerrainP: TerrainProcessor;
+
+	Settings: ChunkSettings;
 
 	RenderAmount: number;
 
@@ -26,8 +32,6 @@ export class TerrainFollower
 	TimePerContentStreamUpdate: number;
 
 	private Signal?: RBXScriptConnection;
-
-	private LastPositionBeforeMagChange: Vector3 = Vector3.zero;
 
 	private Plr: Player;
 
@@ -41,14 +45,24 @@ export class TerrainFollower
 		this.Signal?.Disconnect();
 	}
 
+	RenderRes?: RenderTerrainResult;
 	Step: number = 0;
 	RenderStepped (DeltaTime: number)
 	{
 		if (this.Step >= this.TimePerContentStreamUpdate)
 		{
 			this.Step = 0;
-			this.LastPositionBeforeMagChange = this.Follow.CurrentCamera.CFrame.Position;
 			this.Plr.RequestStreamAroundAsync(this.Follow.CurrentCamera.CFrame.Position);
+			if (this.RenderRes === undefined || (this.RenderRes !== undefined && this.RenderRes.Dead()))
+			{
+				let SpawnLoc = this.Follow.CurrentCamera.CFrame.Position;
+				let ChunkSize = 1;
+				let FrameSkips = 60;
+				let StartPos = new Vector2((SpawnLoc.X - this.RenderAmount), (SpawnLoc.Z - this.RenderAmount));
+				let EndPos = new Vector2((SpawnLoc.X + this.RenderAmount), (SpawnLoc.Z + this.RenderAmount));
+				let Time = os.clock();
+				this.RenderRes = this.TerrainP.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
+			}
 		}
 		else
 		{

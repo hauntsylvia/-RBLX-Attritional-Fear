@@ -6,14 +6,14 @@ import { CollisionCalculator } from "../../../shared/classes/util/Collisions/Col
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
 import { LevelOfZoom } from "./LevelOfZoom";
 
-export class FoACamera // Omar, PhD* says hi
+export class FoACamera // Omar, PhD says hi
 {
 	static ThisRenderStepLabel: string = "CameraOperation";
 
 	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera | undefined)
 	{
 		this.LevelsOfZoom = [CurrentLoZ];
-		this.LoadNewSettings(Settings.Hotkeys);
+		this.LoadNewSettings(Settings.Hotkeys ?? new Hotkeys());
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
 		this.Player = game.GetService("Players").LocalPlayer;
@@ -48,8 +48,8 @@ export class FoACamera // Omar, PhD* says hi
 	CameraZoomSteps: number = 80;
 	CameraYAngle: number = 0;
 
-	MinZoom: number = 20;
-	MaxZoom: number = game.GetService("RunService").IsStudio() ? 1000 : 350;
+	MinZoom: number = 50;
+	MaxZoom: number = 300;
 
 	DisableVelocity ()
 	{
@@ -162,13 +162,12 @@ export class FoACamera // Omar, PhD* says hi
 			let Ray = new RaycastParams();
 			let CollisionResult = CollisionCalculator.CalculateAhead(this.CurrentCamera.CFrame, this.MaxZoom * 4, Ray);
 			let CurrentMin = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MinZoom : this.MinZoom;
-			let CurrentMax = CollisionResult.Result !== undefined ? CollisionResult.Result.Position.Y + this.MaxZoom : this.MaxZoom;
-
-			if (this.CurrentCamera.CFrame.Y >= CurrentMax)
+			let CurrentMax = CurrentMin + this.MaxZoom;
+			if (this.CurrentCamera.CFrame.Y > CurrentMax)
 			{
 				this.InwardVelocity = -0.5;
 			}
-			else if (this.CurrentCamera.CFrame.Y <= CurrentMin)
+			else if (this.CurrentCamera.CFrame.Y < CurrentMin)
 			{
 				this.InwardVelocity = 0.5;
 			}
@@ -182,7 +181,9 @@ export class FoACamera // Omar, PhD* says hi
 			this.UpdateCamera(NewCF);
 			if (this.InputService.IsKeyDown(Enum.KeyCode.U))
 			{
-				print(this.InwardVelocity);
+				print(math.round(CurrentMin));
+				print(math.round(CurrentMax));
+				print(CollisionResult.Result?.Instance.GetFullName() ?? "");
 			}
 			this.InwardVelocity = this.InwardVelocity > -5 ? this.InwardVelocity - this.InwardVelocity * DeltaTime * 12.5 : 0;
 			this.ImmediateInwardVelocity = 0;

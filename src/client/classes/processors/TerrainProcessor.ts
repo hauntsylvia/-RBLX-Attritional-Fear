@@ -41,7 +41,7 @@ export class TerrainProcessor extends Processor
         this.KillThreads = true;
 	}
 
-    RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number): RenderTerrainResult
+    RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number = 1): RenderTerrainResult
     {
         let Sleeper = new Sleep(FramesToSkipPerThread);
         let Result = new RenderTerrainResult([]);
@@ -55,8 +55,8 @@ export class TerrainProcessor extends Processor
                 BufferedZ = BufferedZ > BufferedZ + ChunkSize ? BufferedZ + ChunkSize : BufferedZ;
                 if (!this.KillThreads && !Result.ThreadsKilled)
                 {
-                    let CachedTerrain = this.TerrainHelper.GetTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize);
-                    let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(CachedTerrain);
+                    let Terrain = this.TerrainHelper.GetTerrain(BufferedX, BufferedZ, BufferedX + ChunkSize, BufferedZ + ChunkSize);
+                    let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(Terrain);
                     Thr.forEach(T =>
                     {
                         coroutine.resume(T);

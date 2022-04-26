@@ -1,11 +1,16 @@
+import { ChunkSettings } from "./specifics/ChunkSettings";
 import { Hotkeys } from "./specifics/Hotkeys";
 import { CameraHotkeys } from "./specifics/hotkeys/CameraHotkeys";
 
 export class FoAPlayerSettings
 {
-	Hotkeys: Hotkeys;
-	constructor (HKeys: Hotkeys | undefined)
+	constructor (HotkeySettings?: Hotkeys | undefined, ChunkingSettings?: ChunkSettings)
 	{
-		this.Hotkeys = HKeys ?? new Hotkeys(undefined);
+		this.Hotkeys = HotkeySettings ?? new Hotkeys();
+		this.ChunkSettings = ChunkingSettings ?? new ChunkSettings();
 	}
+
+	Hotkeys: Hotkeys | undefined;
+
+	ChunkSettings: ChunkSettings | undefined;
 }

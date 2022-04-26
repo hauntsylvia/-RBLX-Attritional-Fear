@@ -16,10 +16,10 @@ print("Constructing client . .");
 const Client = new FoAClient();
 print("Client constructed.");
 let Self = Client.PlayerProcessor.GetCurrentPlayer();
+Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings());
 print(Self.Success);
 if (Self.Success && Self.Returned !== undefined)
 {
-	Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(new Hotkeys()));
 	print("Registering faction . .");
 	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new FoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255)));
 	if (Faction.Success && Faction.Returned !== undefined)
@@ -29,21 +29,6 @@ if (Self.Success && Self.Returned !== undefined)
 		print(SpawnLoc.X + ", " + SpawnLoc.Z);
 
 		Client.Camera.MoveCamera(SpawnLoc);
-
-		print("Loading spawn . .");
-		let ChunkSize = 1;
-		let FrameSkips = 120;
-		let Size = 2000;
-		let StartPos = new Vector2((SpawnLoc.X - Size), (SpawnLoc.Z - Size));
-		let EndPos = new Vector2((SpawnLoc.X + Size), (SpawnLoc.Z + Size));
-		print(StartPos.X + ", " + StartPos.Y);
-		print(EndPos.X + ", " + EndPos.Y);
-		let Time = os.clock();
-		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
-		StartingArea.WaitUntilDone();
-		let Studs = StartPos.sub(EndPos).Magnitude;
-		print("[" + (os.clock() - Time) + "] seconds to load [" + Studs + "x" + Studs + "] studs. Upscaled by [x" + Client.TerrainProcessor.MapData.SizePerCell + "]. [" + FrameSkips + "] frames skipped every [" + ChunkSize + "] studs.");
-		print("Spawn loaded.");
 	}
 	else
 	{

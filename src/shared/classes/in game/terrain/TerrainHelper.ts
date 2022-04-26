@@ -1,5 +1,6 @@
 import { AllBiomes, ModelSize } from "../../../consts/Biomes";
 import { BiomeTypes } from "../../../consts/Enums";
+import { SNumbers } from "../../../consts/SNumbers";
 import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
 import { ModelResizer } from "../../util/ModelResizer";
 import { Sleep } from "../../util/Sleep";
@@ -38,18 +39,16 @@ export class TerrainHelper
 	TerrainReq: TerrainRequest;
 
 	XWidth: number = 0;
-	ZWidth: number = 0; // because for this width we count the number of arrays, and arrays r indexed by 0 not 1 (# elements - 1)
+	ZWidth: number = 0;
 
 	Biomes: Biome[];
 	FallbackBiome: Biome;
 
 	private TempMap: number[][];
 
-	private TerrainCache: TerrainRegion[] = [];
-
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-		let Stepper = new Sleep(200);
+		let Stepper = new Sleep(100);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
@@ -76,8 +75,11 @@ export class TerrainHelper
 		}
 	}
 
-	ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[])
+	private ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[])
 	{
+		let RayP = new RaycastParams();
+		RayP.FilterType = Enum.RaycastFilterType.Whitelist;
+		RayP.FilterDescendantsInstances.push(TerrainHelper.Workspace.Terrain);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
@@ -102,13 +104,10 @@ export class TerrainHelper
 							MaxM >= Terrain.Moisture && MinM <= Terrain.Moisture &&
 							MaxT >= Terrain.Temperature && MinT <= Terrain.Temperature)
 						{
-
-							let BoundingBox = Obj.Model.GetExtentsSize();
-							let TopOfPart = Terrain.RealPosition.Position.add(new Vector3(0, ((this.TerrainReq.SizePerCell * 2) / 2) + Obj.YOffset, 0));
-							let BottomOfModel = BoundingBox.sub(new Vector3(0, BoundingBox.Y / 2, 0));
-							let EndCFrame = new CFrame(TopOfPart.add(BottomOfModel));
+							//let Coll = CollisionCalculator.Calculate(new CFrame(Terrain.RealPosition.Position.add(new Vector3(0, 50, 0))), Terrain.RealPosition.Position.sub(new Vector3(0, -5, 0)), 500, RayP);
+							let FullSizeOfModel = Obj.Model.GetExtentsSize();
 							Terrain.ModelToSpawnHere = Obj;
-							Terrain.SpawnModelAt = EndCFrame;
+							Terrain.SpawnModelAt = new CFrame(Terrain.RealPosition.Position.add(new Vector3(0, FullSizeOfModel.Y / 2 + Obj.YOffset, 0)));
 						}
 					}
 				}
@@ -129,7 +128,7 @@ export class TerrainHelper
 					Sleeper.Step();
 					let Terrain = CurrentTerrain[ThisOffset];
 
-					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * 40);
+					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * SNumbers.Terrain.TerrainElevation);
 
 					let Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
 					let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
@@ -179,7 +178,7 @@ export class TerrainHelper
 				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
 				let TR: TerrainResult | undefined = undefined;
 				let Elevation = this.TerrainReq.ElevationMap.Map[NormalX][NormalZ];
-				let FakeElevation = this.TerrainReq.SizePerCell * (Elevation * 40);
+				let FakeElevation = this.TerrainReq.SizePerCell * (Elevation * SNumbers.Terrain.TerrainElevation);
 				let Moisture = this.TerrainReq.MoistureMap.Map[NormalX][NormalZ];
 				let Temperature = this.TempMap[NormalX][NormalZ];
 

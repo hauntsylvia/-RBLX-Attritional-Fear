@@ -48,7 +48,7 @@ export class Tree implements ITerrainObject
 	MaximumMoisture: number = 1;
     MinimumElevation: number = 0;
 	MaximumElevation: number = 1;
-	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.2], [BiomeTypes.SnowForest, 0.2]]);
+	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.45], [BiomeTypes.SnowForest, 0.35]]);
 	Model: Model;
 	YOffset: number;
 }
