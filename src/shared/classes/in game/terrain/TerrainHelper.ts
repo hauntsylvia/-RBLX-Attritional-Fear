@@ -12,6 +12,7 @@ import { TerrainResult } from "./specifics/regions/TerrainResult";
 export class TerrainHelper
 {
 	static ModelsResized = false;
+	static Workspace = game.GetService("Workspace");
 
 	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = ModelSize, Sleeper: Sleep)
 	{
@@ -44,7 +45,7 @@ export class TerrainHelper
 
 	private TempMap: number[][];
 
-	FrameSteps: number = 5;
+	private TerrainCache: TerrainRegion[] = [];
 
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
@@ -58,11 +59,11 @@ export class TerrainHelper
 				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
 
 				let ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
-				ForgetAbout.push(game.GetService("Workspace").Terrain);
+				ForgetAbout.push(TerrainHelper.Workspace.Terrain);
 				let Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
 				if (Collision.isEmpty())
 				{
-					Clone.Parent = game.GetService("Workspace");
+					Clone.Parent = TerrainHelper.Workspace;
 					Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
 					Clone.SetPrimaryPartCFrame(Terrain.SpawnModelAt.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0)));
 				}
@@ -133,7 +134,7 @@ export class TerrainHelper
 					let Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
 					let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
 
-					let Part = new Instance("Part", game.GetService("Workspace"));
+					let Part = new Instance("Part", TerrainHelper.Workspace);
 					Part.Anchored = true;
 					Part.Name = "TerrainPart";
 					Part.Position = Pos;
@@ -144,16 +145,13 @@ export class TerrainHelper
 					let BB = Terrain.Biome;
 					Part.Size = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
 					Part.Position = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
-					game.GetService("Workspace").Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
-					//game.GetService("Workspace").Terrain.FillRegion(new Region3(Part.Position.div(2), Part.Size).ExpandToGrid(4), 4, BB.GroundMaterialDefault);
+					TerrainHelper.Workspace.Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
 					Part.Destroy();
-						//this.AlreadyRendered.push(new Vector2(Terrain.X, Terrain.Z));
 				}
 			});
 			Threads.push(Thread);
 		}
 		return Threads;
-		//game.GetService("Workspace").Terrain.FillCylinder(Part.CFrame, Part.Size.Y, Part.Size.X, Biome.GroundMaterialDefault);
 	}
 
 	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it

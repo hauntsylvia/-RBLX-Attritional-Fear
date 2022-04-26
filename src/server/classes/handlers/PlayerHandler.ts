@@ -36,8 +36,11 @@ export class PlayerHandler implements IHandler
             let SFoAPlayer = this.ServerData.CurrentActivePlayers.find(S => S.RobloxPlayerInstance.UserId === Player.UserId);
             if (SFoAPlayer !== undefined)
             {
-                let TerrSize = this.ServerData.TerrainData.Size / 2;
-                let NewFac = new FoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(math.random(-TerrSize, TerrSize / 2), 50, math.random(-TerrSize / 2, TerrSize / 2)), Arg.Title, Arg.Color);
+                let TerrSize = this.ServerData.TerrainData.Size * this.ServerData.TerrainData.Scale;
+                let AdjustedTerSize = TerrSize / 2;
+                let RanX = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
+                let RanZ = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
+                let NewFac = new FoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color);
                 this.ServerData.CurrentActiveFactions.push(NewFac);
                 return NewFac;
             }

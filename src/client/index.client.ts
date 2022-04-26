@@ -26,18 +26,18 @@ if (Self.Success && Self.Returned !== undefined)
 	{
 		print("Faction registered.");
 		let SpawnLoc = Faction.Returned.SpawnLocation;
+		print(SpawnLoc.X + ", " + SpawnLoc.Z);
 
-		Client.Camera.MoveCamera(new CFrame(SpawnLoc, Client.Camera.CurrentCamera.CFrame.LookVector));
+		Client.Camera.MoveCamera(SpawnLoc);
 
 		print("Loading spawn . .");
 		let ChunkSize = 1;
 		let FrameSkips = 120;
-		let StartPos =	new Vector2((SpawnLoc.X - 2000), (SpawnLoc.Z - 2000));
-		let EndPos =	new Vector2((SpawnLoc.X + 2000), (SpawnLoc.Z + 2000));
-		print(StartPos.X);
-		print(StartPos.Y);
-		print(EndPos.X);
-		print(EndPos.Y);
+		let Size = 2000;
+		let StartPos = new Vector2((SpawnLoc.X - Size), (SpawnLoc.Z - Size));
+		let EndPos = new Vector2((SpawnLoc.X + Size), (SpawnLoc.Z + Size));
+		print(StartPos.X + ", " + StartPos.Y);
+		print(EndPos.X + ", " + EndPos.Y);
 		let Time = os.clock();
 		let StartingArea = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
 		StartingArea.WaitUntilDone();
@@ -54,10 +54,5 @@ else
 {
 	print("No self player.");
 }
-
-
-//print("Connecting camera chunker . .");
-//Client.TerrainChunker.Connect();
-//print("Camera chunker connected.");
 
 export {};

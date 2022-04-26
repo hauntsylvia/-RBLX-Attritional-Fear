@@ -49,7 +49,7 @@ export class FoACamera // Omar, PhD* says hi
 	CameraYAngle: number = 0;
 
 	MinZoom: number = 20;
-	MaxZoom: number = 1000;
+	MaxZoom: number = game.GetService("RunService").IsStudio() ? 1000 : 350;
 
 	DisableVelocity ()
 	{
@@ -127,10 +127,10 @@ export class FoACamera // Omar, PhD* says hi
 		}
 	}
 
-	MoveCamera (MoveTo: CFrame)
+	MoveCamera (MoveTo: Vector3)
 	{
 		this.DisableVelocity();
-		let T = game.GetService("TweenService").Create(this.CurrentCamera, new TweenInfo(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0), { CFrame: MoveTo });
+		let T = game.GetService("TweenService").Create(this.CurrentCamera, new TweenInfo(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0), { CFrame: new CFrame(new Vector3(MoveTo.X, this.CurrentCamera.CFrame.Position.Y, MoveTo.Z)).mul(this.CurrentCamera.CFrame.sub(this.CurrentCamera.CFrame.Position)) });
 		T.Play();
 		while (T.PlaybackState !== Enum.PlaybackState.Completed && T.PlaybackState !== Enum.PlaybackState.Cancelled && T.PlaybackState !== Enum.PlaybackState.Paused) { wait(); }
 		this.EnableVelocity();
