@@ -1,35 +1,34 @@
 import { FoACamera } from "../../../../client/classes/camera/FoACamera";
 import { FoAClient } from "../../../../client/classes/clients/FoAClient";
+import { ISettingsInvolved } from "../../../../client/classes/clients/ISettingsInvolved";
 import { RenderTerrainResult } from "../../../../client/classes/processor results/RenderTerrainResult";
 import { TerrainProcessor } from "../../../../client/classes/processors/TerrainProcessor";
+import { FoAPlayerSettings } from "../players/personalizations/FoAPlayerSettings";
 import { ChunkSettings } from "../players/personalizations/specifics/ChunkSettings";
 import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 import { ServerTerrainRequest } from "./specifics/regions/ServerTerrainRequest";
 
-export class TerrainFollower
+export class TerrainFollower implements ISettingsInvolved
 {
-	constructor (Camera: FoACamera, TerrainP: TerrainProcessor, Settings?: ChunkSettings, ChunkSize: number = 50)
+	constructor (Camera: FoACamera, Settings: FoAPlayerSettings, TerrainP?: TerrainProcessor)
 	{
 		this.Follow = Camera;
 		this.TerrainP = TerrainP;
-		this.Settings = Settings ?? new ChunkSettings();
-		this.RenderAmount = this.Settings.ChunkDistancePerCycle;
-		this.ChunkSize = ChunkSize;
-		this.TimePerContentStreamUpdate = this.Settings.SecondsPerCycle;
-		this.Plr = game.GetService("Players").LocalPlayer;;
+		this.LoadNewSettings(Settings);
+		this.Plr = game.GetService("Players").LocalPlayer;
+		this.DoTerrain = TerrainP !== undefined;
 	}
-
 	Follow: FoACamera;
 
-	TerrainP: TerrainProcessor;
+	TerrainP?: TerrainProcessor;
 
-	Settings: ChunkSettings;
+	RenderAmount: number = 50;
 
-	RenderAmount: number;
+	ChunkSize: number = 1;
 
-	ChunkSize: number;
+	TimePerContentStreamUpdate: number = 5;
 
-	TimePerContentStreamUpdate: number;
+	DoTerrain: boolean = true;
 
 	private Signal?: RBXScriptConnection;
 
@@ -45,6 +44,12 @@ export class TerrainFollower
 		this.Signal?.Disconnect();
 	}
 
+	LoadNewSettings (Settings: FoAPlayerSettings) 
+	{
+		this.RenderAmount = (Settings.ChunkSettings ?? new ChunkSettings()).ChunkDistancePerCycle;
+		this.TimePerContentStreamUpdate = (Settings.ChunkSettings ?? new ChunkSettings()).SecondsPerCycle;
+	}
+
 	RenderRes?: RenderTerrainResult;
 	Step: number = 0;
 	RenderStepped (DeltaTime: number)
@@ -53,14 +58,13 @@ export class TerrainFollower
 		{
 			this.Step = 0;
 			this.Plr.RequestStreamAroundAsync(this.Follow.CurrentCamera.CFrame.Position);
-			if (this.RenderRes === undefined || (this.RenderRes !== undefined && this.RenderRes.Dead()))
+			if (this.TerrainP !== undefined && (this.RenderRes === undefined || (this.RenderRes !== undefined && this.RenderRes.Dead())))
 			{
 				let SpawnLoc = this.Follow.CurrentCamera.CFrame.Position;
 				let ChunkSize = 1;
 				let FrameSkips = 60;
 				let StartPos = new Vector2((SpawnLoc.X - this.RenderAmount), (SpawnLoc.Z - this.RenderAmount));
 				let EndPos = new Vector2((SpawnLoc.X + this.RenderAmount), (SpawnLoc.Z + this.RenderAmount));
-				let Time = os.clock();
 				this.RenderRes = this.TerrainP.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
 			}
 		}

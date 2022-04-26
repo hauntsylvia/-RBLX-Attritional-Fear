@@ -10,7 +10,7 @@ import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics
 import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHelper";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Sleep } from "../../../shared/classes/util/Sleep";
-import { AllBiomes, FallbackBiome, ModelSize } from "../../../shared/consts/Biomes";
+import { AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize } from "../../../shared/consts/Biomes";
 import { RenderTerrainResult } from "../processor results/RenderTerrainResult";
 import { Processor } from "./Processor";
 
@@ -20,7 +20,7 @@ export class TerrainProcessor extends Processor
     {
         super(Instance);
         this.MapData = this.GetMapData();
-        this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, ModelSize, new Sleep(500000));
+        this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize, new Sleep(500000));
     }
 
     MapData: TerrainRequest;

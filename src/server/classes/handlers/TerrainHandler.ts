@@ -8,7 +8,7 @@ import { Registers } from "../../../shared/consts/Registers";
 import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
 import { NoiseHelper } from "../../../shared/classes/in game/terrain/NoiseHelper";
 import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHelper";
-import { AllBiomes, FallbackBiome, ModelSize } from "../../../shared/consts/Biomes";
+import { AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize } from "../../../shared/consts/Biomes";
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
 import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
 import { ServerData } from "../server communication/ServerData";
@@ -53,7 +53,7 @@ export class TerrainHandler implements IHandler
 
     ServerRegistering (Data: ServerData)
     {
-        this.THelper = new TerrainHelper(new TerrainRequest(Data.TerrainData.EleMap, Data.TerrainData.MoistureMap, Data.TerrainData.Scale, 3), AllBiomes, FallbackBiome, ModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+        this.THelper = new TerrainHelper(new TerrainRequest(Data.TerrainData.EleMap, Data.TerrainData.MoistureMap, Data.TerrainData.Scale, 3), AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
         this.Terrain = this.THelper.GetTerrain(-(Data.TerrainData.Size / 2), -(Data.TerrainData.Size / 2), Data.TerrainData.Size / 2, Data.TerrainData.Size / 2);
         coroutine.resume(coroutine.create(() =>
         {

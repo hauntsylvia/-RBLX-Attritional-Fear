@@ -16,7 +16,7 @@ print("Constructing client . .");
 const Client = new FoAClient();
 print("Client constructed.");
 let Self = Client.PlayerProcessor.GetCurrentPlayer();
-Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings());
+Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(), Client.ObjectsProcessor);
 print(Self.Success);
 if (Self.Success && Self.Returned !== undefined)
 {
@@ -26,9 +26,13 @@ if (Self.Success && Self.Returned !== undefined)
 	{
 		print("Faction registered.");
 		let SpawnLoc = Faction.Returned.SpawnLocation;
-		print(SpawnLoc.X + ", " + SpawnLoc.Z);
-
 		Client.Camera.MoveCamera(SpawnLoc);
+		Client.TerrainChunker.Disconnect();
+		let RenderAmount = 2000;
+		let StartPos = new Vector2((SpawnLoc.X - RenderAmount), (SpawnLoc.Z - RenderAmount));
+		let EndPos = new Vector2((SpawnLoc.X + RenderAmount), (SpawnLoc.Z + RenderAmount));
+		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 120, 2);
+		Client.TerrainChunker.Connect();
 	}
 	else
 	{

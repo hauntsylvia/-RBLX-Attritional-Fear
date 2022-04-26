@@ -1,6 +1,7 @@
 import { TerrainFollower } from "../../../shared/classes/in game/terrain/TerrainFollower";
 import { FoACamera } from "../camera/FoACamera";
 import { LevelOfZoom } from "../camera/LevelOfZoom";
+import { InterfacingObjectsProcessor } from "../processors/InterfacingObjectsProcessor";
 import { PlayerProcessor } from "../processors/PlayerProcessor";
 import { TerrainProcessor } from "../processors/TerrainProcessor";
 
@@ -10,22 +11,17 @@ export class FoAClient
     {
         let RemoteFunction = this.WaitForServer();
 
+        this.ObjectsProcessor = new InterfacingObjectsProcessor(RemoteFunction);
         this.PlayerProcessor = new PlayerProcessor(RemoteFunction);
-        let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer();
-        if (CurrentPlayer.Returned !== undefined)
-        {
-            this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), CurrentPlayer.Returned.FoAPlayerSettings);
-            this.Camera.Connect();
+        this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
 
-            this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
+        let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer().Returned ?? error("No player loaded.");
 
-            this.TerrainChunker = new TerrainFollower(this.Camera, this.TerrainProcessor, CurrentPlayer.Returned.FoAPlayerSettings.ChunkSettings);
-            this.TerrainChunker.Connect();
-        }
-        else
-        {
-            error("No player was loaded.");
-		}
+        this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), CurrentPlayer.FoAPlayerSettings);
+        this.TerrainChunker = new TerrainFollower(this.Camera, CurrentPlayer.FoAPlayerSettings, this.TerrainProcessor);
+
+        this.ObjectsProcessor.NewClientObject(this.Camera);
+        this.ObjectsProcessor.NewClientObject(this.TerrainChunker);
     }
 
     PlayerProcessor: PlayerProcessor;
@@ -35,6 +31,8 @@ export class FoAClient
     TerrainProcessor: TerrainProcessor;
 
     TerrainChunker: TerrainFollower;
+
+    ObjectsProcessor: InterfacingObjectsProcessor;
 
     WaitForServer (): RemoteFunction
     {

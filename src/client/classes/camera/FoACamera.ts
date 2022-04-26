@@ -4,16 +4,17 @@ import { CameraHotkeys } from "../../../shared/classes/in game/players/personali
 import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPlayer";
 import { CollisionCalculator } from "../../../shared/classes/util/Collisions/CollisionCalculator";
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
+import { ISettingsInvolved } from "../clients/ISettingsInvolved";
 import { LevelOfZoom } from "./LevelOfZoom";
 
-export class FoACamera // Omar, PhD says hi
+export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 {
 	static ThisRenderStepLabel: string = "CameraOperation";
 
 	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera | undefined)
 	{
 		this.LevelsOfZoom = [CurrentLoZ];
-		this.LoadNewSettings(Settings.Hotkeys ?? new Hotkeys());
+		this.LoadNewSettings(Settings);
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
 		this.Player = game.GetService("Players").LocalPlayer;
@@ -71,9 +72,9 @@ export class FoACamera // Omar, PhD says hi
 		return this.ForwardVelocity !== 0 || this.ImmediateInwardVelocity !== 0 || this.RightVelocity !== 0 || this.RightRotationVelocity !== 0;
 	}
 
-	LoadNewSettings (Settings: Hotkeys)
+	LoadNewSettings (Settings: FoAPlayerSettings)
 	{
-		let Hk: CameraHotkeys = Settings.CameraHotkeys;
+		let Hk: CameraHotkeys = (Settings.Hotkeys ?? new Hotkeys()).CameraHotkeys;
 		let ForwardEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveForward);
 		let BackwardEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveBackward);
 		let LeftEnum = EnumParser.GetEnumFromString<Enum.KeyCode>(Hk.MoveLeft);
@@ -91,7 +92,8 @@ export class FoACamera // Omar, PhD says hi
 		}
 		else
 		{
-			this.LoadNewSettings(new Hotkeys())
+			Settings.Hotkeys = new Hotkeys();
+			this.LoadNewSettings(Settings);
 		}
 		this.CameraSpeed = Hk.CameraSpeed * this.CameraSpeed;
 		this.CameraZoomSteps = Hk.CameraZoomSensitivity * this.CameraZoomSteps;
@@ -101,7 +103,7 @@ export class FoACamera // Omar, PhD says hi
 	{
 		let LPlr = game.GetService("Players").LocalPlayer;
 		while ((LPlr.Character ?? LPlr.CharacterAdded.Wait()) === undefined) { wait(); }
-		wait(1);
+		wait(3);
 		this.InputChangedConnection = this.InputService.InputChanged.Connect((Inp, GameProc) => this.MouseScrollSet(Inp, GameProc))
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);

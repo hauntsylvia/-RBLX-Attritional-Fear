@@ -1,4 +1,4 @@
-import { AllBiomes, ModelSize } from "../../../consts/Biomes";
+import { AllBiomes, MaxModelSize, MinimumModelSize } from "../../../consts/Biomes";
 import { BiomeTypes } from "../../../consts/Enums";
 import { SNumbers } from "../../../consts/SNumbers";
 import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
@@ -12,38 +12,31 @@ import { TerrainResult } from "./specifics/regions/TerrainResult";
 
 export class TerrainHelper
 {
-	static ModelsResized = false;
-	static Workspace = game.GetService("Workspace");
-
-	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsTo: number = ModelSize, Sleeper: Sleep)
+	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsToMax: number = MaxModelSize, RescaleModelsToMin: number = MinimumModelSize, Sleeper: Sleep)
 	{
 		this.TerrainReq = Maps;
-		if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
-		{
-			TerrainHelper.ModelsResized = true;
-			AllBiomes.forEach(B =>
-			{
-				B.RandomObjects.forEach(Obj =>
-				{
-					Obj.Model = ModelResizer.ScaleModel(Obj.Model, RescaleModelsTo);
-				});
-			});
-		}
 		this.XWidth = Maps.ElevationMap.Height;
 		this.ZWidth = Maps.ElevationMap.Width
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
 		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width, Sleeper);
+		this.RescaleModelsToMax = RescaleModelsToMax;
+		this.RescaleModelsToMin = RescaleModelsToMin;
 	}
-
-	TerrainReq: TerrainRequest;
 
 	XWidth: number = 0;
 	ZWidth: number = 0;
+	RescaleModelsToMax: number = MaxModelSize;
+	RescaleModelsToMin: number = MinimumModelSize;
 
+	TerrainReq: TerrainRequest;
 	Biomes: Biome[];
 	FallbackBiome: Biome;
 
+	private static ModelsResized = false;
+	private static Workspace = game.GetService("Workspace");
+
+	private Random = new Random();
 	private TempMap: number[][];
 
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
@@ -52,11 +45,20 @@ export class TerrainHelper
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			let Terrain = CurrentTerrain[ThisOffset];
-			//this.AlreadyRendered.push(new Vector2(Terrain.X, Terrain.Z));
 			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 			{
 				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
-
+				if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
+				{
+					TerrainHelper.ModelsResized = true;
+					AllBiomes.forEach(B =>
+					{
+						B.RandomObjects.forEach(Obj =>
+						{
+							Obj.Model = ModelResizer.ScaleModel(Obj.Model, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
+						});
+					});
+				}
 				let ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
 				ForgetAbout.push(TerrainHelper.Workspace.Terrain);
 				let Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);

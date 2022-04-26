@@ -5,6 +5,7 @@ import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
+import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";
 import { Processor } from "./Processor";
 
 export class PlayerProcessor extends Processor
@@ -29,8 +30,9 @@ export class PlayerProcessor extends Processor
         return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
     }
 
-    SaveFoAPlayerSettings (SettingsToSave: FoAPlayerSettings): ServerResponse<ServerDataOperationResponse>
+    SaveFoAPlayerSettings (SettingsToSave: FoAPlayerSettings, HandlingProcessor: InterfacingObjectsProcessor): ServerResponse<ServerDataOperationResponse>
     {
+        HandlingProcessor.ChangedSettings(SettingsToSave);
         return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
 	}
 }
