@@ -1,4 +1,5 @@
 import { ResourceTypes } from "../../../../consts/Enums";
+import { CrewMember } from "../../vessels/CrewMember";
 import { FactoryOrder } from "../FactoryOrder";
 
 export class Resource
