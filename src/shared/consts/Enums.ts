@@ -26,3 +26,15 @@ export enum ResourceTypes
 	Water,
 	Wood
 }
+
+export enum PartTypes
+{
+	VesselFrame,
+	Engine,
+	FuelTank,
+	NavBridge,
+	CrewQ,
+
+	CargoHold,
+	Armament
+}
