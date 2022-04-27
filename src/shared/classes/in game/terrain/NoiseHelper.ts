@@ -29,6 +29,12 @@ export class NoiseHelper
 	static GenerateHeightmap (XStart: number, YStart: number, XMax: number, YMax: number, MapBoundaryWidth: number, Frequency: number, Z: number, Exponent: number, Sleeper: Sleep): number[][]
 	{
 		let Elevation: number[][] = [];
+		if (game.GetService("RunService").IsClient() && game.GetService("UserInputService").IsKeyDown(Enum.KeyCode.U))
+		{
+			print(XStart + ", " + YStart + " - NoiseHelper start.");
+			print(XMax + ", " + YMax + " - NoiseHelper end.");
+			print(MapBoundaryWidth + ", " + MapBoundaryWidth + " - NoiseHelper boundary.");
+		}
 		for (let X = XStart; X < MapBoundaryWidth && X < XMax; X++)
 		{
 			Elevation[X] = [];

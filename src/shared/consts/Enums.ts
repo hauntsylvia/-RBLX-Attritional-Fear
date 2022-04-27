@@ -15,3 +15,14 @@ export enum TreeTypes
 	Tree3,
 	SnowTree1
 }
+
+export enum ResourceTypes
+{
+	SteelAlloy,
+	Munition,
+	Food,
+	Iron,
+	Oil,
+	Water,
+	Wood
+}

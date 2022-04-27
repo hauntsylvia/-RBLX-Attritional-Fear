@@ -14,8 +14,8 @@ export class ServerData
 
 class ServerTerrainData
 {
-    TerrainRequest: TerrainRequest = new TerrainRequest(6000,
+    TerrainRequest: TerrainRequest = new TerrainRequest(1000 * 20, // 1000 meters * studs per meter
         0/*new Random().NextInteger(5, 10 ^ 26)*/,
-        0/*new Random().NextInteger(5, 10 ^ 26)*/,
+        512/*new Random().NextInteger(5, 10 ^ 26)*/,
         SNumbers.Terrain.SizePerCell, 0.8);
 }

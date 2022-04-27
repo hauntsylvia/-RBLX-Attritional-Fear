@@ -54,10 +54,10 @@ export class TerrainHandler implements IHandler
     ServerRegistering (Data: ServerData)
     {
         this.THelper = new TerrainHelper(Data.TerrainData.TerrainRequest, AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize);
-        this.Terrain = this.THelper.GetTerrain(-500, -500, 500, 500);
+        this.Terrain = this.THelper.GetTerrain(-200, -200, 200, 200);
         coroutine.resume(coroutine.create(() =>
         {
-            //let Sleeper = new Sleep(10);
+            //let Sleeper = new Sleep(5);
             //let Ts = this.THelper.GetThreadsForTerrainFilling(this.Terrain);
             //Ts.forEach(T =>
             //{

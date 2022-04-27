@@ -155,8 +155,6 @@ export class TerrainHelper
 		let OffsetZWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
 		let OffsetZWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
 
-		print("Map width: " + OffsetZWidthMax);
-
 		Xp = Xp < OffsetXWidthMin ? OffsetXWidthMin : Xp;
 		Zp = Zp < OffsetZWidthMin ? OffsetZWidthMin : Zp;
 		Xpt = Xpt > OffsetXWidthMax ? OffsetXWidthMax : Xpt;
@@ -167,14 +165,9 @@ export class TerrainHelper
 		let NormalXpt = Xpt + this.TerrainReq.MapBoundaryMax / 2;
 		let NormalZpt = Zpt + this.TerrainReq.MapBoundaryMax / 2;
 
-		let ElevationMap: number[][] = NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, 2, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		let MoistureMap: number[][] = NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, 2, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		let TemperatureMap: number[][] = NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-
-		if (game.GetService("RunService").IsClient() && game.GetService("UserInputService").IsKeyDown(Enum.KeyCode.U))
-		{
-			print(ElevationMap.size());
-		}
+		let ElevationMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		let MoistureMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		let TemperatureMap: number[][] =	NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
 
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
