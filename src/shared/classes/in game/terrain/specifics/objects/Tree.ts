@@ -5,7 +5,7 @@ import { ITerrainObject } from "./ITerrainObject";
 
 export class Tree implements ITerrainObject
 {
-	constructor (TreeModel: TreeTypes, YOffset: number)
+	constructor (TreeModel: TreeTypes)
 	{
 		if (TreeModel !== TreeTypes.SnowTree1)
 		{
@@ -25,7 +25,6 @@ export class Tree implements ITerrainObject
 			this.Model = M === undefined ? error("Snow tree gone :(") : M.IsA("Model") ? M as Model : error("Not a model.");
 		}
 		this.TreeModel = TreeModel;
-		this.YOffset = YOffset;
 	}
 	GeneratedByTerrain (TerrainCell: TerrainResult, Clone: Model)
 	{
@@ -55,5 +54,5 @@ export class Tree implements ITerrainObject
 			[BiomeTypes.SnowForest, 0.2],
 		]);
 	Model: Model;
-	YOffset: number;
+	YOffset: number = 7;
 }

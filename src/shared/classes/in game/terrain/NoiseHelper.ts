@@ -2,36 +2,19 @@ import { Sleep } from "../../util/Sleep";
 
 export class NoiseHelper
 {
-	constructor (Z: number, Height: number, Width: number, Frequency: number, Exponent: number, Sleeper: Sleep)
-	{
-		this.Height = Height;
-		this.Width = Width;
-		this.Frequency = Frequency;
-		this.Z = Z;
-		this.Exponent = Exponent;
-		this.Map = NoiseHelper.GenerateHeightmap(Height, Width, Frequency, Z, Exponent, Sleeper);
-	}
-
-	Height: number;
-	Width: number;
-	Frequency: number;
-	Z: number;
-	Exponent: number;
-	Map: number[][];
-
 	private static RidgedNoise (nx: number, ny: number, Z: number)
 	{
 		return 2 * (0.5 - math.abs(0.5 - (math.noise(nx, ny, Z) + 0.5)));
 	}
 
-	static GenerateTemperatureMap (Height: number, Width: number, Sleeper: Sleep): number[][]
+	static GenerateTemperatureMap (XStart: number, YStart: number, XMax: number, YMax: number, MapBoundaryMax: number, Sleeper: Sleep): number[][]
 	{
 		let NewMap: number[][] = [];
-		let EquatorAtY: number = Height / 2;
-		for (let X = 0; X < Height; X++)
+		let EquatorAtY: number = MapBoundaryMax / 2;
+		for (let X = XStart; X < MapBoundaryMax && X < XMax; X++)
 		{
 			NewMap[X] = [];
-			for (let Y = 0; Y < Width; Y++)
+			for (let Y = YStart; Y < MapBoundaryMax && Y < YMax; Y++)
 			{
 				Sleeper.Step();
 
@@ -43,14 +26,13 @@ export class NoiseHelper
 		return NewMap;
 	}
 
-	static GenerateHeightmap (Height: number, Width: number, Frequency: number, Z: number, Exponent: number, Sleeper: Sleep): number[][]
+	static GenerateHeightmap (XStart: number, YStart: number, XMax: number, YMax: number, MapBoundaryWidth: number, Frequency: number, Z: number, Exponent: number, Sleeper: Sleep): number[][]
 	{
-		print("Noisy!");
 		let Elevation: number[][] = [];
-		for (let X = 0; X < Height; X++)
+		for (let X = XStart; X < MapBoundaryWidth && X < XMax; X++)
 		{
 			Elevation[X] = [];
-			for (let Y = 0; Y < Width; Y++)
+			for (let Y = YStart; Y < MapBoundaryWidth && Y < YMax; Y++)
 			{
 				Sleeper.Step();
 				//this.Elevation[X][Y] = [];
@@ -62,8 +44,8 @@ export class NoiseHelper
 				//	let Noise = math.noise(nx * 4, ny * 4, nz * 4);
 				//	this.Elevation[X][Y][Z] = Noise + 0.5;
 				//}
-				let nx = X / Height - 0.5;
-				let ny = Y / Width - 0.5;
+				let nx = X / MapBoundaryWidth - 0.5;
+				let ny = Y / MapBoundaryWidth - 0.5;
 
 				//let Noise = (math.noise(nx * Frequency, ny * Frequency, Z) + 0.5);
 				//let E0 = Amp1 * this.RidgedNoise(1 / Amp1 * nx, 1 / Amp1 * ny, Z);
@@ -77,7 +59,6 @@ export class NoiseHelper
 				Elevation[X][Y] = math.clamp(E, 0, 1);
 			}
 		}
-		print("Quiet.");
 		return Elevation;
 	}
 }

@@ -12,20 +12,15 @@ import { TerrainResult } from "./specifics/regions/TerrainResult";
 
 export class TerrainHelper
 {
-	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsToMax: number = MaxModelSize, RescaleModelsToMin: number = MinimumModelSize, Sleeper: Sleep)
+	constructor (Maps: TerrainRequest, AllBiomes: Biome[], FallbackBiome: Biome, RescaleModelsToMax: number = MaxModelSize, RescaleModelsToMin: number = MinimumModelSize)
 	{
 		this.TerrainReq = Maps;
-		this.XWidth = Maps.ElevationMap.Height;
-		this.ZWidth = Maps.ElevationMap.Width
 		this.Biomes = AllBiomes;
 		this.FallbackBiome = FallbackBiome;
-		this.TempMap = NoiseHelper.GenerateTemperatureMap(Maps.ElevationMap.Height, Maps.ElevationMap.Width, Sleeper);
 		this.RescaleModelsToMax = RescaleModelsToMax;
 		this.RescaleModelsToMin = RescaleModelsToMin;
 	}
 
-	XWidth: number = 0;
-	ZWidth: number = 0;
 	RescaleModelsToMax: number = MaxModelSize;
 	RescaleModelsToMin: number = MinimumModelSize;
 
@@ -37,7 +32,6 @@ export class TerrainHelper
 	private static Workspace = game.GetService("Workspace");
 
 	private Random = new Random();
-	private TempMap: number[][];
 
 	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
@@ -51,13 +45,7 @@ export class TerrainHelper
 				if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
 				{
 					TerrainHelper.ModelsResized = true;
-					AllBiomes.forEach(B =>
-					{
-						B.RandomObjects.forEach(Obj =>
-						{
-							Obj.Model = ModelResizer.ScaleModel(Obj.Model, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
-						});
-					});
+					Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
 				}
 				let ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
 				ForgetAbout.push(TerrainHelper.Workspace.Terrain);
@@ -159,30 +147,46 @@ export class TerrainHelper
 	// to the center of the real world space.
 	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
-		let Stepper = new Sleep(7000);
+		let Stepper = new Sleep(70000);
 		let T: TerrainResult[] = [];
-		let OffsetXWidthMin = -(this.XWidth / 2);
-		let OffsetXWidthMax = (this.XWidth / 2);
+		let OffsetXWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
+		let OffsetXWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
 
-		let OffsetZWidthMin = -(this.ZWidth / 2);
-		let OffsetZWidthMax = (this.ZWidth / 2);
+		let OffsetZWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
+		let OffsetZWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
+
+		print("Map width: " + OffsetZWidthMax);
 
 		Xp = Xp < OffsetXWidthMin ? OffsetXWidthMin : Xp;
 		Zp = Zp < OffsetZWidthMin ? OffsetZWidthMin : Zp;
 		Xpt = Xpt > OffsetXWidthMax ? OffsetXWidthMax : Xpt;
 		Zpt = Zpt > OffsetZWidthMax ? OffsetZWidthMax : Zpt;
 
+		let NormalXp = Xp + this.TerrainReq.MapBoundaryMax / 2;
+		let NormalZp = Zp + this.TerrainReq.MapBoundaryMax / 2;
+		let NormalXpt = Xpt + this.TerrainReq.MapBoundaryMax / 2;
+		let NormalZpt = Zpt + this.TerrainReq.MapBoundaryMax / 2;
+
+		let ElevationMap: number[][] = NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, 2, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		let MoistureMap: number[][] = NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, 2, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		let TemperatureMap: number[][] = NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+
+		if (game.GetService("RunService").IsClient() && game.GetService("UserInputService").IsKeyDown(Enum.KeyCode.U))
+		{
+			print(ElevationMap.size());
+		}
+
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
-			let NormalX = RealWorldRequestedX + this.XWidth / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
+			let NormalX = RealWorldRequestedX + this.TerrainReq.MapBoundaryMax / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
 			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < OffsetZWidthMax && RealWorldRequestedZ >= OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
-				let NormalZ = RealWorldRequestedZ + this.ZWidth / 2;
+				let NormalZ = RealWorldRequestedZ + this.TerrainReq.MapBoundaryMax / 2;
 				let TR: TerrainResult | undefined = undefined;
-				let Elevation = this.TerrainReq.ElevationMap.Map[NormalX][NormalZ];
+				let Elevation = ElevationMap[NormalX][NormalZ];
 				let FakeElevation = this.TerrainReq.SizePerCell * (Elevation * SNumbers.Terrain.TerrainElevation);
-				let Moisture = this.TerrainReq.MoistureMap.Map[NormalX][NormalZ];
-				let Temperature = this.TempMap[NormalX][NormalZ];
+				let Moisture = MoistureMap[NormalX][NormalZ];
+				let Temperature = TemperatureMap[NormalX][NormalZ];
 
 				let Pos = new CFrame(RealWorldRequestedX * this.TerrainReq.SizePerCell, FakeElevation, RealWorldRequestedZ * this.TerrainReq.SizePerCell);
 

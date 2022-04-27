@@ -1,6 +1,7 @@
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { NoiseHelper } from "../../../shared/classes/in game/terrain/NoiseHelper";
+import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 import { SNumbers } from "../../../shared/consts/SNumbers";
 
@@ -13,8 +14,8 @@ export class ServerData
 
 class ServerTerrainData
 {
-    Size: number = 500;
-    EleMap: NoiseHelper = new NoiseHelper(new Random().NextInteger(5, 10 ^ 26), this.Size, this.Size, 2, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-    MoistureMap: NoiseHelper = new NoiseHelper(new Random().NextInteger(5, 10 ^ 26), this.Size, this.Size, 12, 2, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-    Scale: number = SNumbers.Terrain.SizePerCell;
+    TerrainRequest: TerrainRequest = new TerrainRequest(6000,
+        0/*new Random().NextInteger(5, 10 ^ 26)*/,
+        0/*new Random().NextInteger(5, 10 ^ 26)*/,
+        SNumbers.Terrain.SizePerCell, 0.8);
 }

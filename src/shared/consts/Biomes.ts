@@ -5,13 +5,13 @@ import { BiomeTypes, TreeTypes } from "./Enums";
 
 const AllBiomes: Biome[] =
 	[
-		new Biome(0.5, 0.05, 1.0, 0.25, 1.0, 0.5, [new Tree(TreeTypes.Tree1, 2), new Tree(TreeTypes.Tree2, 2), new Tree(TreeTypes.Tree3, 2)], Enum.Material.Mud, BiomeTypes.Beach),
+		new Biome(0.5, 0.05, 1.0, 0.25, 1.0, 0.5, [new Tree(TreeTypes.Tree1), new Tree(TreeTypes.Tree2), new Tree(TreeTypes.Tree3)], Enum.Material.Mud, BiomeTypes.Beach),
 
-		new Biome(0.8, 0.05, 1.0, 0.1, 0.5, 0.0, [new Tree(TreeTypes.SnowTree1, 2)], Enum.Material.Snow, BiomeTypes.SnowForest),
-		new Biome(0.8, 0.05, 1.0, 0.1, 1.0, 0.0, [new Tree(0, 2), new Tree(1, 2), new Tree(2, 2)], Enum.Material.Grass, BiomeTypes.Forest),
+		new Biome(0.8, 0.05, 1.0, 0.1, 0.5, 0.0, [new Tree(TreeTypes.SnowTree1)], Enum.Material.Snow, BiomeTypes.SnowForest),
+		new Biome(0.8, 0.05, 1.0, 0.1, 1.0, 0.0, [new Tree(0), new Tree(1), new Tree(2)], Enum.Material.Grass, BiomeTypes.Forest),
 	];
 
-const FallbackBiome = new Biome(0, 0, 1, 0, 0.5, 0, [new Church(2), new Tree(TreeTypes.Tree1, 2), new Tree(TreeTypes.Tree2, 2), new Tree(TreeTypes.Tree3, 2)], Enum.Material.LeafyGrass, BiomeTypes.Forest);
+const FallbackBiome = new Biome(1, 0, 1, 0, 1, 0, [new Tree(TreeTypes.Tree1), new Tree(TreeTypes.Tree2), new Tree(TreeTypes.Tree3)], Enum.Material.LeafyGrass, BiomeTypes.Forest);
 const MaxModelSize = 1.1;
 const MinimumModelSize = 0.5;
 
