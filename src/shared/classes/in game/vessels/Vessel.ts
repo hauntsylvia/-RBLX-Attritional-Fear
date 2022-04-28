@@ -21,6 +21,11 @@ export class Vessel
 
 	Crew: CrewMember[];
 
+	static MoveVesselTo (V: Vessel, MoveTo: CFrame)
+	{
+
+	}
+
 	static GetPartsOfType<T extends VesselPart> (V: Vessel, PartTypeEnum: PartTypes): T[]
 	{
 		let Ret: T[] = [];

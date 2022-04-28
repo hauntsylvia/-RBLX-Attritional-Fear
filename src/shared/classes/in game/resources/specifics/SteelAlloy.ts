@@ -1,11 +1,11 @@
 import { ResourceTypes } from "../../../../consts/Enums";
 import { FactoryOrder } from "../FactoryOrder";
-import { Resource } from "./Resource";
+import { Storable } from "./Resource";
 
-export class SteelAlloy extends Resource
+export class SteelAlloy extends Storable
 {
-	constructor (ParentOrder: FactoryOrder, WeightInKG: number)
+	constructor (ParentOrder: FactoryOrder, WeightInKG: number, LengthInMM: number, WidthInMM: number, HeightInMM: number)
 	{
-		super(ResourceTypes.SteelAlloy, ParentOrder, WeightInKG);
+		super(ResourceTypes.SteelAlloy, ParentOrder, WeightInKG, LengthInMM, WidthInMM, HeightInMM);
 	}
 }

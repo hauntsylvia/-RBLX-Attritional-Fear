@@ -1,10 +1,10 @@
 import { PartTypes } from "../../../../consts/Enums";
-import { Resource } from "../../resources/specifics/Resource";
+import { Storable } from "../../resources/specifics/Resource";
 import { StorageContainer } from "../../resources/StorageContainer";
 
 export class VesselPart
 {
-	constructor (Type: PartTypes, ModelOfPart: Model, WeightInKG: number, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Resource[])
+	constructor (Type: PartTypes, ModelOfPart: Model, WeightInKG: number, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[])
 	{
 		this.Type = Type;
 		this.ModelOfPart = ModelOfPart;
@@ -21,5 +21,5 @@ export class VesselPart
 
 	StorageOfPart: StorageContainer;
 
-	ResourcesConsumedByPart: Resource[];
+	ResourcesConsumedByPart: Storable[];
 }

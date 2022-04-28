@@ -27,6 +27,12 @@ export enum ResourceTypes
 	Wood
 }
 
+export enum StorableTypes
+{
+	Resource,
+	Vessel
+}
+
 export enum PartTypes
 {
 	VesselFrame,

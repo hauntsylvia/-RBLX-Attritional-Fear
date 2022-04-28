@@ -1,13 +1,13 @@
 import { ResourceTypes } from "../../../../consts/Enums";
 import { IFactory } from "../../buildings/interfaces/IFactory";
 import { FactoryOrder } from "../FactoryOrder";
-import { Resource } from "./Resource";
+import { Storable } from "./Resource";
 
-export class Munition extends Resource
+export class Munition extends Storable
 {
-	constructor (ParentOrder: FactoryOrder, WeightInKG: number, MMCaliber: number)
+	constructor (ParentOrder: FactoryOrder, WeightInKG: number, LengthInMM: number, WidthInMM: number, HeightInMM: number, MMCaliber: number)
 	{
-		super(ResourceTypes.Munition, ParentOrder, WeightInKG);
+		super(ResourceTypes.Munition, ParentOrder, WeightInKG, LengthInMM, WidthInMM, HeightInMM);
 		this.MMCaliber = MMCaliber;
 	}
 

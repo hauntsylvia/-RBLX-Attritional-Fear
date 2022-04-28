@@ -1,24 +1,24 @@
 import { ResourceTypes } from "../../../consts/Enums";
-import { Resource } from "./specifics/Resource";
+import { Storable } from "./specifics/Resource";
 
 export class StorageContainer
 {
-	constructor (MaxResourceHold: Resource[], CurrentResources: Resource[], MaxVesselHold: number = 0)
+	constructor (MaxResourceHold: Storable[], CurrentResources: Storable[], MaxVesselHold: number = 0)
 	{
 		this.MaxResourceHold = MaxResourceHold;
 		this.CurrentResources = CurrentResources;
 		this.MaxVesselHold = MaxVesselHold;
 	}
 
-	MaxResourceHold: Resource[];
+	MaxResourceHold: Storable[];
 
-	CurrentResources: Resource[];
+	CurrentResources: Storable[];
 
 	MaxVesselHold: number;
 
-	static AddResourcesToPool (Pool: Resource[], Add: Resource[]): Resource[]
+	static AddResourcesToPool (Pool: Storable[], Add: Storable[]): Storable[]
 	{
-		let R: Resource[] = Pool;
+		let R: Storable[] = Pool;
 		Add.forEach(ToPush =>
 		{
 			R.push(ToPush);
@@ -26,7 +26,7 @@ export class StorageContainer
 		return R;
 	}
 
-	static ContainsResources (Types: ResourceTypes[], Contains: Resource[], ResourcesToCheckAgainst: Resource[]): boolean
+	static ContainsResources (Types: ResourceTypes[], Contains: Storable[], ResourcesToCheckAgainst: Storable[]): boolean
 	{
 		let ToRet = false;
 		Types.forEach(T =>
@@ -41,12 +41,12 @@ export class StorageContainer
 		return ToRet;
 	}
 
-	static GetResourcesOfType (T: ResourceTypes, Resources: Resource[]): Resource[]
+	static GetResourcesOfType (T: ResourceTypes, Resources: Storable[]): Storable[]
 	{
 		return Resources.filter(R => R.TypeOfResource === T);
 	}
 
-	static GetTotalWeightByType (T: ResourceTypes, Resources: Resource[]): number
+	static GetTotalWeightByType (T: ResourceTypes, Resources: Storable[]): number
 	{
 		let TotalWeightOfCurrentResource = 0;
 		let AllResourcesOfType = StorageContainer.GetResourcesOfType(T, Resources);
