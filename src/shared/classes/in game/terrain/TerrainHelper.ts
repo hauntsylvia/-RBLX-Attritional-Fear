@@ -1,5 +1,5 @@
 import { AllBiomes, MaxModelSize, MinimumModelSize } from "../../../consts/Biomes";
-import { BiomeTypes } from "../../../consts/Enums";
+import { BiomeType } from "../../../consts/Enums";
 import { SNumbers } from "../../../consts/SNumbers";
 import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
 import { ModelResizer } from "../../util/ModelResizer";
@@ -132,8 +132,8 @@ export class TerrainHelper
 					Part.Transparency = 1;
 
 					let BB = Terrain.Biome;
-					Part.Size = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
-					Part.Position = BB.BiomeEnum === BiomeTypes.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
+					Part.Size = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
+					Part.Position = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
 					TerrainHelper.Workspace.Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
 					Part.Destroy();
 				}

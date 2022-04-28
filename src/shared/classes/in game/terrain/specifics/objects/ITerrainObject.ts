@@ -1,9 +1,9 @@
-import { BiomeTypes } from "../../../../../consts/Enums";
+import { BiomeType } from "../../../../../consts/Enums";
 import { TerrainResult } from "../regions/TerrainResult";
 
 export interface ITerrainObject
 {
-	BiomesAndRarity: Map<BiomeTypes, number>;
+	BiomesAndRarity: Map<BiomeType, number>;
 	Model: Model;
 	YOffset: number;
 	MinimumElevation: number;

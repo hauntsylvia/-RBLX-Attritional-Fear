@@ -1,4 +1,4 @@
-export enum BiomeTypes
+export enum BiomeType
 {
 	Ocean,
 	Forest,
@@ -8,7 +8,7 @@ export enum BiomeTypes
 	MountainTop
 };
 
-export enum TreeTypes
+export enum TreeType
 {
 	Tree1,
 	Tree2,
@@ -16,7 +16,7 @@ export enum TreeTypes
 	SnowTree1
 }
 
-export enum ResourceTypes
+export enum StorableType
 {
 	SteelAlloy,
 	Munition,
@@ -24,16 +24,12 @@ export enum ResourceTypes
 	Iron,
 	Oil,
 	Water,
-	Wood
-}
+	Wood,
 
-export enum StorableTypes
-{
-	Resource,
 	Vessel
 }
 
-export enum PartTypes
+export enum PartType
 {
 	VesselFrame,
 	Engine,

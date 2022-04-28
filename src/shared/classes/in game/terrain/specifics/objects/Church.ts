@@ -1,4 +1,4 @@
-import { BiomeTypes } from "../../../../../consts/Enums";
+import { BiomeType } from "../../../../../consts/Enums";
 import { Strings } from "../../../../../consts/Strings";
 import { TerrainResult } from "../regions/TerrainResult";
 import { ITerrainObject } from "./ITerrainObject";
@@ -23,7 +23,7 @@ export class Church implements ITerrainObject
 	MinimumMoisture: number = 0;
 	MaximumMoisture: number = 1;
 
-	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>([[BiomeTypes.Forest, 0.00001]]);
+	BiomesAndRarity: Map<BiomeType, number> = new Map<BiomeType, number>([[BiomeType.Forest, 0.00001]]);
 	Model: Model;
 	YOffset: number;
 }

@@ -1,4 +1,4 @@
-import { BiomeTypes } from "../../../../../consts/Enums";
+import { BiomeType } from "../../../../../consts/Enums";
 import { ITerrainObject } from "../objects/ITerrainObject";
 
 export class Biome
@@ -14,7 +14,7 @@ export class Biome
 		MinimumTemp: number,
 
 		RandomObjects: ITerrainObject[],
-		GroundMaterialDefault: Enum.Material, BiomeEnum: BiomeTypes)
+		GroundMaterialDefault: Enum.Material, BiomeEnum: BiomeType)
 	{
 		this.MaximumElevation = MaximumElevation;
 		this.MinimumElevation = MinimumElevation;
@@ -44,5 +44,5 @@ export class Biome
 
 	GroundMaterialDefault: Enum.Material;
 
-	BiomeEnum: BiomeTypes;
+	BiomeEnum: BiomeType;
 }

@@ -1,13 +1,13 @@
-import { BiomeTypes, TreeTypes } from "../../../../../consts/Enums";
+import { BiomeType, TreeType } from "../../../../../consts/Enums";
 import { Strings } from "../../../../../consts/Strings";
 import { TerrainResult } from "../regions/TerrainResult";
 import { ITerrainObject } from "./ITerrainObject";
 
 export class Tree implements ITerrainObject
 {
-	constructor (TreeModel: TreeTypes)
+	constructor (TreeModel: TreeType)
 	{
-		if (TreeModel !== TreeTypes.SnowTree1)
+		if (TreeModel !== TreeType.SnowTree1)
 		{
 			let Children = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Trees", 5)?.GetChildren();
 			if (Children !== undefined)
@@ -28,7 +28,7 @@ export class Tree implements ITerrainObject
 	}
 	GeneratedByTerrain (TerrainCell: TerrainResult, Clone: Model)
 	{
-		if (this.TreeModel === TreeTypes.SnowTree1)
+		if (this.TreeModel === TreeType.SnowTree1)
 		{
 			let Body = Clone.FindFirstChild("Body");
 			if (Body !== undefined && Body.IsA("MeshPart"))
@@ -40,18 +40,18 @@ export class Tree implements ITerrainObject
 			}
 		}
 	}
-	TreeModel: TreeTypes;
+	TreeModel: TreeType;
     MinimumTemperature: number = 0;
 	MaximumTemperature: number = 1;
 	MinimumMoisture: number = 0;
 	MaximumMoisture: number = 1;
     MinimumElevation: number = 0;
 	MaximumElevation: number = 1;
-	BiomesAndRarity: Map<BiomeTypes, number> = new Map<BiomeTypes, number>(
+	BiomesAndRarity: Map<BiomeType, number> = new Map<BiomeType, number>(
 		[
-			[BiomeTypes.Beach, 0.2],
-			[BiomeTypes.Forest, 0.2],
-			[BiomeTypes.SnowForest, 0.2],
+			[BiomeType.Beach, 0.2],
+			[BiomeType.Forest, 0.2],
+			[BiomeType.SnowForest, 0.2],
 		]);
 	Model: Model;
 	YOffset: number = 7;

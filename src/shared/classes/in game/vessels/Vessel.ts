@@ -1,4 +1,4 @@
-import { PartTypes } from "../../../consts/Enums";
+import { PartType } from "../../../consts/Enums";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
 import { Engine } from "./parts/specifics/Engine";
@@ -26,7 +26,7 @@ export class Vessel
 
 	}
 
-	static GetPartsOfType<T extends VesselPart> (V: Vessel, PartTypeEnum: PartTypes): T[]
+	static GetPartsOfType<T extends VesselPart> (V: Vessel, PartTypeEnum: PartType): T[]
 	{
 		let Ret: T[] = [];
 		V.VesselParts.forEach(P =>
@@ -51,8 +51,8 @@ export class Vessel
 			});
 		});
 
-		let Engines = Vessel.GetPartsOfType<Engine>(V, PartTypes.Engine);
-		let Frame = Vessel.GetPartsOfType<VesselFrame>(V, PartTypes.VesselFrame)[0];
+		let Engines = Vessel.GetPartsOfType<Engine>(V, PartType.Engine);
+		let Frame = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame)[0];
 
 		let TotalMaxSpeed = 0;
 		Engines.forEach(E =>
