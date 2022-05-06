@@ -9,9 +9,7 @@ import { LevelOfZoom } from "./LevelOfZoom";
 
 export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 {
-	static ThisRenderStepLabel: string = "CameraOperation";
-
-	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera | undefined)
+	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera)
 	{
 		this.LevelsOfZoom = [CurrentLoZ];
 		this.LoadNewSettings(Settings);
@@ -20,11 +18,13 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 		this.Player = game.GetService("Players").LocalPlayer;
 	}
 
+	static ThisRenderStepLabel: string = "CameraOperation";
+
 	LevelsOfZoom: LevelOfZoom[];
 
 	CurrentCamera: Camera;
 
-	InputChangedConnection: RBXScriptConnection | undefined;
+	InputChangedConnection?: RBXScriptConnection;
 
 	InputService: UserInputService;
 

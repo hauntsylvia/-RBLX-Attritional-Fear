@@ -10,8 +10,6 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
 
-print("Waiting for server to be ready . .");
-print("Server is accepting requests.");
 print("Constructing client . .");
 const Client = new FoAClient();
 print("Client constructed.");

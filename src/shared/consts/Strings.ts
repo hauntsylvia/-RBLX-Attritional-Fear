@@ -1,14 +1,14 @@
 export enum FactionTitleKeys
 {
     Manufacturer = 0,
-    OilCollector,
-    SteelHoarder,
-    Dreadful,
-    DreadnoughtKiller,
-    Prospector,
-    Atomic,
-    Anomic,
-    AirTraverser
+    OilCollector = 1,
+    SteelHoarder = 2,
+    Dreadful = 3,
+    DreadnoughtKiller = 4,
+    Prospector = 5,
+    Atomic = 6,
+    Anomic = 7,
+    AirTraverser = 8
 }
 export class Strings
 {

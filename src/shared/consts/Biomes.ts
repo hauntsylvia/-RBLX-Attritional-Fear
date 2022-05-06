@@ -9,10 +9,6 @@ const AllBiomes: Biome[] =
 			[new Tree(TreeType.Tree1), new Tree(TreeType.Tree2), new Tree(TreeType.Tree3)],
 			Enum.Material.Mud, BiomeType.Beach),
 
-		new Biome(0.8, 0.05, 1.0, 0.1, 0.5, 0.0,
-			[new Tree(TreeType.SnowTree1)],
-			Enum.Material.Snow, BiomeType.SnowForest),
-
 		new Biome(0.8, 0.05, 1.0, 0.1, 1.0, 0.0,
 			[new Tree(TreeType.Tree1), new Tree(TreeType.Tree2), new Tree(TreeType.Tree3)],
 			Enum.Material.Grass, BiomeType.Forest),

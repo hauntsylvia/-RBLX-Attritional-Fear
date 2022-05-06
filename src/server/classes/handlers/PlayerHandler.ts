@@ -31,7 +31,7 @@ export class PlayerHandler implements IHandler
 
     RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
     {
-        if (!this.ServerData.CurrentActiveFactions.some(Faction => Faction.Player.RobloxPlayerInstance.UserId === Player.UserId))
+        if (!this.ServerData.CurrentActiveFactions.some(Faction => Faction.UserId === Player.UserId))
         {
             let SFoAPlayer = this.ServerData.CurrentActivePlayers.find(S => S.RobloxPlayerInstance.UserId === Player.UserId);
             if (SFoAPlayer !== undefined)
