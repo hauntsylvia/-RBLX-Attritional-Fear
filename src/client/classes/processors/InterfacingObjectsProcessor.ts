@@ -13,7 +13,6 @@ export class InterfacingObjectsProcessor extends Processor
 
     NewClientObject (Entangled: ISettingsInvolved)
     {
-        Entangled.Connect();
         this.Entangled.push(Entangled);
 	}
 

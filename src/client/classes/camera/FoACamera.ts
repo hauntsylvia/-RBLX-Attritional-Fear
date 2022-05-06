@@ -107,7 +107,6 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 		this.InputChangedConnection = this.InputService.InputChanged.Connect((Inp, GameProc) => this.MouseScrollSet(Inp, GameProc))
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);
-		this.CurrentCamera.CameraSubject = undefined;
 		this.CurrentCamera.FieldOfView = 90;
 		game.GetService("RunService").BindToRenderStep(FoACamera.ThisRenderStepLabel, Enum.RenderPriority.Camera.Value, (DT) => this.RenderStepped(DT));
 	}
@@ -140,6 +139,8 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 
 	UpdateCamera (MoveTo: CFrame)
 	{
+		this.CurrentCamera.CameraSubject = undefined;
+
 		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.2);
 	}
 

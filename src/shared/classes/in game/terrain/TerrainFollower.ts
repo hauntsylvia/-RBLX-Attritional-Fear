@@ -18,6 +18,7 @@ export class TerrainFollower implements ISettingsInvolved
 		this.Plr = game.GetService("Players").LocalPlayer;
 		this.DoTerrain = TerrainP !== undefined;
 	}
+
 	Follow: FoACamera;
 
 	TerrainP?: TerrainProcessor;
@@ -26,7 +27,7 @@ export class TerrainFollower implements ISettingsInvolved
 
 	ChunkSize: number = 1;
 
-	TimePerContentStreamUpdate: number = 5;
+	TimePerContentStreamUpdate: number = 2;
 
 	DoTerrain: boolean = true;
 
