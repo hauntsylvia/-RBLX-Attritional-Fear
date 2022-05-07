@@ -40,3 +40,9 @@ export enum PartType
 	CargoHold,
 	Armament
 }
+
+export enum Species
+{
+	Vessel,
+	Human
+}
