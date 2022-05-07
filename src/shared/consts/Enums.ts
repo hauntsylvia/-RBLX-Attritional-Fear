@@ -16,7 +16,7 @@ export enum TreeType
 	SnowTree1
 }
 
-export enum StorableType
+export enum ResourceType
 {
 	SteelAlloy,
 	Munition,

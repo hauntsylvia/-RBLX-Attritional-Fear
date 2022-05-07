@@ -1,4 +1,5 @@
 import { PartType } from "../../../consts/Enums";
+import { Storable } from "../resources/specifics/Resource";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
 import { Engine } from "./parts/specifics/Engine";
@@ -44,10 +45,10 @@ export class Vessel
 		let TotalWeightIncResources = 0;
 		V.VesselParts.forEach(P =>
 		{
-			TotalWeightIncResources = P.WeightInKG;
+			TotalWeightIncResources = P.WeightInG;
 			P.StorageOfPart.CurrentResources.forEach(CRes =>
 			{
-				TotalWeightIncResources += CRes.WeightInKG;
+				TotalWeightIncResources += Storable.GetWeightInG(CRes);
 			});
 		});
 
@@ -57,7 +58,7 @@ export class Vessel
 		let TotalMaxSpeed = 0;
 		Engines.forEach(E =>
 		{
-			TotalMaxSpeed += E.TimeToMove1000KGOfMass1StudInSeconds * (1000 / TotalWeightIncResources);
+			TotalMaxSpeed += E.TimeToMove1000GOfMass1StudInSeconds * (1000 / TotalWeightIncResources);
 		});
 		let MaxRotSpeed = Frame.TimeToMove1000KGOfMass1DegreeInSeconds * (1000 / TotalWeightIncResources);
 		
