@@ -1,15 +1,18 @@
 import { PartType } from "../../../../../consts/Enums";
+import { Geometry } from "../../../../util/Measurements/Geometry";
+import { Speed } from "../../../../util/Measurements/Speed";
+import { IEntityPart } from "../../../entities/IEntityPart";
 import { Storable } from "../../../resources/specifics/Resource";
 import { StorageContainer } from "../../../resources/StorageContainer";
 import { VesselPart } from "../VesselPart";
 
 export class VesselFrame extends VesselPart
 {
-	constructor (Type: PartType, ModelOfPart: Model, WeightInKG: number, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], TimeToMove1000KGOfMass1DegreeInSeconds: number)
+	constructor (EntityParts: IEntityPart[], Name: string, Type: PartType, ModelOfPart: Model, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], SpeedAtBase: Speed)
 	{
-		super(Type, ModelOfPart, WeightInKG, StorageOfPart, ResourcesConsumedByPart);
-		this.TimeToMove1000KGOfMass1DegreeInSeconds = TimeToMove1000KGOfMass1DegreeInSeconds;
+		super(EntityParts, Name, Type, ModelOfPart, StorageOfPart, ResourcesConsumedByPart);
+		this.SpeedAtBase = SpeedAtBase;
 	}
 
-	TimeToMove1000KGOfMass1DegreeInSeconds: number = 5;
+	SpeedAtBase: Speed;
 }

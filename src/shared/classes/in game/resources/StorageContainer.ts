@@ -1,52 +1,37 @@
-import { ResourceType } from "../../../consts/Enums";
+import { MetricPrefixes, ResourceType } from "../../../consts/Enums";
+import { Geometry } from "../../util/Measurements/Geometry";
+import { Mass } from "../../util/Measurements/Mass";
+import { Volume } from "../../util/Measurements/Volume";
 import { Storable } from "./specifics/Resource";
 
 export class StorageContainer
 {
-	constructor (VolumeCubicMeters: number, CurrentResources: Storable[])
+	constructor (CurrentResources: Storable[], Geometry: Geometry)
 	{
-		this.VolumeCubicMeters = VolumeCubicMeters;
 		this.CurrentResources = CurrentResources;
+		this.Geometry = Geometry;
 	}
 
-	VolumeCubicMeters: number;
+	private CurrentResources: Storable[];
 
-	CurrentResources: Storable[];
+	private Geometry: Geometry;
 
 	/**
-	 * Returns the current pool with the added resources.
+	 * Returns the current pool with the added resources. Doesn't add them if the geometry's volume of a resource is greater than the volume of the storage container's geometry.
 	 * @param Pool	The pool to modify.
 	 * @param Add	The resources to add to the pool.
 	 */
-	static AddResourcesToPool (Pool: Storable[], Add: Storable[]): Storable[]
+	static AddResourcesToPool (Units: MetricPrefixes, Pool: Storable[], Add: Storable[]): Storable[]
 	{
 		let R: Storable[] = Pool;
 		Add.forEach(ToPush =>
 		{
-			R.push(ToPush);
-		});
-		return R;
-	}
-
-	/**
-	 * Returns true if the volume of all types is greater than or equal to the given resources.
-	 * @param Types Indicates all types of resources to check the volume of.
-	 * @param Pool	The current pool of resources.
-	 * @param ResourcesToCheckAgainst The resources to check the volume of in the pool.
-	 */
-	static ContainsResources (Types: ResourceType[], Pool: Storable[], ResourcesToCheckAgainst: Storable[]): boolean
-	{
-		let ToRet = false;
-		Types.forEach(T =>
-		{
-			let WeightOfCheckingResource = StorageContainer.GetTotalVolumeByType(Pool, T);
-			let WeightOfResourceInStorage = StorageContainer.GetTotalVolumeByType(ResourcesToCheckAgainst, T);
-			if (WeightOfResourceInStorage >= WeightOfCheckingResource)
+			if (Geometry.GetVolumeOfGeometry(Units, ToPush.Geometry).CubicVolume <= StorageContainer.GetTotalVolumeOfType(Units, Pool).CubicVolume)
 			{
-				ToRet = true;
+				R.push(ToPush);
 			}
 		});
-		return ToRet;
+		return R;
 	}
 
 	/**
@@ -54,9 +39,9 @@ export class StorageContainer
 	 * @param T The type of resource that should be returned.
 	 * @param Pool The pool of resources to filter through.
 	 */
-	static GetResourcesOfType (Pool: Storable[], T: ResourceType): Storable[]
+	static GetResourcesOfType (Pool: Storable[], T?: ResourceType): Storable[]
 	{
-		return Pool.filter(R => R.TypeOfStorable === T);
+		return T !== undefined ? Pool.filter(R => R.TypeOfStorable === T) : Pool;
 	}
 
 	/**
@@ -64,14 +49,30 @@ export class StorageContainer
 	 * @param T The type of resource that should be included in the total volume. If undefined, this method checks the full volume of the given pool.
 	 * @param Pool
 	 */
-	static GetTotalVolumeByType (Pool: Storable[], T?: ResourceType): number
+	static GetTotalVolumeOfType (Units: MetricPrefixes, Pool: Storable[], T?: ResourceType): Volume
 	{
-		let TotalVolumeOfResource = 0;
+		let TotalVolumeOfResources = 0;
 		let AllResourcesOfType = T !== undefined ? StorageContainer.GetResourcesOfType(Pool, T) : Pool;
 		AllResourcesOfType.forEach(ARoT =>
 		{
-			TotalVolumeOfResource += Storable.GetVolumeInCubicMeters(ARoT);
+			TotalVolumeOfResources += Geometry.GetVolumeOfGeometry(Units, ARoT.Geometry).CubicVolume;
 		});
-		return TotalVolumeOfResource;
+		return new Volume(Units, TotalVolumeOfResources);
+	}
+
+	/**
+	 * Returns the total mass of the given pool by resource type.
+	 * @param T The type of resource that should be included in the total mass. If undefined, this method checks the full mass of the given pool.
+	 * @param Pool
+	 */
+	static GetTotalMassOfType (Units: MetricPrefixes, Pool: Storable[], T?: ResourceType): Mass
+	{
+		let TotalMass = 0;
+		let AllResourcesOfType = T !== undefined ? StorageContainer.GetResourcesOfType(Pool, T) : Pool;
+		AllResourcesOfType.forEach(ARoT =>
+		{
+			TotalMass += Geometry.GetMass(Units, ARoT.Geometry).Weight;
+		});
+		return new Mass(Units, TotalMass);
 	}
 }

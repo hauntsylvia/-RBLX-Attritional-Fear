@@ -1,14 +1,17 @@
 import { PartType } from "../../../../consts/Enums";
+import { Geometry } from "../../../util/Measurements/Geometry";
+import { Entity } from "../../entities/Entity";
+import { IEntityPart } from "../../entities/IEntityPart";
 import { Storable } from "../../resources/specifics/Resource";
 import { StorageContainer } from "../../resources/StorageContainer";
 
-export class VesselPart
+export class VesselPart extends Entity
 {
-	constructor (Type: PartType, ModelOfPart: Model, WeightInG: number, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[])
+	constructor (EntityParts: IEntityPart[], Name: string, Type: PartType, ModelOfPart: Model, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[])
 	{
+		super(EntityParts, Name, PartType[Type]);
 		this.Type = Type;
 		this.ModelOfPart = ModelOfPart;
-		this.WeightInG = WeightInG;
 		this.StorageOfPart = StorageOfPart;
 		this.ResourcesConsumedByPart = ResourcesConsumedByPart;
 	}
@@ -16,8 +19,6 @@ export class VesselPart
 	Type: PartType;
 
 	ModelOfPart: Model;
-
-	WeightInG: number;
 
 	StorageOfPart: StorageContainer;
 

@@ -1,4 +1,5 @@
 import { Species } from "../../../consts/Enums";
+import { Geometry } from "../../util/Measurements/Geometry";
 import { IEntityPart } from "./IEntityPart";
 
 export class Entity

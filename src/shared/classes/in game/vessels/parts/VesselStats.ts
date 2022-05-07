@@ -1,12 +1,16 @@
+import { Geometry } from "../../../util/Measurements/Geometry";
+import { Mass } from "../../../util/Measurements/Mass";
+import { Speed } from "../../../util/Measurements/Speed";
+
 export class VesselStats
 {
-	constructor (MaxForwardSpeed: number, MaxRotationSpeed: number, WeightInKG: number)
+	constructor (MaxSpeedPotential: Speed, MaxRotationPotential: Speed)
 	{
-		this.MaxForwardSpeed = MaxForwardSpeed;
-		this.MaxRotationSpeed = MaxRotationSpeed;
-		this.WeightInKG = WeightInKG;
+		this.MaxSpeedPotential = MaxSpeedPotential;
+		this.MaxRotationPotential = MaxRotationPotential;
 	}
-	MaxForwardSpeed: number;
-	MaxRotationSpeed: number;
-	WeightInKG: number;
+
+	MaxSpeedPotential: Speed;
+
+	MaxRotationPotential: Speed;
 }

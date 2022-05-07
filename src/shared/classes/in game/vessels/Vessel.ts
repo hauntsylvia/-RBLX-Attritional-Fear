@@ -1,4 +1,7 @@
-import { PartType } from "../../../consts/Enums";
+import { MetricPrefixes, PartType } from "../../../consts/Enums";
+import { Geometry } from "../../util/Measurements/Geometry";
+import { Mass } from "../../util/Measurements/Mass";
+import { Speed } from "../../util/Measurements/Speed";
 import { Storable } from "../resources/specifics/Resource";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
@@ -22,7 +25,12 @@ export class Vessel
 
 	Crew: CrewMember[];
 
-	static MoveVesselTo (V: Vessel, MoveTo: CFrame)
+	static RotateVesselTowards (V: Vessel, Rotation: CFrame)
+	{
+
+	}
+
+	static MoveVesselTo (V: Vessel, MoveTo: Vector3)
 	{
 
 	}
@@ -40,28 +48,38 @@ export class Vessel
 		return Ret;
 	}
 
-	static GetVesselStats (V: Vessel): VesselStats
+	static GetVesselStats (Units: MetricPrefixes, V: Vessel): VesselStats
 	{
-		let TotalWeightIncResources = 0;
-		V.VesselParts.forEach(P =>
+		let Engines = Vessel.GetPartsOfType<Engine>(V, PartType.Engine);
+		let Frames = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame);
+
+		let TotalMass: Mass = new Mass(Units, 0);
+		V.VesselParts.forEach(VP =>
 		{
-			TotalWeightIncResources = P.WeightInG;
-			P.StorageOfPart.CurrentResources.forEach(CRes =>
+			VP.Parts.forEach(Part =>
 			{
-				TotalWeightIncResources += Storable.GetWeightInG(CRes);
+				let PartMass = Geometry.GetMass(Units, Part.Geometry);
+				TotalMass = new Mass(Units, TotalMass.Weight + PartMass.Weight);
 			});
 		});
 
-		let Engines = Vessel.GetPartsOfType<Engine>(V, PartType.Engine);
-		let Frame = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame)[0];
-
-		let TotalMaxSpeed = 0;
-		Engines.forEach(E =>
+		let TotalSpeedAtZero = new Speed(Units, 0);
+		Engines.forEach(Engine =>
 		{
-			TotalMaxSpeed += E.TimeToMove1000GOfMass1StudInSeconds * (1000 / TotalWeightIncResources);
+			let SpeedToUnits = Speed.ConvertToUnits(Units, Engine.SpeedAtBase);
+			TotalSpeedAtZero = new Speed(Units, TotalSpeedAtZero.MaxVelocityInOneSecond + SpeedToUnits.MaxVelocityInOneSecond);
 		});
-		let MaxRotSpeed = Frame.TimeToMove1000KGOfMass1DegreeInSeconds * (1000 / TotalWeightIncResources);
-		
-		return new VesselStats(TotalMaxSpeed, MaxRotSpeed, TotalWeightIncResources);
+
+		let TotalRotationAtZero = new Speed(Units, 0);
+		Frames.forEach(Frame =>
+		{
+			let SpeedToUnits = Speed.ConvertToUnits(Units, Frame.SpeedAtBase);
+			TotalRotationAtZero = new Speed(Units, TotalRotationAtZero.MaxVelocityInOneSecond + SpeedToUnits.MaxVelocityInOneSecond);
+		});
+
+		let SpeedAdjustedForMass =		Mass.GetSpeedPotential(Units, TotalMass, TotalSpeedAtZero);
+		let RotationAdjustedForMass =	Mass.GetSpeedPotential(Units, TotalMass, TotalRotationAtZero);
+
+		return new VesselStats(SpeedAdjustedForMass, RotationAdjustedForMass);
 	}
 }

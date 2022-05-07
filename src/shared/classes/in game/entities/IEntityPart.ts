@@ -1,3 +1,4 @@
+import { Geometry } from "../../util/Measurements/Geometry";
 import { EntityDamageEvent } from "./EntityDamageEvent";
 
 export interface IEntityPart
@@ -6,4 +7,5 @@ export interface IEntityPart
 	readonly Name: string;
 	readonly Description: string;
 	readonly EntityDamageEvents: EntityDamageEvent[];
+	readonly Geometry: Geometry;
 }
