@@ -1,4 +1,4 @@
-import { MetricPrefixes, PartType } from "../../../consts/Enums";
+import { MetricUnits, PartType } from "../../../consts/Enums";
 import { Geometry } from "../../util/measurements/Geometry";
 import { Mass } from "../../util/measurements/Mass";
 import { Speed } from "../../util/measurements/Speed";
@@ -48,7 +48,7 @@ export class Vessel
 		return Ret;
 	}
 
-	static GetVesselStats (Units: MetricPrefixes, V: Vessel): VesselStats
+	static GetVesselStats (Units: MetricUnits, V: Vessel): VesselStats
 	{
 		let Engines = Vessel.GetPartsOfType<Engine>(V, PartType.Engine);
 		let Frames = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame);

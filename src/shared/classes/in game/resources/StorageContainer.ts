@@ -1,4 +1,4 @@
-import { MetricPrefixes, ResourceType } from "../../../consts/Enums";
+import { MetricUnits, ResourceType } from "../../../consts/Enums";
 import { Geometry } from "../../util/measurements/Geometry";
 import { Mass } from "../../util/measurements/Mass";
 import { Volume } from "../../util/measurements/Volume";
@@ -21,7 +21,7 @@ export class StorageContainer
 	 * @param Pool	The pool to modify.
 	 * @param Add	The resources to add to the pool.
 	 */
-	static AddResourcesToPool (Units: MetricPrefixes, Pool: Storable[], Add: Storable[]): Storable[]
+	static AddResourcesToPool (Units: MetricUnits, Pool: Storable[], Add: Storable[]): Storable[]
 	{
 		let R: Storable[] = Pool;
 		Add.forEach(ToPush =>
@@ -49,7 +49,7 @@ export class StorageContainer
 	 * @param T The type of resource that should be included in the total volume. If undefined, this method checks the full volume of the given pool.
 	 * @param Pool
 	 */
-	static GetTotalVolumeOfType (Units: MetricPrefixes, Pool: Storable[], T?: ResourceType): Volume
+	static GetTotalVolumeOfType (Units: MetricUnits, Pool: Storable[], T?: ResourceType): Volume
 	{
 		let TotalVolumeOfResources = 0;
 		let AllResourcesOfType = T !== undefined ? StorageContainer.GetResourcesOfType(Pool, T) : Pool;
@@ -65,7 +65,7 @@ export class StorageContainer
 	 * @param T The type of resource that should be included in the total mass. If undefined, this method checks the full mass of the given pool.
 	 * @param Pool
 	 */
-	static GetTotalMassOfType (Units: MetricPrefixes, Pool: Storable[], T?: ResourceType): Mass
+	static GetTotalMassOfType (Units: MetricUnits, Pool: Storable[], T?: ResourceType): Mass
 	{
 		let TotalMass = 0;
 		let AllResourcesOfType = T !== undefined ? StorageContainer.GetResourcesOfType(Pool, T) : Pool;

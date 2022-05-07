@@ -1,21 +1,21 @@
-import { MetricPrefixes } from "../../../consts/Enums";
+import { MetricUnits } from "../../../consts/Enums";
 import { Speed } from "./Speed";
 
 export class Mass
 {
-	constructor (PrefixOfValues: MetricPrefixes, Weight: number)
+	constructor (PrefixOfValues: MetricUnits, Weight: number)
 	{
 		this.Units = PrefixOfValues;
 		this.Weight = Weight;
 	}
 
-	Units: MetricPrefixes;
+	Units: MetricUnits;
 
 	Weight: number;
 
-	static ConvertMassToOtherUnit (NewUnit: MetricPrefixes, A: Mass): Mass
+	static ConvertMassToOtherUnit (NewUnit: MetricUnits, A: Mass): Mass
 	{
-		let MAtBase = new Mass(MetricPrefixes.Base, A.Weight * A.Units);
+		let MAtBase = new Mass(MetricUnits.Base, A.Weight * A.Units);
 		return new Mass(NewUnit, MAtBase.Weight / NewUnit);
 	}
 
@@ -25,7 +25,7 @@ export class Mass
 	 * @param A This parameter is expected to have already been converted to the same units as the speed at one mass.
 	 * @param SpeedAtOneMass This parameter is expected to have already been converted to the same units as the given mass.
 	 */
-	static GetSpeedPotential (Units: MetricPrefixes, A: Mass, SpeedAtOneMass: Speed): Speed
+	static GetSpeedPotential (Units: MetricUnits, A: Mass, SpeedAtOneMass: Speed): Speed
 	{
 		return new Speed(Units, SpeedAtOneMass.MaxVelocityInOneSecond * (1000 / A.Weight));
 	}

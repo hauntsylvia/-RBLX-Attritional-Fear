@@ -1,14 +1,14 @@
-import { MetricPrefixes } from "../../../consts/Enums";
+import { MetricUnits } from "../../../consts/Enums";
 
 export class Volume
 {
-	constructor (PrefixOfValues: MetricPrefixes, CubicVolume: number)
+	constructor (PrefixOfValues: MetricUnits, CubicVolume: number)
 	{
 		this.PrefixOfValues = PrefixOfValues;
 		this.CubicVolume = CubicVolume;
 	}
 
-	PrefixOfValues: MetricPrefixes;
+	PrefixOfValues: MetricUnits;
 
 	CubicVolume: number;
 }

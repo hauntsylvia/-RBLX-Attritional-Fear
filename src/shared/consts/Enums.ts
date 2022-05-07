@@ -47,7 +47,7 @@ export enum Species
 	Human
 }
 
-export enum MetricPrefixes
+export enum MetricUnits
 {
 	Kilo = 1000,
 	Hecto = 100,
@@ -56,4 +56,11 @@ export enum MetricPrefixes
 	Deci = 0.1,
 	Centi = 0.01,
 	Milli = 0.001
+}
+
+export enum TimeUnits
+{
+	Hour = 3600,
+	Minute = 60,
+	Second = 1,
 }
