@@ -2,7 +2,7 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { Hotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { CameraHotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/hotkeys/CameraHotkeys";
 import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPlayer";
-import { CollisionCalculator } from "../../../shared/classes/util/Collisions/CollisionCalculator";
+import { CollisionCalculator } from "../../../shared/classes/util/collisions/CollisionCalculator";
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
 import { ISettingsInvolved } from "../clients/ISettingsInvolved";
 import { LevelOfZoom } from "./LevelOfZoom";

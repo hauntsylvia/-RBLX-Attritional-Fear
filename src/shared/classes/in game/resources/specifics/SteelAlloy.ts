@@ -1,5 +1,5 @@
 import { ResourceType } from "../../../../consts/Enums";
-import { Geometry } from "../../../util/Measurements/Geometry";
+import { Geometry } from "../../../util/measurements/Geometry";
 import { FactoryOrder } from "../FactoryOrder";
 import { Storable } from "./Resource";
 

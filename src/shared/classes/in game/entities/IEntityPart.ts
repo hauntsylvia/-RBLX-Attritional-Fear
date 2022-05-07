@@ -1,4 +1,4 @@
-import { Geometry } from "../../util/Measurements/Geometry";
+import { Geometry } from "../../util/measurements/Geometry";
 import { EntityDamageEvent } from "./EntityDamageEvent";
 
 export interface IEntityPart

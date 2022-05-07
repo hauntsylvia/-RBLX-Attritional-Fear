@@ -1,6 +1,6 @@
 import { ResourceType } from "../../../../consts/Enums";
-import { Geometry } from "../../../util/Measurements/Geometry";
-import { Mass } from "../../../util/Measurements/Mass";
+import { Geometry } from "../../../util/measurements/Geometry";
+import { Mass } from "../../../util/measurements/Mass";
 import { CrewMember } from "../../vessels/CrewMember";
 import { FactoryOrder } from "../FactoryOrder";
 

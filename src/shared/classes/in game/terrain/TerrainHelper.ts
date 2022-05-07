@@ -1,7 +1,7 @@
 import { AllBiomes, MaxModelSize, MinimumModelSize } from "../../../consts/Biomes";
 import { BiomeType } from "../../../consts/Enums";
 import { SNumbers } from "../../../consts/SNumbers";
-import { CollisionCalculator } from "../../util/Collisions/CollisionCalculator";
+import { CollisionCalculator } from "../../util/collisions/CollisionCalculator";
 import { ModelResizer } from "../../util/ModelResizer";
 import { Sleep } from "../../util/Sleep";
 import { Workers } from "../../util/Workers";

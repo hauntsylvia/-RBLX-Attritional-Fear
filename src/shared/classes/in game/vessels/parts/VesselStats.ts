@@ -1,6 +1,6 @@
-import { Geometry } from "../../../util/Measurements/Geometry";
-import { Mass } from "../../../util/Measurements/Mass";
-import { Speed } from "../../../util/Measurements/Speed";
+import { Geometry } from "../../../util/measurements/Geometry";
+import { Mass } from "../../../util/measurements/Mass";
+import { Speed } from "../../../util/measurements/Speed";
 
 export class VesselStats
 {

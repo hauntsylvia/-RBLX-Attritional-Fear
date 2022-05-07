@@ -1,6 +1,6 @@
 import { PartType } from "../../../../../consts/Enums";
-import { Geometry } from "../../../../util/Measurements/Geometry";
-import { Speed } from "../../../../util/Measurements/Speed";
+import { Geometry } from "../../../../util/measurements/Geometry";
+import { Speed } from "../../../../util/measurements/Speed";
 import { IEntityPart } from "../../../entities/IEntityPart";
 import { Storable } from "../../../resources/specifics/Resource";
 import { StorageContainer } from "../../../resources/StorageContainer";

@@ -1,7 +1,7 @@
 import { MetricPrefixes, ResourceType } from "../../../consts/Enums";
-import { Geometry } from "../../util/Measurements/Geometry";
-import { Mass } from "../../util/Measurements/Mass";
-import { Volume } from "../../util/Measurements/Volume";
+import { Geometry } from "../../util/measurements/Geometry";
+import { Mass } from "../../util/measurements/Mass";
+import { Volume } from "../../util/measurements/Volume";
 import { Storable } from "./specifics/Resource";
 
 export class StorageContainer

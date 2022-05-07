@@ -1,5 +1,5 @@
 import { PartType } from "../../../../consts/Enums";
-import { Geometry } from "../../../util/Measurements/Geometry";
+import { Geometry } from "../../../util/measurements/Geometry";
 import { Entity } from "../../entities/Entity";
 import { IEntityPart } from "../../entities/IEntityPart";
 import { Storable } from "../../resources/specifics/Resource";
