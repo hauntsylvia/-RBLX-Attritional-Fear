@@ -1,5 +1,5 @@
 import { Entity } from "./Entity";
-import { IEntityDamageEvent } from "./IEntityForce";
+import { IEntityDamageEvent } from "./IEntityDamageEvent";
 
 export class EntityDamageEvent implements IEntityDamageEvent
 {

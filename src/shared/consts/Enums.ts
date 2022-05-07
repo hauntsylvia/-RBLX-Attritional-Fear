@@ -46,3 +46,14 @@ export enum Species
 	Vessel,
 	Human
 }
+
+export enum MetricPrefixes
+{
+	Kilo = 1000,
+	Hecto = 100,
+	Deca = 10,
+	Base = 1,
+	Deci = 0.1,
+	Centi = 0.01,
+	Milli = 0.001
+}
