@@ -3,13 +3,13 @@ import { Storable } from "./specifics/Resource";
 
 export class StorageContainer
 {
-	constructor (MaxResourceHold: Storable[], CurrentResources: Storable[])
+	constructor (VolumeCubicMeters: number, CurrentResources: Storable[])
 	{
-		this.MaxResourceHold = MaxResourceHold;
+		this.VolumeCubicMeters = VolumeCubicMeters;
 		this.CurrentResources = CurrentResources;
 	}
 
-	MaxResourceHold: Storable[];
+	VolumeCubicMeters: number;
 
 	CurrentResources: Storable[];
 
@@ -28,8 +28,8 @@ export class StorageContainer
 		let ToRet = false;
 		Types.forEach(T =>
 		{
-			let WeightOfCheckingResource = StorageContainer.GetTotalWeightByType(T, Contains);
-			let WeightOfResourceInStorage = StorageContainer.GetTotalWeightByType(T, ResourcesToCheckAgainst);
+			let WeightOfCheckingResource = StorageContainer.GetTotalVolumeByType(T, Contains);
+			let WeightOfResourceInStorage = StorageContainer.GetTotalVolumeByType(T, ResourcesToCheckAgainst);
 			if (WeightOfResourceInStorage >= WeightOfCheckingResource)
 			{
 				ToRet = true;
@@ -43,14 +43,14 @@ export class StorageContainer
 		return Resources.filter(R => R.TypeOfStorable === T);
 	}
 
-	static GetTotalWeightByType (T: StorableType, Resources: Storable[]): number
+	static GetTotalVolumeByType (T: StorableType, Resources: Storable[]): number
 	{
-		let TotalWeightOfCurrentResource = 0;
+		let TotalVolumeOfResource = 0;
 		let AllResourcesOfType = StorageContainer.GetResourcesOfType(T, Resources);
 		AllResourcesOfType.forEach(ARoT =>
 		{
-			TotalWeightOfCurrentResource += ARoT.WeightInKG;
+			TotalVolumeOfResource += Storable.GetVolumeInCubicMeters(ARoT);
 		});
-		return TotalWeightOfCurrentResource;
+		return TotalVolumeOfResource;
 	}
 }

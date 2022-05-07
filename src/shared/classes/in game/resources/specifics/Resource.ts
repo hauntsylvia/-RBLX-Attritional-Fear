@@ -9,9 +9,9 @@ export class Storable
 		this.TypeOfStorable = TypeOfStorable;
 		this.ParentOrder = ParentOrder;
 		this.WeightInKG = WeightInKG;
-		this.LengthInMM = LengthInMM;
-		this.WidthInMM = WidthInMM;
-		this.HeightInMM = HeightInMM;
+		this.LengthInMeters = LengthInMM;
+		this.WidthInMeters = WidthInMM;
+		this.HeightInMeters = HeightInMM;
 	}
 
 	TypeOfStorable: StorableType;
@@ -20,9 +20,14 @@ export class Storable
 
 	WeightInKG: number;
 
-	LengthInMM: number;
+	LengthInMeters: number;
 
-	WidthInMM: number;
+	WidthInMeters: number;
 
-	HeightInMM: number;
+	HeightInMeters: number;
+
+	static GetVolumeInCubicMeters (Self: Storable): number
+	{
+		return Self.HeightInMeters * Self.LengthInMeters * Self.WidthInMeters;
+	}
 }
