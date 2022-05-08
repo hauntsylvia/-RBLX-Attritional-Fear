@@ -1,3 +1,5 @@
+import { PartType } from "./Enums";
+
 export enum FactionTitleKeys
 {
     Manufacturer = 0,
@@ -67,6 +69,24 @@ export class Strings
                 F2.Name = "Models";
                 return F2;
 			}
+        }
+        static GetVesselPartsFolder (PType: PartType): Folder
+        {
+            let F = game.GetService("ReplicatedStorage").WaitForChild("VesselParts", 5)?.WaitForChild("Models", 5)?.WaitForChild(PartType[PType], 5);
+            if (F !== undefined && F.IsA("Folder"))
+            {
+                return F;
+            }
+            else
+            {
+                let F1 = new Instance("Folder", game.GetService("ReplicatedStorage"));
+                F1.Name = "VesselParts";
+                let F2 = new Instance("Folder", F1);
+                F2.Name = "Models";
+                let F3 = new Instance("Folder", F1);
+                F3.Name = PartType[PType];
+                return F3;
+            }
 		}
 	}
 }

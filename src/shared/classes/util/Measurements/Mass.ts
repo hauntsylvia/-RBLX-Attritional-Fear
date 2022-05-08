@@ -22,14 +22,12 @@ export class Mass
 
 	static GetSpeedPotential (A: Mass, MaxVelocityAtZeroMass: Rate): Rate
 	{
-		let UnitRate = Rate.MakeUnit(MaxVelocityAtZeroMass);
-		print("Mass Script: " + MetricUnits[UnitRate.DistanceUnits]);
-		print("Mass Script: " + UnitRate.DistanceValue);
-		print("Mass Script: " + TimeUnits[UnitRate.TimeUnit]);
-		print("Mass Script: " + UnitRate.TimeValue);
-		let Weight = (A.Weight !== 0 ? A.Weight : 1);
-		let MaxVel = UnitRate.DistanceValue * (1000 / Weight);
-		let ToRet = new Rate(MaxVel, UnitRate.DistanceUnits, 1, UnitRate.TimeUnit);
-		return Rate.MakeUnit(ToRet);
+		let BaseA = Mass.ConvertMassToOtherUnit(MetricUnits.Base, A);
+		let BaseVel = Rate.Convert(MetricUnits.Base, TimeUnits.Second, MaxVelocityAtZeroMass);
+		BaseVel = Rate.MakeUnit(BaseVel);
+		let Weight = (BaseA.Weight !== 0 ? BaseA.Weight : 1);
+		let MaxVel = BaseVel.DistanceValue / math.pow(Weight, 0.5);
+		let BaseReturn = new Rate(MaxVel, BaseVel.DistanceUnits, 1, BaseVel.TimeUnit);
+		return Rate.MakeUnit(Rate.Convert(MaxVelocityAtZeroMass.DistanceUnits, MaxVelocityAtZeroMass.TimeUnit, BaseReturn));
 	}
 }

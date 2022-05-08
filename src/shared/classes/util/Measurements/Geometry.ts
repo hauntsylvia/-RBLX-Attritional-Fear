@@ -44,7 +44,7 @@ export class Geometry
 	static GetMass (UnitsToUse: MetricUnits, A: Geometry): Mass
 	{
 		let GAtBase = new Geometry(MetricUnits.Base, A.Length * A.Units, A.Width * A.Units, A.Height * A.Units, A.Density * A.Units);
-		let Volume = Geometry.GetVolumeOfGeometry(UnitsToUse, A);
-		return new Mass(UnitsToUse, Volume.CubicVolume * GAtBase.Density);
+		let VolumeAtBase = Geometry.GetVolumeOfGeometry(MetricUnits.Base, A);
+		return new Mass(UnitsToUse, (VolumeAtBase.CubicVolume * GAtBase.Density) / UnitsToUse);
 	}
 }

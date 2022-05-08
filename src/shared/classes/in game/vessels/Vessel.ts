@@ -71,20 +71,20 @@ export class Vessel extends Entity
 	static MoveVesselTo (V: Vessel, MoveTo: Vector3)
 	{
 		let Base = MetricUnits.Base;
+		let TU = TimeUnits.Second;
 
 		let CurrentPos = Vessel.GetPositionalAverageOfVessel(V);
 		Vessel.RotateVesselTowards(V, MoveTo);
-		let Stats = Vessel.GetVesselStats(Base, TimeUnits.Hour, V);
-		let TargetSpeed = new Rate(Stats.MaxSpeedPotential.DistanceValue * V.ThrottleForward, Base, Stats.MaxSpeedPotential.TimeValue, TimeUnits.Hour);
+		let Stats = Vessel.GetVesselStats(Base, TU, V);
+		let TargetSpeed = new Rate(Stats.MaxSpeedPotential.DistanceValue * V.ThrottleForward, Base, Stats.MaxSpeedPotential.TimeValue, TU);
 		let DistanceInStuds = CurrentPos.sub(MoveTo).Magnitude;
-		let Distance = (DistanceInStuds / 3.572) * Base;
-		let Time = TargetSpeed.DistanceValue * Distance;
+		let Distance = (DistanceInStuds / 3.572) / Base;
+		let Time = Distance / TargetSpeed.DistanceValue;
 		let TimeUnit = TimeUnits[TargetSpeed.TimeUnit];
 		let DistanceUnit = MetricUnits[TargetSpeed.DistanceUnits];
-		print("- - Vessel move order - -");
-		print("Moving at: " + TargetSpeed.DistanceValue + DistanceUnit + "s every " + Time + TimeUnit);
+		print("Moving at: " + TargetSpeed.DistanceValue + DistanceUnit + "s every " + TargetSpeed.TimeValue + TimeUnit);
 		print("ETA: " + Time + TimeUnit + "s");
-		print("- - Vessel move order - -")
+		print("Distance: " + Distance + DistanceUnit + "s");
 	}
 
 	static StopMovingVessel (V: Vessel)
@@ -116,12 +116,13 @@ export class Vessel extends Entity
 			let PartMass = Geometry.GetMass(DUnits, VP.Geometry);
 			TotalMass = new Mass(DUnits, TotalMass.Weight + PartMass.Weight);
 		});
+		print("Part count: " + V.Parts.size());
 
 		let TotalSpeedPerOne = new Rate(0, DUnits, 1, TUnits);
 		Engines.forEach(Engine =>
 		{
 			let SpeedToUnits = Rate.Convert(DUnits, TUnits, Engine.Speed);
-			TotalSpeedPerOne = new Rate(TotalSpeedPerOne.DistanceValue + SpeedToUnits.DistanceValue, DUnits, 1, TUnits);
+			TotalSpeedPerOne = new Rate(TotalSpeedPerOne.DistanceValue + SpeedToUnits.DistanceValue, DUnits, SpeedToUnits.TimeValue, TUnits);
 		});
 		print("Engine count: " + Engines.size());
 
@@ -129,13 +130,12 @@ export class Vessel extends Entity
 		Frames.forEach(Frame =>
 		{
 			let SpeedToUnits = Rate.Convert(DUnits, TUnits, Frame.Speed);
-			TotalRotationPerOne = new Rate(TotalRotationPerOne.DistanceValue + SpeedToUnits.DistanceValue, DUnits, 1, TUnits);
+			TotalRotationPerOne = new Rate(TotalRotationPerOne.DistanceValue + SpeedToUnits.DistanceValue, DUnits, SpeedToUnits.TimeValue, TUnits);
 		});
+		print("Frame count: " + Frames.size());
 
 		let MaxSpeedPotential = Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
 		let MaxRotationPotential = Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
-
-		print("Vessel stats calculated max speed at: " + MaxSpeedPotential.DistanceValue);
 
 		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second));
 	}
