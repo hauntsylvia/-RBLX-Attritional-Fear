@@ -1,4 +1,5 @@
 import { Entity } from "./Entity";
+import { PenetrationForce } from "./forces/PenetrationForce";
 
 export interface IEntityDamageEvent
 {
@@ -24,9 +25,12 @@ export interface IEntityDamageEvent
 	 * . . "The crew will auto-restart electrical systems." */
 	HelpfulDescription: string;
 
-	/** Describes the action to apply to the entity when damaged. */
-	WhenDamaged: (E: Entity) => void;
+	/** The minimum value of penetration to activate this event. */
+	MinimumPenetrationalForce: PenetrationForce;
 
-	/** Describes what to do on every tick. Should be wrapped around an OnTick() that returns a boolean and sets the active boolean to true. */
-	OnTick: () => void;
+	///** Describes the action to apply to the entity when damaged. */
+	//WhenDamaged: (E: Entity) => void;
+
+	///** Describes what to do on every tick. Should be wrapped around an OnTick() that returns a boolean and sets the active boolean to true. */
+	//OnTick: () => void;
 }

@@ -1,7 +1,9 @@
-import { MetricUnits, PartType, TimeUnits } from "../../../consts/Enums";
+import { MetricUnits, PartType, Species, TimeUnits } from "../../../consts/Enums";
 import { Geometry } from "../../util/measurements/Geometry";
 import { Mass } from "../../util/measurements/Mass";
 import { Rate } from "../../util/measurements/Rate";
+import { Entity } from "../entities/Entity";
+import { IId } from "../entities/Unique";
 import { Storable } from "../resources/specifics/Resource";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
@@ -10,36 +12,78 @@ import { VesselFrame } from "./parts/specifics/VesselFrame";
 import { VesselPart } from "./parts/VesselPart";
 import { VesselStats } from "./parts/VesselStats";
 
-export class Vessel
+export class Vessel extends Entity
 {
-	constructor (Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
+	constructor (Id: number, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
 	{
-		this.Name = Name;
-		this.VesselParts = VesselParts;
+		super(Id, VesselParts, Name, Species.Vessel);
 		this.Crew = Crew;
 	}
 
-	Name: string;
-
-	VesselParts: VesselPart[];
-
 	Crew: CrewMember[];
 
-	static RotateVesselTowards (V: Vessel, Rotation: CFrame)
+	ThrottleForward: number = 0;
+
+	ThrottleRotation: number = 0;
+
+	
+
+	static GetPositionalAverageOfVessel (V: Vessel): Vector3
+	{
+		let Sum = Vector3.zero;
+		let Iterations = 0;
+		V.Parts.forEach(VP =>
+		{
+			Sum = Sum.add(VesselPart.GetModelCenter(VP as VesselPart));
+			Iterations++;
+		});
+		return Sum.div(Iterations);
+	}
+
+	static ChangeVesselThrottles (V: Vessel, ThrottleForward: number, ThrottleRotation: number)
+	{
+		V.ThrottleForward = math.clamp(ThrottleForward, -1, 1);
+		V.ThrottleRotation = math.clamp(ThrottleRotation, -1, 1);
+	}
+
+	/**
+	 * Will rotate the vessel towards the target position.
+	 * @param V
+	 * @param Rotation
+	 */
+	static RotateVesselTowards (V: Vessel, TargetPosition: Vector3)
 	{
 
 	}
 
+	/**
+	 * Will move the target vessel forward in the direction it is facing until it reaches as close to the parameter as possible.
+	 * @param V
+	 * @param MoveTo
+	 */
 	static MoveVesselTo (V: Vessel, MoveTo: Vector3)
 	{
+		let CurrentPos = Vessel.GetPositionalAverageOfVessel(V);
+		Vessel.RotateVesselTowards(V, MoveTo);
+		let Stats = Vessel.GetVesselStats(MetricUnits.Base, TimeUnits.Second, V);
+		let TargetSpeed = new Rate(Stats.MaxSpeedPotential.DistanceValue * V.ThrottleForward, MetricUnits.Base, Stats.MaxSpeedPotential.TimeValue, TimeUnits.Second);
+		V.Parts.forEach(_P =>
+		{
+			let P = _P as VesselPart;
+			P.ModelOfPart.
+		});
+	}
 
+	static StopMovingVessel (V: Vessel)
+	{
 	}
 
 	static GetPartsOfType<T extends VesselPart> (V: Vessel, PartTypeEnum: PartType): T[]
 	{
 		let Ret: T[] = [];
-		V.VesselParts.forEach(P =>
+		V.Parts.forEach(_P =>
 		{
+			let P = _P as VesselPart;
 			if (P.Type === PartTypeEnum)
 			{
 				Ret.push((P as T));
@@ -54,13 +98,10 @@ export class Vessel
 		let Frames = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame);
 
 		let TotalMass: Mass = new Mass(DUnits, 0);
-		V.VesselParts.forEach(VP =>
+		V.Parts.forEach(VP =>
 		{
-			VP.Parts.forEach(Part =>
-			{
-				let PartMass =		Geometry.GetMass(DUnits, Part.Geometry);
-				TotalMass =			new Mass(DUnits, TotalMass.Weight + PartMass.Weight);
-			});
+			let PartMass = Geometry.GetMass(DUnits, VP.Geometry);
+			TotalMass = new Mass(DUnits, TotalMass.Weight + PartMass.Weight);
 		});
 
 		let TotalSpeedPerOne =		new Rate(0, DUnits, 1, TUnits);
@@ -77,9 +118,9 @@ export class Vessel
 			TotalRotationPerOne =	new Rate(TotalRotationPerOne.DistanceValue + SpeedToUnits.DistanceValue, DUnits, 1, TUnits);
 		});
 
-		let SpeedAdjustedForMass =		Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
-		let RotationAdjustedForMass =	Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
+		let MaxSpeedPotential =			Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
+		let MaxRotationPotential =		Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
 
-		return new VesselStats(SpeedAdjustedForMass, RotationAdjustedForMass);
+		return new VesselStats(MaxSpeedPotential, MaxRotationPotential);
 	}
 }

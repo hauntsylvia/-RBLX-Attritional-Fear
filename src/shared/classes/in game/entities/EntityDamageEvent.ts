@@ -1,19 +1,16 @@
 import { Entity } from "./Entity";
+import { PenetrationForce } from "./forces/PenetrationForce";
 import { IEntityDamageEvent } from "./IEntityDamageEvent";
 
 export class EntityDamageEvent implements IEntityDamageEvent
 {
-    constructor (FullEntityDeathWhenActive: boolean, Name: string, Description: string, HelpfulDescription: string, WhenDamaged: (E: Entity) => void, OnTickB: () => boolean)
+    constructor (FullEntityDeathWhenActive: boolean, Name: string, Description: string, HelpfulDescription: string, MinimumPenetrationalForce: PenetrationForce)
     {
         this.FullEntityDeathWhenActive = FullEntityDeathWhenActive;
         this.Name = Name;
         this.Description = Description;
         this.HelpfulDescription = HelpfulDescription;
-        this.WhenDamaged = WhenDamaged;
-        this.OnTick = () =>
-        {
-            this.IsActive = OnTickB();
-        };
+        this.MinimumPenetrationalForce = MinimumPenetrationalForce;
     }
 
     IsActive: boolean = false;
@@ -26,7 +23,5 @@ export class EntityDamageEvent implements IEntityDamageEvent
 
     HelpfulDescription: string;
 
-    WhenDamaged: (E: Entity) => void;
-
-    OnTick: () => void;
+    MinimumPenetrationalForce: PenetrationForce;
 }
