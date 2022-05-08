@@ -28,7 +28,11 @@ export class Geometry
 	static ConvertGeometryToOtherUnit (NewUnits: MetricUnits, A: Geometry): Geometry
 	{
 		let GAtBase = new Geometry(MetricUnits.Base, A.Length * A.Units, A.Width * A.Units, A.Height * A.Units, A.Density * A.Units);
-		return new Geometry(NewUnits, GAtBase.Length / NewUnits, GAtBase.Width / NewUnits, GAtBase.Height / NewUnits, A.Density / NewUnits);
+		return new Geometry(NewUnits,
+			GAtBase.Length !== 0 ? GAtBase.Length / NewUnits : 0,
+			GAtBase.Width !== 0 ? GAtBase.Width / NewUnits : 0,
+			GAtBase.Height !== 0 ? GAtBase.Height / NewUnits : 0,
+			GAtBase.Density !== 0 ? GAtBase.Density / NewUnits : 0);
 	}
 
 	static GetVolumeOfGeometry (UnitsToUse: MetricUnits, A: Geometry): Volume

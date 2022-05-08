@@ -48,6 +48,8 @@ export class VesselPart implements IEntityPart
 				Iterations++;
 			}
 		});
+		Iterations = Iterations !== 0 ? Iterations : 1;
+		Sum = Sum !== Vector3.zero ? Sum.div(Iterations) : Vector3.zero;
 		return Sum.div(Iterations);
 	}
 }

@@ -26,7 +26,7 @@ export class Rate
 	static MakeUnit (R: Rate): Rate
 	{
 		return new Rate(
-			R.DistanceValue / R.TimeValue,
+			R.DistanceValue !== 0 ? R.DistanceValue / R.TimeValue : 0,
 			R.DistanceUnits,
 
 			1,
@@ -37,6 +37,12 @@ export class Rate
 	static Convert (DistanceUnits: MetricUnits, _TimeUnits: TimeUnits, A: Rate): Rate
 	{
 		let BaseRate = new Rate(A.DistanceValue * A.DistanceUnits, MetricUnits.Base, A.TimeValue * A.TimeUnit, TimeUnits.Second);
-		return new Rate(BaseRate.DistanceValue / DistanceUnits, DistanceUnits, BaseRate.TimeValue / _TimeUnits, _TimeUnits);
+		return new Rate(
+			BaseRate.DistanceValue !== 0 ? BaseRate.DistanceValue / DistanceUnits : 0,
+			DistanceUnits,
+
+			BaseRate.TimeValue !== 0 ? BaseRate.TimeValue / _TimeUnits : 0,
+			_TimeUnits
+		);
 	}
 }
