@@ -1,5 +1,5 @@
-import { MetricUnits } from "../../../consts/Enums";
-import { Speed } from "./Speed";
+import { MetricUnits, TimeUnits } from "../../../consts/Enums";
+import { Rate } from "./Rate";
 
 export class Mass
 {
@@ -19,14 +19,11 @@ export class Mass
 		return new Mass(NewUnit, MAtBase.Weight / NewUnit);
 	}
 
-	/**
-	 * Read param descriptions.
-	 * @param Units
-	 * @param A This parameter is expected to have already been converted to the same units as the speed at one mass.
-	 * @param SpeedAtOneMass This parameter is expected to have already been converted to the same units as the given mass.
-	 */
-	static GetSpeedPotential (Units: MetricUnits, A: Mass, SpeedAtOneMass: Speed): Speed
+
+	static GetSpeedPotential (A: Mass, MaxVelocityAtZeroMass: Rate): Rate
 	{
-		return new Speed(Units, SpeedAtOneMass.MaxVelocityInOneSecond * (1000 / A.Weight));
+		let UnitRate = Rate.MakeUnit(MaxVelocityAtZeroMass);
+		let MaxVel = UnitRate.DistanceValue * (1000 / A.Weight);
+		return new Rate(MaxVel, UnitRate.DistanceUnits, 1, UnitRate.TimeUnit);
 	}
 }

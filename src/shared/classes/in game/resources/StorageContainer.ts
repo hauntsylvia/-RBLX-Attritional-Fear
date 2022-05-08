@@ -6,31 +6,32 @@ import { Storable } from "./specifics/Resource";
 
 export class StorageContainer
 {
-	constructor (CurrentResources: Storable[], Geometry: Geometry)
+	constructor (CurrentResources: Storable[], Volume: Volume)
 	{
 		this.CurrentResources = CurrentResources;
-		this.Geometry = Geometry;
+		this.Volume = Volume;
 	}
 
-	private CurrentResources: Storable[];
+	CurrentResources: Storable[];
 
-	private Geometry: Geometry;
+	Volume: Volume;
 
 	/**
 	 * Returns the current pool with the added resources. Doesn't add them if the geometry's volume of a resource is greater than the volume of the storage container's geometry.
 	 * @param Pool	The pool to modify.
 	 * @param Add	The resources to add to the pool.
 	 */
-	static AddResourcesToPool (Units: MetricUnits, Pool: Storable[], Add: Storable[]): Storable[]
+	static AddResourcesToPool (Units: MetricUnits, A: StorageContainer, Add: Storable[]): Storable[]
 	{
-		let R: Storable[] = Pool;
+		let R: Storable[] = A.CurrentResources;
 		Add.forEach(ToPush =>
 		{
-			if (Geometry.GetVolumeOfGeometry(Units, ToPush.Geometry).CubicVolume <= StorageContainer.GetTotalVolumeOfType(Units, Pool).CubicVolume)
+			if (Geometry.GetVolumeOfGeometry(Units, ToPush.Geometry).CubicVolume <= A.Volume.CubicVolume)
 			{
 				R.push(ToPush);
 			}
 		});
+		A.CurrentResources = R;
 		return R;
 	}
 

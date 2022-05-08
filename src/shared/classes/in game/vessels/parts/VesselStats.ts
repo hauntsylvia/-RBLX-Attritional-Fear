@@ -1,16 +1,24 @@
 import { Geometry } from "../../../util/measurements/Geometry";
 import { Mass } from "../../../util/measurements/Mass";
-import { Speed } from "../../../util/measurements/Speed";
+import { Rate } from "../../../util/measurements/Rate";
 
 export class VesselStats
 {
-	constructor (MaxSpeedPotential: Speed, MaxRotationPotential: Speed)
+	constructor (MaxSpeedPotential: Rate, MaxRotationPotential: Rate, IdleFuelConsumption: Rate, CurrentFuelConsumption: Rate)
 	{
 		this.MaxSpeedPotential = MaxSpeedPotential;
 		this.MaxRotationPotential = MaxRotationPotential;
+		this.IdleFuelConsumption = IdleFuelConsumption;
+		this.CurrentFuelConsumption = CurrentFuelConsumption;
 	}
 
-	MaxSpeedPotential: Speed;
+	MaxSpeedPotential: Rate;
 
-	MaxRotationPotential: Speed;
+	MaxRotationPotential: Rate;
+
+	IdleFuelConsumption: Rate;
+
+	CurrentFuelConsumption: Rate;
+
+
 }

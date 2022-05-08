@@ -1,4 +1,4 @@
-import { Register } from "../../server/classes/modules/Register";
+import { Register } from "../../server/classes/modules/datastores/Register";
 import { Strings } from "./Strings";
 
 export class Registers

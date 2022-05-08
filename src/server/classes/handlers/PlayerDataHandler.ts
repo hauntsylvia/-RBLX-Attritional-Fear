@@ -4,9 +4,9 @@ import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Registers } from "../../../shared/consts/Registers";
-import { Record } from "../modules/Record";
 import { IHandler } from "./Handler";
 import { ServerData } from "../server communication/ServerData";
+import { Record } from "../modules/datastores/Record";
 
 export class PlayerDataHandler implements IHandler
 {

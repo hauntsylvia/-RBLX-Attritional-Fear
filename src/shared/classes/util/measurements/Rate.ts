@@ -3,34 +3,40 @@ import { MetricUnits, TimeUnits } from "../../../consts/Enums";
 export class Rate
 {
 	constructor (
-		QuantityOneValue: number,
-		QuantityOneRate: MetricUnits,
+		DistanceValue: number,
+		DistanceUnit: MetricUnits,
 
-		QuantityTwoValue: number,
-		QuantityTwoRate: TimeUnits)
+		TimeValue: number,
+		TimeUnit: TimeUnits)
 	{
-		this.QuantityOneValue = QuantityOneValue; // 100
-		this.QuantityOneRate = QuantityOneRate;	  // km
+		this.DistanceValue = DistanceValue; // 100
+		this.DistanceUnits = DistanceUnit;	  // km
 
-		this.QuantityTwoValue = QuantityTwoValue; // 5
-		this.QuantityTwoRate = QuantityTwoRate;	  // hours
+		this.TimeValue = TimeValue; // 5
+		this.TimeUnit = TimeUnit;	  // hours
 	}
 
-	QuantityOneValue: number;
-	QuantityOneRate: MetricUnits;
+	DistanceValue: number;
+	DistanceUnits: MetricUnits;
 	// ^ per v
-	QuantityTwoValue: number;
-	QuantityTwoRate: TimeUnits;
+	TimeValue: number;
+	TimeUnit: TimeUnits;
 
 	/** Returns a unit rate. x:1, "x per one" */
 	static MakeUnit (R: Rate): Rate
 	{
 		return new Rate(
-			R.QuantityOneValue / R.QuantityTwoValue,
-			R.QuantityOneRate,
+			R.DistanceValue / R.TimeValue,
+			R.DistanceUnits,
 
 			1,
-			R.QuantityTwoRate
+			R.TimeUnit
 		);
+	}
+
+	static Convert (DistanceUnits: MetricUnits, _TimeUnits: TimeUnits, A: Rate): Rate
+	{
+		let BaseRate = new Rate(A.DistanceValue * A.DistanceUnits, MetricUnits.Base, A.TimeValue * A.TimeUnit, TimeUnits.Second);
+		return new Rate(BaseRate.DistanceValue / DistanceUnits, DistanceUnits, BaseRate.TimeValue / _TimeUnits, _TimeUnits);
 	}
 }

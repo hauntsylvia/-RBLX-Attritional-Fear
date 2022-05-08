@@ -1,5 +1,7 @@
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
+import { Rate } from "../../../shared/classes/util/measurements/Rate";
+import { MetricUnits, TimeUnits } from "../../../shared/consts/Enums";
 import { Strings } from "../../../shared/consts/Strings";
 import { IHandler } from "../handlers/Handler";
 import { PlayerDataHandler } from "../handlers/PlayerDataHandler";

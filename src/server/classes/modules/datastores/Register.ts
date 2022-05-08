@@ -1,5 +1,4 @@
-import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
-import { ServerData } from "../server communication/ServerData";
+import { ServerDataOperationResponse } from "../../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Record } from "./Record";
 
 export class Register

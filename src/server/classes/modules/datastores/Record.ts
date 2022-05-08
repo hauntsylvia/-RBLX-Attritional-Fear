@@ -1,4 +1,4 @@
-import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
+import { ServerDataOperationResponse } from "../../../../shared/classes/server helpers/ServerDataOperationResponse";
 
 export class Record<T>
 {

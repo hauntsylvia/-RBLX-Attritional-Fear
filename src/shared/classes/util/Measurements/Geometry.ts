@@ -25,10 +25,10 @@ export class Geometry
 	/** If the units used are base, then this is equivalent to grams per cubic meter. */
 	Density: number;
 
-	static ConvertGeometryToOtherUnit (NewUnit: MetricUnits, A: Geometry): Geometry
+	static ConvertGeometryToOtherUnit (NewUnits: MetricUnits, A: Geometry): Geometry
 	{
 		let GAtBase = new Geometry(MetricUnits.Base, A.Length * A.Units, A.Width * A.Units, A.Height * A.Units, A.Density * A.Units);
-		return new Geometry(NewUnit, GAtBase.Length / NewUnit, GAtBase.Width / NewUnit, GAtBase.Height / NewUnit, A.Density / NewUnit);
+		return new Geometry(NewUnits, GAtBase.Length / NewUnits, GAtBase.Width / NewUnits, GAtBase.Height / NewUnits, A.Density / NewUnits);
 	}
 
 	static GetVolumeOfGeometry (UnitsToUse: MetricUnits, A: Geometry): Volume

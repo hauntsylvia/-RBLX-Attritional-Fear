@@ -1,10 +1,12 @@
 export class ServerResponse<T>
 {
-    Success: boolean;
-    Returned: T | undefined;
-    constructor(Success: boolean, Returned: T | undefined)
+    constructor(Success: boolean, Returned?: T)
     {
         this.Success = Success;
         this.Returned = Returned;
     }
+
+    Success: boolean;
+
+    Returned?: T;
 }
