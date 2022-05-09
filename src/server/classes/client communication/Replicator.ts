@@ -1,3 +1,5 @@
+import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
+
 export class Replicator
 {
 	constructor (APIReplicator: RemoteEvent)
@@ -7,8 +9,11 @@ export class Replicator
 
 	APIReplicator: RemoteEvent;
 
-	MakeRequest ()
+	SendToClient<T> (Clients: Player[], Job: ServerJob<T>)
 	{
-
+		Clients.forEach(C =>
+		{
+			this.APIReplicator.FireClient(C, Job);
+		});
 	}
 }

@@ -3,6 +3,7 @@ import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Rate } from "../../../shared/classes/util/measurements/Rate";
 import { MetricUnits, TimeUnits } from "../../../shared/consts/Enums";
 import { Strings } from "../../../shared/consts/Strings";
+import { Replicator } from "../client communication/Replicator";
 import { IHandler } from "../handlers/Handler";
 import { PlayerDataHandler } from "../handlers/PlayerDataHandler";
 import { PlayerHandler } from "../handlers/PlayerHandler";
@@ -19,19 +20,20 @@ export class Server
         this.AvailableListeners.Name = Strings.AvailableServicesFolderName;
         this.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
 
-        this.APIListener = new Instance("RemoteFunction");
-        this.APIListener.Name = "API";
-        this.APIListener.OnServerInvoke = (Player: Player, Controller: unknown, Endpoint: unknown, Arg: unknown) =>
+        this.APIListenerFunction = new Instance("RemoteFunction");
+        this.APIListenerFunction.Name = "API";
+        this.APIListenerFunction.OnServerInvoke = (Player: Player, Controller: unknown, Endpoint: unknown, Arg: unknown) =>
         {
             return this.OnAPIInvoke(Player, Controller, Endpoint, Arg);
         };
-        this.APIListener.Parent = game.GetService("ReplicatedStorage");
+        this.APIListenerFunction.Parent = game.GetService("ReplicatedStorage");
 
         this.RegisterHandlers();
 
-        this.APIReplicator = new Instance("RemoteEvent");
-        this.APIReplicator.Name = "APIReplicator";
-        this.APIReplicator.Parent = game.GetService("ReplicatedStorage");
+        let _APIReplicator = new Instance("RemoteEvent");
+        _APIReplicator.Name = "APIReplicator";
+        _APIReplicator.Parent = game.GetService("ReplicatedStorage");
+        this.APIReplicator = new Replicator(_APIReplicator);
     }
 
     UnavailableHandlers: IHandler[] =
@@ -45,9 +47,9 @@ export class Server
 
     ServerData: ServerData;
 
-    APIListener: RemoteFunction;
+    APIListenerFunction: RemoteFunction;
 
-    APIReplicator: RemoteEvent;
+    APIReplicator: Replicator;
 
     AvailableListeners: Folder;
 
@@ -65,7 +67,7 @@ export class Server
                     {
                         if(Endpoint.Route === Request.EndpointRequested)
                         {
-                            Result = Endpoint.Invoke(Player, Request.Arguments);
+                            Result = Endpoint.Invoke(Player, Request.Arguments, this.APIReplicator);
                         }
                     });
                 }
