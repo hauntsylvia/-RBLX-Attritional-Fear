@@ -14,9 +14,9 @@ export class FoAClient
         let RemoteFunction = ServerAPIStuff[0];
         let RemoteEvent = ServerAPIStuff[1];
 
-        this.ObjectsProcessor = new InterfacingObjectsProcessor(RemoteFunction, RemoteEvent);
-        this.PlayerProcessor = new PlayerProcessor(RemoteFunction, RemoteEvent);
-        this.TerrainProcessor = new TerrainProcessor(RemoteFunction, RemoteEvent);
+        this.ObjectsProcessor = new InterfacingObjectsProcessor(RemoteFunction);
+        this.PlayerProcessor = new PlayerProcessor(RemoteFunction);
+        this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
 
         let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer().Returned ?? error("No player loaded.");
 
