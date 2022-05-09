@@ -7,6 +7,7 @@ import { Server } from "../../../server/classes/server communication/Server";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
+import { ServerJobHandler } from "../processor classes/ServerJobHandler";
 import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";
 import { Processor } from "./Processor";
 
@@ -18,9 +19,16 @@ export class ServerJobProcessor extends Processor
         this.ListenTo = APIReplicator;
     }
 
+    private ServerJobHandlers: ServerJobHandler<any>[] = [];
+
     ListenTo: RemoteEvent;
 
     Signal?: RBXScriptConnection;
+
+    RegisterHandler (ServerJobHandler: ServerJobHandler<any>)
+    {
+        this.ServerJobHandlers.push(ServerJobHandler);
+	}
 
     StopDispatching (): void
     {
@@ -29,7 +37,10 @@ export class ServerJobProcessor extends Processor
 
     StartDispatching(): void
     {
-        this.Signal = this.ListenTo.OnClientEvent.ConnectParallel((Arg: unknown) => this.OnServerDispatching(Arg));
+        if (this.Signal !== undefined && !this.Signal.Connected)
+        {
+            this.Signal = this.ListenTo.OnClientEvent.ConnectParallel((Arg: unknown) => this.OnServerDispatching(Arg));
+		}
     }
 
     private OnServerDispatching (Arg: unknown)
@@ -37,7 +48,13 @@ export class ServerJobProcessor extends Processor
         let Attempt = opcall(() =>
         {
             let AArg = Arg as ServerJob<any>;
-
+            this.ServerJobHandlers.forEach(H =>
+            {
+                if (H.DispatchJobType === AArg.ServerJobSpecification)
+                {
+                    H.InvokeJob(AArg);
+				}
+            });
         });
         if (!Attempt.success)
         {
