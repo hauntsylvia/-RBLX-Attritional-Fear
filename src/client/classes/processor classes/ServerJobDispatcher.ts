@@ -1,6 +1,4 @@
-import { ServerJobSpecifications } from "../../../consts/Enums";
-import { Vessel } from "../../in game/vessels/Vessel";
-import { ServerJob } from "./ServerJob";
+import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
 
 export class ServerJobDispatcher<T>
 {

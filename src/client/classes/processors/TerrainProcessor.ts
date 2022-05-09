@@ -11,7 +11,7 @@ import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHe
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { Sleep } from "../../../shared/classes/util/Sleep";
 import { AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize } from "../../../shared/consts/Biomes";
-import { RenderTerrainResult } from "../processor results/RenderTerrainResult";
+import { RenderTerrainResult } from "../processor classes/RenderTerrainResult";
 import { Processor } from "./Processor";
 
 export class TerrainProcessor extends Processor

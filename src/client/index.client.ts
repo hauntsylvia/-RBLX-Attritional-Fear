@@ -8,7 +8,7 @@ import { FactionTitleKeys } from "../shared/consts/Strings";
 import { FoACamera } from "./classes/camera/FoACamera";
 import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
-import { RenderTerrainResult } from "./classes/processor results/RenderTerrainResult";
+import { RenderTerrainResult } from "./classes/processor classes/RenderTerrainResult";
 
 print("Constructing client . .");
 const Client = new FoAClient();

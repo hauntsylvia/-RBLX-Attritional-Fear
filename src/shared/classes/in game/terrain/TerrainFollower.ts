@@ -1,7 +1,7 @@
 import { FoACamera } from "../../../../client/classes/camera/FoACamera";
 import { FoAClient } from "../../../../client/classes/clients/FoAClient";
 import { ISettingsInvolved } from "../../../../client/classes/clients/ISettingsInvolved";
-import { RenderTerrainResult } from "../../../../client/classes/processor results/RenderTerrainResult";
+import { RenderTerrainResult } from "../../../../client/classes/processor classes/RenderTerrainResult";
 import { TerrainProcessor } from "../../../../client/classes/processors/TerrainProcessor";
 import { FoAPlayerSettings } from "../players/personalizations/FoAPlayerSettings";
 import { ChunkSettings } from "../players/personalizations/specifics/ChunkSettings";
