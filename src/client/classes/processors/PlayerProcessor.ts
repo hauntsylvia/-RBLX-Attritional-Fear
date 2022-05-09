@@ -10,9 +10,9 @@ import { Processor } from "./Processor";
 
 export class PlayerProcessor extends Processor
 {
-    constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
+    constructor (APIInstance: RemoteFunction)
     {
-        super(APIInstance, APIReplicator);
+        super(APIInstance);
     }
 
     GetAllPlayers (): ServerResponse<FoAFaction[]>

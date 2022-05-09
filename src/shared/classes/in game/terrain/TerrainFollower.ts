@@ -37,7 +37,7 @@ export class TerrainFollower implements ISettingsInvolved
 
 	Connect ()
 	{
-		this.Signal = game.GetService("Workspace").StreamingEnabled ? game.GetService("RunService").RenderStepped.Connect((Dt) => this.RenderStepped(Dt)) : undefined;
+		this.Signal = game.GetService("Workspace").StreamingEnabled ? game.GetService("RunService").RenderStepped.ConnectParallel((Dt) => this.RenderStepped(Dt)) : undefined;
 	}
 
 	Disconnect ()

@@ -4,15 +4,12 @@ import { Strings } from "../../../shared/consts/Strings";
 
 export class Processor
 {
-    constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
+    constructor (APIInstance: RemoteFunction)
     {
         this.APIInstance = APIInstance;
-        this.APIReplicator = APIReplicator;
     }
 
     APIInstance: RemoteFunction;
-
-    APIReplicator: RemoteEvent;
 
     ServiceAvailable (ControllerName: string): boolean
     {

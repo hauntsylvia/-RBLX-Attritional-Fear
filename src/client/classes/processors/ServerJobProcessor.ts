@@ -12,11 +12,22 @@ export class ServerJobProcessor extends Processor
 {
     constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
     {
-        super(APIInstance, APIReplicator);
+        super(APIInstance);
+        this.ListenTo = APIReplicator;
+        this.Signal = this.ListenTo.OnClientEvent.ConnectParallel(this.OnServerDispatching);
     }
 
-    GetAllPlayers (): ServerResponse<FoAFaction[]>
+    ListenTo: RemoteEvent;
+
+    Signal: RBXScriptConnection;
+
+    StartDispatching (): ServerResponse<FoAFaction[]>
     {
         return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
+
+    private OnServerDispatching ()
+    {
+
+	}
 }

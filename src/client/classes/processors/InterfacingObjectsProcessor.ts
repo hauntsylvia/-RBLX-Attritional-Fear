@@ -4,9 +4,9 @@ import { Processor } from "./Processor";
 
 export class InterfacingObjectsProcessor extends Processor
 {
-    constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
+    constructor (APIInstance: RemoteFunction)
     {
-        super(APIInstance, APIReplicator);
+        super(APIInstance);
     }
 
     Entangled: ISettingsInvolved[] = [];
