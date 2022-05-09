@@ -64,3 +64,13 @@ export enum TimeUnits
 	Minute = 60,
 	Second = 1,
 }
+
+/** Items representing different jobs the client is expected to do upon request of the server. */
+export enum ServerJobSpecifications
+{
+	/** Indicates that the returned object in the replicator job is one containing vessel positional data. */
+	VesselMove,
+
+	/** Indicates that the returned object in the replicator job is one containing data of a new player that has registered a faction. */
+	NewFactionInGame,
+}

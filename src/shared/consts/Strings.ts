@@ -15,6 +15,11 @@ export enum FactionTitleKeys
 export class Strings
 {
     static AvailableServicesFolderName = "Available Services";
+    static ServerAPIStrings = class
+    {
+        static APIInstanceName: string = "APIInstance";
+        static APIReplicatorName: string = "APIReplicator";
+	}
     static DataStrings = class
     {
         static FoAPlayerSettingsDataStore: string = "FoA.PlayerSettings";

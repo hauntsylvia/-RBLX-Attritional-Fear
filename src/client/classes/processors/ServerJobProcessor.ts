@@ -8,7 +8,7 @@ import { ServerDataOperationResponse } from "../../../shared/classes/server help
 import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";
 import { Processor } from "./Processor";
 
-export class PlayerProcessor extends Processor
+export class ServerJobProcessor extends Processor
 {
     constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
     {
@@ -19,20 +19,4 @@ export class PlayerProcessor extends Processor
     {
         return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
-
-    RegisterFactionToGame (Faction: FoAFaction): ServerResponse<FoAFaction>
-    {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.RegisterPlayerFaction, Faction));
-    }
-
-    GetCurrentPlayer (): ServerResponse<SelfFoAPlayer>
-    {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
-    }
-
-    SaveFoAPlayerSettings (SettingsToSave: FoAPlayerSettings, HandlingProcessor: InterfacingObjectsProcessor): ServerResponse<ServerDataOperationResponse>
-    {
-        HandlingProcessor.ChangedSettings(SettingsToSave);
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
-	}
 }

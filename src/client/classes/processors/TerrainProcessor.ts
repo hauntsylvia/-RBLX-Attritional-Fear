@@ -16,9 +16,9 @@ import { Processor } from "./Processor";
 
 export class TerrainProcessor extends Processor
 {
-    constructor (Instance: RemoteFunction)
+    constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
     {
-        super(Instance);
+        super(APIInstance, APIReplicator);
         this.MapData = this.GetMapData();
         this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize);
     }

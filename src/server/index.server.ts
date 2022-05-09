@@ -32,7 +32,6 @@ let V = new Vessel(1, "Logic Air",
 Vessel.ChangeVesselThrottles(V, 1, 0);
 Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
 
-wait(55);
 new Server();
 
 export {};

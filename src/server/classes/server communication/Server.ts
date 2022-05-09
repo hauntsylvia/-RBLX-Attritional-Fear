@@ -23,11 +23,15 @@ export class Server
         this.APIListener.Name = "API";
         this.APIListener.OnServerInvoke = (Player: Player, Controller: unknown, Endpoint: unknown, Arg: unknown) =>
         {
-            return this.OnInvoke(Player, Controller, Endpoint, Arg);
+            return this.OnAPIInvoke(Player, Controller, Endpoint, Arg);
         };
         this.APIListener.Parent = game.GetService("ReplicatedStorage");
 
         this.RegisterHandlers();
+
+        this.APIReplicator = new Instance("RemoteEvent");
+        this.APIReplicator.Name = "APIReplicator";
+        this.APIReplicator.Parent = game.GetService("ReplicatedStorage");
     }
 
     UnavailableHandlers: IHandler[] =
@@ -36,15 +40,18 @@ export class Server
             new PlayerHandler(),
             new TerrainHandler(),
         ];
+
     AvailableHandlers: IHandler[] = [];
 
     ServerData: ServerData;
 
     APIListener: RemoteFunction;
 
+    APIReplicator: RemoteEvent;
+
     AvailableListeners: Folder;
 
-    OnInvoke(Player: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
+    OnAPIInvoke(Player: Player, ControllerRequested: unknown, EndpointRequested: unknown, Args: unknown)
     {
         if(typeIs(ControllerRequested, "string") && typeIs(EndpointRequested, "string"))
         {

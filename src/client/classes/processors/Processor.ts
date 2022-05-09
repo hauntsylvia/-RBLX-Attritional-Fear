@@ -4,11 +4,15 @@ import { Strings } from "../../../shared/consts/Strings";
 
 export class Processor
 {
-    Instance: RemoteFunction;
-    constructor(Instance: RemoteFunction)
+    constructor (APIInstance: RemoteFunction, APIReplicator: RemoteEvent)
     {
-        this.Instance = Instance;
+        this.APIInstance = APIInstance;
+        this.APIReplicator = APIReplicator;
     }
+
+    APIInstance: RemoteFunction;
+
+    APIReplicator: RemoteEvent;
 
     ServiceAvailable (ControllerName: string): boolean
     {
@@ -26,7 +30,7 @@ export class Processor
         }
         else
         {
-            return this.Instance.InvokeServer(ServerRequest.ControllerRequested, ServerRequest.EndpointRequested, ServerRequest.Arguments);
+            return this.APIInstance.InvokeServer(ServerRequest.ControllerRequested, ServerRequest.EndpointRequested, ServerRequest.Arguments);
 		}
     }
 }

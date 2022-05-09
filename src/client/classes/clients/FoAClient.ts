@@ -1,4 +1,5 @@
 import { TerrainFollower } from "../../../shared/classes/in game/terrain/TerrainFollower";
+import { Strings } from "../../../shared/consts/Strings";
 import { FoACamera } from "../camera/FoACamera";
 import { LevelOfZoom } from "../camera/LevelOfZoom";
 import { InterfacingObjectsProcessor } from "../processors/InterfacingObjectsProcessor";
@@ -9,11 +10,13 @@ export class FoAClient
 {
     constructor()
     {
-        let RemoteFunction = this.WaitForServer();
+        let ServerAPIStuff = this.WaitForServer();
+        let RemoteFunction = ServerAPIStuff[0];
+        let RemoteEvent = ServerAPIStuff[1];
 
-        this.ObjectsProcessor = new InterfacingObjectsProcessor(RemoteFunction);
-        this.PlayerProcessor = new PlayerProcessor(RemoteFunction);
-        this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
+        this.ObjectsProcessor = new InterfacingObjectsProcessor(RemoteFunction, RemoteEvent);
+        this.PlayerProcessor = new PlayerProcessor(RemoteFunction, RemoteEvent);
+        this.TerrainProcessor = new TerrainProcessor(RemoteFunction, RemoteEvent);
 
         let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer().Returned ?? error("No player loaded.");
 
@@ -34,9 +37,10 @@ export class FoAClient
 
     ObjectsProcessor: InterfacingObjectsProcessor;
 
-    WaitForServer (): RemoteFunction
+    WaitForServer (): [RemoteFunction, RemoteEvent]
     {
-        let RemoteFunction = game.GetService("ReplicatedStorage").WaitForChild("API", 60) as RemoteFunction;
-        return RemoteFunction;
-	}
+        let RemoteFunction = game.GetService("ReplicatedStorage").WaitForChild(Strings.ServerAPIStrings.APIInstanceName, 60) as RemoteFunction;
+        let RemoteEvent = game.GetService("ReplicatedStorage").WaitForChild(Strings.ServerAPIStrings.APIReplicatorName, 60) as RemoteEvent;
+        return [RemoteFunction, RemoteEvent];
+    }
 }
