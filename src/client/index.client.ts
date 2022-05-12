@@ -20,7 +20,7 @@ print(Self.Success);
 if (Self.Success && Self.Returned !== undefined)
 {
 	print("Registering faction . .");
-	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new SelfFoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255)));
+	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new SelfFoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255), [], [], []));
 	if (Faction.Success && Faction.Returned !== undefined)
 	{
 		print("Faction registered.");

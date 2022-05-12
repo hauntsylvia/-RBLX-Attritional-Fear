@@ -1,4 +1,4 @@
-import { PartType } from "./Enums";
+import { BuildingTypes, BuildingVisuals, PartType } from "./Enums";
 
 export enum FactionTitleKeys
 {
@@ -19,29 +19,35 @@ export class Strings
     {
         static APIInstanceName: string = "APIInstance";
         static APIReplicatorName: string = "APIReplicator";
-	}
-    static DataStrings = class
-    {
-        static FoAPlayerSettingsDataStore: string = "FoA.PlayerSettings";
-	}
-    static PlayerStrings = class
-    {
-        static PlayerHandlerRoute: string = "Players";
-        static PlayerDataHandlerRoute: string = "Player.Data";
+        static DataStrings = class
+        {
+            static FoAPlayerSettingsDataStore: string = "FoA.PlayerSettings";
+        };
+        static PlayerStrings = class
+        {
+            static PlayerHandlerRoute: string = "Players";
+            static PlayerDataHandlerRoute: string = "Player.Data";
 
-        static GetAllActivePlayerFactions: string = "GetFactions";
-        static RegisterPlayerFaction: string = "RegisterFaction";
-        static GetFoAPlayerFromPlayer: string = "RegisterCurrentPlayer";
+            static GetAllActivePlayerFactions: string = "GetFactions";
+            static RegisterPlayerFaction: string = "RegisterFaction";
+            static GetFoAPlayerFromPlayer: string = "RegisterCurrentPlayer";
 
-        static GetFoAPlayerSettings: string = "GetFoAPlayerSettings";
-        static SaveFoAPlayerSettings: string = "SaveFoAPlayerSettings";
-    };
-    static TerrainStrings = class
-    {
-        static TerrainHandlerRoute = "Terrain";
+            static GetFoAPlayerSettings: string = "GetFoAPlayerSettings";
+            static SaveFoAPlayerSettings: string = "SaveFoAPlayerSettings";
+        };
+        static TerrainStrings = class
+        {
+            static TerrainHandlerRoute = "Terrain";
 
-        static GetMapData = "GetMapData";
-        static GetChunkOfTerrain = "GetChunk";
+            static GetMapData = "GetMapData";
+            static GetChunkOfTerrain = "GetChunk";
+        };
+        static VesselHandlerStrings = class
+        {
+            static VesselHandlerRoute: string = "VesselHandler";
+
+            static TryToMakeVessel: string = "MakeVessel";
+		}
 	}
     static FactionStrings = class
     {
@@ -77,7 +83,7 @@ export class Strings
         }
         static GetVesselPartsFolder (PType: PartType): Folder
         {
-            let F = game.GetService("ReplicatedStorage").WaitForChild("VesselParts", 5)?.WaitForChild("Models", 5)?.WaitForChild(PartType[PType], 5);
+            let F = game.GetService("ReplicatedStorage").WaitForChild(".Vessel Parts", 5)?.WaitForChild("Models", 5)?.WaitForChild(PartType[PType], 5);
             if (F !== undefined && F.IsA("Folder"))
             {
                 return F;
@@ -85,13 +91,19 @@ export class Strings
             else
             {
                 let F1 = new Instance("Folder", game.GetService("ReplicatedStorage"));
-                F1.Name = "VesselParts";
+                F1.Name = ".Vessel Parts";
                 let F2 = new Instance("Folder", F1);
                 F2.Name = "Models";
                 let F3 = new Instance("Folder", F1);
                 F3.Name = PartType[PType];
                 return F3;
             }
+        }
+        static GetBuildingModel (BuildingVisuals: BuildingVisuals, BuildingType: BuildingTypes): Model | undefined
+        {
+
+            let F = game.GetService("ReplicatedStorage").WaitForChild(".Buildings", 5)?.WaitForChild("Models", 5)?.WaitForChild(BuildingVisuals, 5)?.WaitForChild(BuildingType);
+            return F?.FindFirstChildOfClass("Model");
 		}
 	}
 }

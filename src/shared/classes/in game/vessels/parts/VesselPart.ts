@@ -13,7 +13,7 @@ export class VesselPart implements IEntityPart
 	{
 		this.Name = Name;
 		this.Description = Description;
-		this.ModelToCloneName = ModelToCloneName;
+		this.ModelName = ModelToCloneName;
 		this.EntityDamageEvents = EntityDamageEvents;
 		this.Geometry = Geometry;
 		this.Type = Type;
@@ -25,7 +25,7 @@ export class VesselPart implements IEntityPart
 
 	Description: string;
 
-	ModelToCloneName: string;
+	ModelName: string;
 
 	EntityDamageEvents: EntityDamageEvent[];
 
@@ -40,7 +40,7 @@ export class VesselPart implements IEntityPart
 	static GetModel (VP: VesselPart): Model | undefined
 	{
 		let F = Strings.StorageStrings.GetVesselPartsFolder(VP.Type);
-		let M = F.FindFirstChild(VP.ModelToCloneName);
+		let M = F.FindFirstChild(VP.ModelName);
 		return M !== undefined && M.IsA("Model") ? M : undefined;
 	}
 

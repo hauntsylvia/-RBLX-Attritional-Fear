@@ -74,3 +74,21 @@ export enum ServerJobSpecifications
 	/** Indicates that the returned object in the replicator job is one containing data of a new player that has registered a faction. */
 	NewFactionInGame,
 }
+
+export enum BuildingVisuals
+{
+	Default = "Default",
+}
+
+export enum BuildingTypes
+{
+	Hangar = "Hangar",
+	HQ = "Headquarters",
+	MassProductionFacility = "Mass Production Facility",
+	OilDrillingRig = "Oil Drilling Rig",
+	ProductionFacility = "Production Facility",
+	StaticArtilleryHouse = "Static Artillery House",
+	StoreHouse = "Store House",
+	VesselManufacturingFacility = "Vessel Manufacturing Facility",
+	VesselPlanningFacility = "Vessel Planning Facility",
+}

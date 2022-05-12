@@ -18,12 +18,12 @@ import { IHandler } from "./Handler";
 
 export class TerrainHandler implements IHandler
 {
-    Name: string = Strings.TerrainStrings.TerrainHandlerRoute;
+    Name: string = Strings.ServerAPIStrings.TerrainStrings.TerrainHandlerRoute;
 
     Endpoints =
     [
-        new Endpoint(Strings.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
-        new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
+            new Endpoint(Strings.ServerAPIStrings.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
+            new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.ServerAPIStrings.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
     ]
 
     THelper!: TerrainHelper;

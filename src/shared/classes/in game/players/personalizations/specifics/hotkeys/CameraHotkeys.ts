@@ -1,21 +1,5 @@
 export class CameraHotkeys
 {
-	ZoomIn: string;
-	ZoomOut: string;
-
-	LoZZoomOut: string;
-	LoZZoomIn: string;
-
-	MoveForward: string;
-	MoveBackward: string;
-	MoveLeft: string;
-	MoveRight: string;
-	RotateLeft: string;
-	RotateRight: string;
-
-	CameraZoomSensitivity: number;
-	CameraSpeed: number;
-
 	constructor (ZoomIn: string, ZoomOut: string, LoZZoomOut: string, LoZZoomIn: string, MoveForward: string, MoveBackward: string, MoveLeft: string, MoveRight: string, RotateLeft: string, RotateRight: string, CameraSensitivity: number, CameraSpeed: number)
 	{
 		this.ZoomIn = ZoomIn;
@@ -33,4 +17,21 @@ export class CameraHotkeys
 		this.CameraZoomSensitivity = CameraSensitivity;
 		this.CameraSpeed = CameraSpeed;
 	}
+
+	ZoomIn: string;
+	ZoomOut: string;
+
+	LoZZoomOut: string;
+	LoZZoomIn: string;
+
+	MoveForward: string;
+	MoveBackward: string;
+	MoveLeft: string;
+	MoveRight: string;
+	RotateLeft: string;
+	RotateRight: string;
+
+	CameraZoomSensitivity: number;
+	CameraSpeed: number;
+
 }

@@ -8,18 +8,19 @@ import { Registers } from "../../../shared/consts/Registers";
 import { ServerData } from "../server communication/ServerData";
 import { IHandler } from "./Handler";
 import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
+import { StuffOnRoundStart } from "../../../shared/consts/in game/factions/StuffOnRoundStart";
 
 export class PlayerHandler implements IHandler
 {
-    Name: string = Strings.PlayerStrings.PlayerHandlerRoute;
+    Name: string = Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute;
 
     Endpoints =
         [
-            new Endpoint<any, FoAFaction[]>(Strings.PlayerStrings.GetAllActivePlayerFactions,
+            new Endpoint<any, FoAFaction[]>(Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions,
                 (Player: Player) => this.GetAllActivePlayerFactions(Player)),
-            new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.PlayerStrings.RegisterPlayerFaction,
+            new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction,
                 (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
-            new Endpoint<any, SelfFoAPlayer>(Strings.PlayerStrings.GetFoAPlayerFromPlayer,
+            new Endpoint<any, SelfFoAPlayer>(Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerFromPlayer,
                 (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
         ]
 
@@ -41,7 +42,7 @@ export class PlayerHandler implements IHandler
                 let AdjustedTerSize = TerrSize / 2;
                 let RanX = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
                 let RanZ = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
-                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color);
+                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color, StuffOnRoundStart.);
                 this.ServerData.CurrentActiveFactions.push(NewFac);
                 return NewFac;
             }

@@ -32,7 +32,7 @@ export class TerrainProcessor extends Processor
     GetMapData (): TerrainRequest
     {
         wait(2);
-        let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.TerrainStrings.TerrainHandlerRoute, Strings.TerrainStrings.GetMapData, undefined));
+        let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.ServerAPIStrings.TerrainStrings.TerrainHandlerRoute, Strings.ServerAPIStrings.TerrainStrings.GetMapData, undefined));
         return MapData.Returned ?? this.GetMapData();
     }
 

@@ -17,22 +17,22 @@ export class PlayerProcessor extends Processor
 
     GetAllPlayers (): ServerResponse<FoAFaction[]>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetAllActivePlayerFactions, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
 
     RegisterFactionToGame (Faction: FoAFaction): ServerResponse<FoAFaction>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.RegisterPlayerFaction, Faction));
+        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction, Faction));
     }
 
     GetCurrentPlayer (): ServerResponse<SelfFoAPlayer>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
     }
 
     SaveFoAPlayerSettings (SettingsToSave: FoAPlayerSettings, HandlingProcessor: InterfacingObjectsProcessor): ServerResponse<ServerDataOperationResponse>
     {
         HandlingProcessor.ChangedSettings(SettingsToSave);
-        return this.MakeRequest(new ServerRequest<any>(Strings.PlayerStrings.PlayerHandlerRoute, Strings.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
+        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
 	}
 }
