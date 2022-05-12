@@ -1,5 +1,5 @@
-import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
-import { ServerJobSpecifications } from "../../../shared/consts/Enums";
+import { ServerJob } from "../../../../shared/classes/server helpers/server replications/ServerJob";
+import { ServerJobSpecifications } from "../../../../shared/consts/Enums";
 
 export class ServerJobHandler<T>
 {

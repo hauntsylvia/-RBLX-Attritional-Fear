@@ -7,5 +7,10 @@ export class BuildingVisualsSettings
 		this.V = V;
 	}
 
-	V: Map<BuildingTypes, BuildingVisuals>;
+	private V: Map<BuildingTypes, BuildingVisuals>;
+
+	GetVisualsForBuilding (Building: BuildingTypes): BuildingVisuals
+	{
+		return this.V.get(Building) ?? BuildingVisuals.Default;
+	}
 }

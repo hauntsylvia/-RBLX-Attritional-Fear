@@ -7,7 +7,7 @@ import { Server } from "../../../server/classes/server communication/Server";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
-import { ServerJobHandler } from "../processor classes/ServerJobHandler";
+import { ServerJobHandler } from "../processor classes/server jobs/ServerJobHandler";
 import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";
 import { Processor } from "./Processor";
 
