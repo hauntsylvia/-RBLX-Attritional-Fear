@@ -1,4 +1,5 @@
 import { MetricUnits, PartType, Species, TimeUnits } from "../../../consts/Enums";
+import { VesselCondition } from "../../../consts/in game/entities/conditions/VesselCondition";
 import { Geometry } from "../../util/measurements/Geometry";
 import { Mass } from "../../util/measurements/Mass";
 import { Rate } from "../../util/measurements/Rate";
@@ -16,7 +17,7 @@ export class Vessel extends Entity
 {
 	constructor (Id: number, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
 	{
-		super(Id, VesselParts, Name, Species.Vessel);
+		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition());
 		this.Crew = Crew;
 	}
 
@@ -70,6 +71,11 @@ export class Vessel extends Entity
 	 */
 	static MoveVesselTo (V: Vessel, MoveTo: Vector3)
 	{
+		if (game.GetService("RunService").IsServer())
+		{
+			print("This method is meant to be fired on the clients!");
+		}
+
 		let Base = MetricUnits.Base;
 		let TU = TimeUnits.Second;
 
@@ -140,3 +146,4 @@ export class Vessel extends Entity
 		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second));
 	}
 }
+

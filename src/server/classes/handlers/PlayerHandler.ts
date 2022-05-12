@@ -7,6 +7,7 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { Registers } from "../../../shared/consts/Registers";
 import { ServerData } from "../server communication/ServerData";
 import { IHandler } from "./Handler";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 
 export class PlayerHandler implements IHandler
 {
@@ -40,7 +41,7 @@ export class PlayerHandler implements IHandler
                 let AdjustedTerSize = TerrSize / 2;
                 let RanX = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
                 let RanZ = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
-                let NewFac = new FoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color);
+                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color);
                 this.ServerData.CurrentActiveFactions.push(NewFac);
                 return NewFac;
             }

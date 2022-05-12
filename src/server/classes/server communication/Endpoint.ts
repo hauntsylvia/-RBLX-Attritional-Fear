@@ -5,7 +5,7 @@ import { Replicator } from "../client communication/Replicator";
 
 export class Endpoint<ExpectedArgFromClient, ExpectedReturnToClient>
 {
-    constructor (Route: string, OnRoutedTo: (Player: Player, Arg: ExpectedArgFromClient) => ExpectedReturnToClient | undefined)
+    constructor (Route: string, OnRoutedTo: (Player: Player, Arg: ExpectedArgFromClient, Replicator: Replicator) => ExpectedReturnToClient | undefined)
     {
         this.Route = Route;
         this.OnRoutedTo = OnRoutedTo;

@@ -1,5 +1,6 @@
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { Server } from "../server/classes/server communication/Server";
+import { SelfFoAFaction } from "../shared/classes/in game/factions/SelfFoAFaction";
 import { FoAPlayerSettings } from "../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Hotkeys } from "../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { ServerTerrainRequest } from "../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
@@ -19,7 +20,7 @@ print(Self.Success);
 if (Self.Success && Self.Returned !== undefined)
 {
 	print("Registering faction . .");
-	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new FoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255)));
+	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new SelfFoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255)));
 	if (Faction.Success && Faction.Returned !== undefined)
 	{
 		print("Faction registered.");

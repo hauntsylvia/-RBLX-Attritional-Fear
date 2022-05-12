@@ -2,18 +2,8 @@ import { FactionTitleKeys } from "../../../consts/Strings";
 import { FoAPlayer } from "../players/FoAPlayer";
 import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 
-export class FoAFaction
+export interface FoAFaction
 {
-    constructor (Player: SelfFoAPlayer, UserId: number, Name: string, SpawnLoc: Vector3, Title: FactionTitleKeys, Color: Color3)
-    {
-        this.Player = Player;
-        this.UserId = UserId;
-        this.Name = Name;
-        this.SpawnLocation = SpawnLoc;
-        this.Title = Title;
-        this.Color = Color;
-    }
-
     Player?: FoAPlayer;
 
     UserId: number;
