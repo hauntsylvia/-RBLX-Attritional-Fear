@@ -16,4 +16,6 @@ export interface IEntityPart
 	readonly Geometry: Geometry;
 
 	readonly ModelCenter: Vector3;
+
+	readonly FullEntityDeathWhenDisabled: boolean;
 }

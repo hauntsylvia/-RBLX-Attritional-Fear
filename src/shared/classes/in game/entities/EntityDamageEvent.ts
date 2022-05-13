@@ -4,9 +4,8 @@ import { IEntityDamageEvent } from "./IEntityDamageEvent";
 
 export class EntityDamageEvent implements IEntityDamageEvent
 {
-    constructor (FullEntityDeathWhenActive: boolean, Name: string, Description: string, HelpfulDescription: string, MinimumPenetrationalForce: PenetrationForce)
+    constructor (Name: string, Description: string, HelpfulDescription: string, MinimumPenetrationalForce: PenetrationForce)
     {
-        this.FullEntityDeathWhenActive = FullEntityDeathWhenActive;
         this.Name = Name;
         this.Description = Description;
         this.HelpfulDescription = HelpfulDescription;
@@ -14,8 +13,6 @@ export class EntityDamageEvent implements IEntityDamageEvent
     }
 
     IsActive: boolean = false;
-
-    FullEntityDeathWhenActive: boolean;
 
     Name: string;
 

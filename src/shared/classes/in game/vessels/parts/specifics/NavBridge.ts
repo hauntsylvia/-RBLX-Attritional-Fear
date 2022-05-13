@@ -11,7 +11,7 @@ export class NavBridge extends VesselPart
 {
 	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], SightRadiusMax: Rate)
 	{
-		super(Name, Description, EntityDamageEvents, Geometry, PartType.NavBridge, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart);
+		super(Name, Description, EntityDamageEvents, Geometry, PartType.NavBridge, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart, false);
 		this.SightRadiusMax = SightRadiusMax;
 	}
 

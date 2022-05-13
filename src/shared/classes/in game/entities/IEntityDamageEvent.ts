@@ -6,9 +6,6 @@ export interface IEntityDamageEvent
 	/** Returns true when this force may be applied. */
 	IsActive: boolean;
 
-	/** If set to true, the parenting entity may be fully disabled or killed when this event is active. */
-	FullEntityDeathWhenActive: boolean;
-
 	/**Examples: liver rupture (crew) . . no fuel input (engine/fuel tank) . . emp (electrical devices) */
 	Name: string;
 

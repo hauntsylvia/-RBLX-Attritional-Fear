@@ -9,7 +9,7 @@ import { StorageContainer } from "../../resources/StorageContainer";
 
 export class VesselPart implements IEntityPart
 {
-	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, Type: PartType, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[])
+	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, Type: PartType, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], FullEntityDeathWhenDisabled: boolean)
 	{
 		this.Name = Name;
 		this.Description = Description;
@@ -20,6 +20,7 @@ export class VesselPart implements IEntityPart
 		this.StorageOfPart = StorageOfPart;
 		this.ResourcesConsumedByPart = ResourcesConsumedByPart;
 		this.ModelCenter = VesselPart.GetModelCenter(this);
+		this.FullEntityDeathWhenDisabled = FullEntityDeathWhenDisabled;
 	}
 
 	Name: string;
@@ -39,6 +40,8 @@ export class VesselPart implements IEntityPart
 	ResourcesConsumedByPart: Storable[];
 
 	ModelCenter: Vector3;
+
+	FullEntityDeathWhenDisabled: boolean;
 
 	static GetModel (VP: VesselPart): Model | undefined
 	{

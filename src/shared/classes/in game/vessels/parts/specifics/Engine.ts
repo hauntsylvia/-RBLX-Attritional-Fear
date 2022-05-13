@@ -11,7 +11,7 @@ export class Engine extends VesselPart
 {
 	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], Speed: Rate)
 	{
-		super(Name, Description, EntityDamageEvents, Geometry, PartType.Engine, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart);
+		super(Name, Description, EntityDamageEvents, Geometry, PartType.Engine, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart, false);
 		this.Speed = Speed;
 	}
 
