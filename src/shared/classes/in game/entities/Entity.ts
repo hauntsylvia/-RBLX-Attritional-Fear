@@ -1,12 +1,13 @@
 import { Species } from "../../../consts/Enums";
 import { Geometry } from "../../util/measurements/Geometry";
+import { Rate } from "../../util/measurements/Rate";
 import { EntityCondition } from "./conditions/EntityCondition";
 import { IEntityPart } from "./IEntityPart";
 import { IId } from "./Unique";
 
 export class Entity implements IId
 {
-	constructor (Id: number, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: number)
+	constructor (Id: number, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: Rate)
 	{
 		this.Id = Id;
 		this.Parts = Parts;
@@ -26,7 +27,7 @@ export class Entity implements IId
 
 	EntityCondition: EntityCondition;
 
-	EntitySightRadius: number;
+	EntitySightRadius: Rate;
 
 	static GetPositionalAverage (V: Entity): Vector3
 	{

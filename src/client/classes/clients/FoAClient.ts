@@ -2,6 +2,7 @@ import { TerrainFollower } from "../../../shared/classes/in game/terrain/Terrain
 import { Strings } from "../../../shared/consts/Strings";
 import { FoACamera } from "../camera/FoACamera";
 import { LevelOfZoom } from "../camera/LevelOfZoom";
+import { EntityProcessor } from "../processors/EntityProcessor";
 import { InterfacingObjectsProcessor } from "../processors/InterfacingObjectsProcessor";
 import { PlayerProcessor } from "../processors/PlayerProcessor";
 import { TerrainProcessor } from "../processors/TerrainProcessor";
@@ -23,6 +24,8 @@ export class FoAClient
         this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), CurrentPlayer.FoAPlayerSettings);
         this.TerrainChunker = new TerrainFollower(this.Camera, CurrentPlayer.FoAPlayerSettings, this.TerrainProcessor);
 
+        this.EntitiesProcessor = new EntityProcessor(RemoteFunction);
+
         this.ObjectsProcessor.NewClientObject(this.Camera);
         this.ObjectsProcessor.NewClientObject(this.TerrainChunker);
     }
@@ -36,6 +39,8 @@ export class FoAClient
     TerrainChunker: TerrainFollower;
 
     ObjectsProcessor: InterfacingObjectsProcessor;
+
+    EntitiesProcessor: EntityProcessor;
 
     WaitForServer (): [RemoteFunction, RemoteEvent]
     {

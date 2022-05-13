@@ -5,14 +5,12 @@ export class VesselCondition extends EntityCondition
 {
 	constructor ()
 	{
-		super(false, VesselConditionEntries.GetEntries());
+		super(false, []);
+		this.ConditionEntries.push(this.MovementEntry);
+		this.ConditionEntries.push(this.SightEntry);
 	}
-}
 
-class VesselConditionEntries
-{
-	static GetEntries (): ConditionEntry[]
-	{
-		return [new ConditionEntry("Movement", 1)];
-	}
+	MovementEntry: ConditionEntry = new ConditionEntry("Movement", 1);
+
+	SightEntry: ConditionEntry = new ConditionEntry("External Situational Awareness", 1);
 }

@@ -19,7 +19,7 @@ export class Vessel extends Entity
 	constructor (Id: number, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
 	{
 		let NavB = VesselParts.find(P => P.Type === PartType.NavBridge);
-		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : 0);
+		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : new Rate(0, MetricUnits.Base, 1, TimeUnits.Second));
 		this.Crew = Crew;
 	}
 
@@ -128,10 +128,17 @@ export class Vessel extends Entity
 		});
 		print("Frame count: " + Frames.size());
 
+		let TotalSight = new Rate(0, DUnits, 1, TUnits);
+		NavBs.forEach(N =>
+		{
+			let SightToUnits = Rate.Convert(DUnits, TUnits, N.SightRadiusMax);
+			TotalSight = new Rate(TotalSight.DistanceValue + SightToUnits.DistanceValue, DUnits, SightToUnits.TimeValue, TUnits);
+		});
+
 		let MaxSpeedPotential = Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
 		let MaxRotationPotential = Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
 
-		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second), new Rate(40, MetricUnits.RobloxStud, 1, TimeUnits.Second));
+		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second), TotalSight);
 	}
 }
 
