@@ -4,6 +4,7 @@ import { Entity } from "../entities/Entity";
 import { FoAPlayer } from "../players/FoAPlayer";
 import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 import { CrewMember } from "../vessels/CrewMember";
+import { FactionArguments } from "./FactionArguments";
 
 export interface FoAFaction
 {
@@ -11,13 +12,9 @@ export interface FoAFaction
 
     UserId: number;
 
-    Name: string;
+    FactionDescriptors: FactionArguments;
 
     SpawnLocation: Vector3;
-
-    Title: FactionTitleKeys;
-
-    Color: Color3;
 
     Buildings: IBuilding[];
 

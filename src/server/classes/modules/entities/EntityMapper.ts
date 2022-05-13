@@ -1,6 +1,5 @@
 import { Entity } from "../../../../shared/classes/in game/entities/Entity";
 import { FoAFaction } from "../../../../shared/classes/in game/factions/Faction";
-import { OpponentFoAFaction } from "../../../../shared/classes/in game/factions/OpponentFoAFaction";
 import { SelfFoAFaction } from "../../../../shared/classes/in game/factions/SelfFoAFaction";
 import { Rate } from "../../../../shared/classes/util/measurements/Rate";
 import { MetricUnits, TimeUnits } from "../../../../shared/consts/Enums";
@@ -12,7 +11,7 @@ export class EntityMapper
 	 * @param VisibleTo
 	 * @param AllOtherFactions
 	 */
-	static MapVisibleEntities (VisibleTo: SelfFoAFaction, AllOtherFactions: OpponentFoAFaction[]): Partial<Entity>[]
+	static MapVisibleEntities (VisibleTo: SelfFoAFaction, AllOtherFactions: FoAFaction[]): Partial<Entity>[]
 	{
 		let M: Partial<Entity>[] = [];
 		AllOtherFactions.forEach(OpposingFaction =>

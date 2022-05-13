@@ -1,5 +1,6 @@
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { Server } from "../server/classes/server communication/Server";
+import { FactionArguments } from "../shared/classes/in game/factions/FactionArguments";
 import { SelfFoAFaction } from "../shared/classes/in game/factions/SelfFoAFaction";
 import { FoAPlayerSettings } from "../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Hotkeys } from "../shared/classes/in game/players/personalizations/specifics/Hotkeys";
@@ -26,7 +27,7 @@ Vessel.ChangeVesselThrottles(V, 1, 0);
 Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
 	 */
 
-	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new SelfFoAFaction(Self.Returned, Self.Returned.RobloxPlayerInstance.UserId, "Abc", new Vector3(), FactionTitleKeys.Dreadful, Color3.fromRGB(255, 180, 255), [], [], []));
+	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new FactionArguments("Melancholic", FactionTitleKeys.AirTraverser, Color3.fromRGB(0, 0, 0)));
 	if (Faction.Success && Faction.Returned !== undefined)
 	{
 		print("Faction registered.");

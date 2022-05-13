@@ -2,6 +2,7 @@ import { TerrainFollower } from "../../../shared/classes/in game/terrain/Terrain
 import { Strings } from "../../../shared/consts/Strings";
 import { FoACamera } from "../camera/FoACamera";
 import { LevelOfZoom } from "../camera/LevelOfZoom";
+import { FactionModifiedJobHandler } from "../processor classes/server job handlers/FactionModifiedJobHandler";
 import { ServerJobHandler } from "../processor classes/server job handlers/ServerJobHandler";
 import { VesselCreationHandler } from "../processor classes/server job handlers/VesselCreationHandler";
 import { VesselMovementHandler } from "../processor classes/server job handlers/VesselMovementHandler";
@@ -57,7 +58,12 @@ export class FoAClient
     RegisterJobHandlers ()
     {
         this.ServerJobProcessor.StartDispatching();
-        let ToR: ServerJobHandler<any>[] = [new VesselMovementHandler(this), new VesselCreationHandler(this)];
+        let ToR: ServerJobHandler<any>[] =
+            [
+                new VesselMovementHandler(this),
+                new VesselCreationHandler(this),
+                new FactionModifiedJobHandler(this),
+            ];
         ToR.forEach(R =>
         {
             this.ServerJobProcessor.RegisterHandler(R);

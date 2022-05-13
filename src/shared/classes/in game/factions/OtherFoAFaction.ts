@@ -1,20 +1,18 @@
-import { FactionTitleKeys } from "../../../consts/Strings";
 import { IBuilding } from "../buildings/interfaces/IBuilding";
 import { Entity } from "../entities/Entity";
 import { FoAPlayer } from "../players/FoAPlayer";
 import { CrewMember } from "../vessels/CrewMember";
 import { FoAFaction } from "./Faction";
+import { FactionArguments } from "./FactionArguments";
 
-export class OpponentFoAFaction implements FoAFaction
+export class OtherFoAFaction implements FoAFaction
 {
-    constructor (Player: FoAPlayer, UserId: number, Name: string, SpawnLoc: Vector3, Title: FactionTitleKeys, Color: Color3, Buildings: IBuilding[], Entities: Entity[], Crew: CrewMember[])
+    constructor (Player: FoAPlayer, UserId: number, SpawnLocation: Vector3, Args: FactionArguments, Buildings: IBuilding[], Entities: Entity[], Crew: CrewMember[])
     {
         this.Player = Player;
         this.UserId = UserId;
-        this.Name = Name;
-        this.SpawnLocation = SpawnLoc;
-        this.Title = Title;
-        this.Color = Color;
+        this.SpawnLocation = SpawnLocation;
+        this.FactionDescriptors = Args;
         this.Buildings = Buildings;
         this.Entities = Entities;
         this.Crew = Crew;
@@ -24,13 +22,9 @@ export class OpponentFoAFaction implements FoAFaction
 
     UserId: number;
 
-    Name: string;
-
     SpawnLocation: Vector3;
 
-    Title: FactionTitleKeys;
-
-    Color: Color3;
+    FactionDescriptors: FactionArguments;
 
     Buildings: IBuilding[];
 

@@ -16,6 +16,7 @@ export class VesselMovementHandler extends ServerJobHandler<[number, Vector3]>
 
 	UpdatePosition (A: ServerJob<Partial<[number, Vector3]>>)
 	{
+		print("Vessel position needs to be updated.");
 		if (A.Returned !== undefined && A.Returned[0] !== undefined)
 		{
 			let VesselId = A.Returned[0];

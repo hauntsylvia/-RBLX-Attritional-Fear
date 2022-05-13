@@ -3,6 +3,8 @@ import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
+import { FactionArguments } from "../../../shared/classes/in game/factions/FactionArguments";
+import { OtherFoAFaction } from "../../../shared/classes/in game/factions/OtherFoAFaction";
 import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
@@ -20,14 +22,14 @@ export class PlayerProcessor extends Processor
 
     PlayerFaction?: SelfFoAFaction;
 
-    KnownFactions: FoAFaction[];
+    KnownFactions: OtherFoAFaction[];
 
-    GetAllPlayers (): ServerResponse<FoAFaction[]>
+    GetAllPlayers (): ServerResponse<OtherFoAFaction[]>
     {
         return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
 
-    RegisterFactionToGame (Faction: FoAFaction): ServerResponse<FoAFaction>
+    RegisterFactionToGame (Faction: FactionArguments): ServerResponse<SelfFoAFaction>
     {
         let R = this.MakeRequest<SelfFoAFaction>(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction, Faction));
         if (R.Success && R.Returned !== undefined)

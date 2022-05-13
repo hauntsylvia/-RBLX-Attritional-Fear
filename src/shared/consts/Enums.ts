@@ -94,8 +94,8 @@ export enum ServerJobSpecifications
 	/** Indicates that the returned object in the replicator job is one containing vessel information due to a newly created vessel. */
 	VesselCreated,
 
-	/** Indicates that the returned object in the replicator job is one containing data of a new player that has registered a faction. */
-	NewFactionInGame,
+	/** Indicates that the returned object in the replicator job is one containing data of a new player that has registered, modified, or deleted a faction. */
+	FactionInGameChanged,
 
 	/** Indicates that the returned object in the replicator job is one containing data of any player constructing a building successfully. */
 	NewBuildingConstructedInGame,

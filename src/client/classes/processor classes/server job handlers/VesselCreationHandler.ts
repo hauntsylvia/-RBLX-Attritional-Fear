@@ -8,7 +8,6 @@ export class VesselCreationHandler extends ServerJobHandler<Vessel>
 {
 	constructor (Client: FoAClient)
 	{
-		print("Created.");
 		super((A) => this.RenderNewVessel(A), ServerJobSpecifications.VesselCreated);
 		this.ClientReference = Client;
 	}

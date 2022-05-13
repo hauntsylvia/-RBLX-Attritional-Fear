@@ -9,6 +9,11 @@ import { ServerData } from "../server communication/ServerData";
 import { IHandler } from "./Handler";
 import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 import { StuffOnRoundStart } from "../../../shared/consts/in game/factions/StuffOnRoundStart";
+import { Replicator } from "../client communication/Replicator";
+import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
+import { ServerJobSpecifications } from "../../../shared/consts/Enums";
+import { FactionArguments } from "../../../shared/classes/in game/factions/FactionArguments";
+import { OtherFoAFaction } from "../../../shared/classes/in game/factions/OtherFoAFaction";
 
 export class PlayerHandler implements IHandler
 {
@@ -18,20 +23,20 @@ export class PlayerHandler implements IHandler
         [
             new Endpoint<any, FoAFaction[]>(Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions,
                 (Player: Player) => this.GetAllActivePlayerFactions(Player)),
-            new Endpoint<FoAFaction, FoAFaction | undefined>(Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction,
-                (Player: Player, Arg: FoAFaction) => this.RegisterPlayerFaction(Player, Arg)),
+            new Endpoint<FactionArguments, FoAFaction | undefined>(Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction,
+                (Player: Player, Arg: FactionArguments, Replicator: Replicator) => this.RegisterPlayerFaction(Player, Arg, Replicator)),
             new Endpoint<any, SelfFoAPlayer>(Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerFromPlayer,
                 (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
         ]
 
     ServerData!: ServerData;
 
-    GetAllActivePlayerFactions (Player: Player): FoAFaction[]
+    GetAllActivePlayerFactions (Player: Player): OtherFoAFaction[]
     {
-        return this.ServerData.CurrentActiveFactions;
+        return this.ServerData.CurrentActiveFactions as OtherFoAFaction[];
     }
 
-    RegisterPlayerFaction (Player: Player, Arg: FoAFaction): FoAFaction | undefined
+    RegisterPlayerFaction (Player: Player, Arg: FactionArguments, Replicator: Replicator): SelfFoAFaction | undefined
     {
         if (!this.ServerData.CurrentActiveFactions.some(Faction => Faction.UserId === Player.UserId))
         {
@@ -43,8 +48,10 @@ export class PlayerHandler implements IHandler
                 let RanX = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
                 let RanZ = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
                 let StartingInformation = new StuffOnRoundStart(SFoAPlayer);
-                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, Arg.Name, new Vector3(RanX, 50, RanZ), Arg.Title, Arg.Color, StartingInformation.StartingBuildings, StartingInformation.StartingVessels, StartingInformation.StartingCrew);
+                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, new Vector3(RanX, 50, RanZ), Arg, StartingInformation.StartingBuildings, StartingInformation.StartingVessels, StartingInformation.StartingCrew);
+                let WhatOthersSee = new OtherFoAFaction(SFoAPlayer, Player.UserId, NewFac.SpawnLocation, Arg, [], [], []);
                 this.ServerData.CurrentActiveFactions.push(NewFac);
+                Replicator.SendToClient(game.GetService("Players").GetPlayers(), new ServerJob<OtherFoAFaction>(ServerJobSpecifications.FactionInGameChanged, WhatOthersSee));
                 return NewFac;
             }
         }

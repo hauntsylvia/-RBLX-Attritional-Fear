@@ -5,17 +5,16 @@ import { FoAPlayer } from "../players/FoAPlayer";
 import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
 import { CrewMember } from "../vessels/CrewMember";
 import { FoAFaction } from "./Faction";
+import { FactionArguments } from "./FactionArguments";
 
 export class SelfFoAFaction implements FoAFaction
 {
-    constructor (Player: SelfFoAPlayer, UserId: number, Name: string, SpawnLoc: Vector3, Title: FactionTitleKeys, Color: Color3, Buildings: IBuilding[], Entities: Entity[], Crew: CrewMember[])
+    constructor (Player: SelfFoAPlayer, UserId: number, SpawnLocation: Vector3, Args: FactionArguments, Buildings: IBuilding[], Entities: Entity[], Crew: CrewMember[])
     {
         this.Player = Player;
         this.UserId = UserId;
-        this.Name = Name;
-        this.SpawnLocation = SpawnLoc;
-        this.Title = Title;
-        this.Color = Color;
+        this.SpawnLocation = SpawnLocation;
+        this.FactionDescriptors = Args;
         this.Buildings = Buildings;
         this.Entities = Entities;
         this.Crew = Crew;
@@ -25,13 +24,9 @@ export class SelfFoAFaction implements FoAFaction
 
     UserId: number;
 
-    Name: string;
-
     SpawnLocation: Vector3;
 
-    Title: FactionTitleKeys;
-
-    Color: Color3;
+    FactionDescriptors: FactionArguments;
 
     Buildings: IBuilding[];
 

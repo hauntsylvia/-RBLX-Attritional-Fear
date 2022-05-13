@@ -24,29 +24,20 @@ export class VesselHandler implements IHandler
 
     TryToMakeAVessel (Player: Player, PlayerWantsToMake: Vessel, Replicator: Replicator): Vessel | undefined
     {
-        print("Making a vessel . . .");
         let F: FoAFaction | undefined = this.ServerData.CurrentActiveFactions.find(X => X.UserId === Player.UserId);
         if (F !== undefined)
         {
             let PlayerRefinedVessel = new Vessel(undefined, PlayerWantsToMake.EntityName, PlayerWantsToMake.VesselPartsSpecifically, PlayerWantsToMake.Crew);
             F.Entities.push(PlayerRefinedVessel);
-            print("New vessel refined.");
             this.ServerData.CurrentActiveFactions.forEach(ActiveFaction =>
             {
-                print("Passing " + ActiveFaction.Name + " faction.");
-
                 let ActiveFactionAsSelf = ActiveFaction as SelfFoAFaction;
                 let IsVisible = EntityMapper.IsEntityVisibleToFaction(ActiveFactionAsSelf, PlayerRefinedVessel);
 
                 if (IsVisible)
                 {
-                    print("Is visible to passing faction!");
                     Replicator.SendToClient([Player], new ServerJob<Vessel>(ServerJobSpecifications.VesselCreated, PlayerRefinedVessel));
                 }
-                else
-                {
-                    print("Is not visible to passing faction!");
-				}
             });
             return PlayerRefinedVessel;
         }
@@ -70,19 +61,28 @@ export class VesselHandler implements IHandler
                         {
                             Replicator.SendToClient([Faction.Player.RobloxPlayerInstance], new ServerJob<[number, Vector3]>(ServerJobSpecifications.VesselMove, IdAndMoveTo));
                         }
+                        else
+                        {
+                            print("No player?");
+                        }
                     }
                     else
                     {
                         print("Vessel not visible to " + Faction.UserId);
-					}
+                    }
                 });
                 return true;
             }
             else
             {
                 print("No vessels available to move for the player of id " + Player.UserId);
-			}
+            }
         }
+        else
+        {
+            print("Player has no faction but tried to move a vessel!");
+            Player.Kick("come on . . .");
+		}
         return false;
 	}
 
