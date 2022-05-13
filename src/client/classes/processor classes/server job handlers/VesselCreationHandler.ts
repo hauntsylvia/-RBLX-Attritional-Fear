@@ -4,7 +4,7 @@ import { ServerJobSpecifications } from "../../../../shared/consts/Enums";
 import { FoAClient } from "../../clients/FoAClient";
 import { ServerJobHandler } from "./ServerJobHandler";
 
-export class VesselCreationHandler extends ServerJobHandler<Vessel>
+export class VesselCreationHandler extends ServerJobHandler<[number, Vessel]>
 {
 	constructor (Client: FoAClient)
 	{
@@ -14,8 +14,16 @@ export class VesselCreationHandler extends ServerJobHandler<Vessel>
 
 	ClientReference: FoAClient;
 
-	RenderNewVessel (A: ServerJob<Partial<Vessel>>)
+	RenderNewVessel (A: ServerJob<[number, Vessel]>)
 	{
-		print("New vessel information!");
+		let OwneorOfThisVessel = this.ClientReference.PlayerProcessor.KnownFactions.find(F => F.UserId === A.Returned?.[0]);
+		if (OwneorOfThisVessel !== undefined)
+		{
+			if (A.Returned?.[1] !== undefined)
+			{
+				print("Vessel belonging to " + A.Returned[0] + " pushed.");
+				OwneorOfThisVessel.Entities.push(A.Returned[1]);
+			}
+		}
 	}
 }

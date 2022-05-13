@@ -14,9 +14,8 @@ export class VesselMovementHandler extends ServerJobHandler<[number, Vector3]>
 
 	ClientReference: FoAClient;
 
-	UpdatePosition (A: ServerJob<Partial<[number, Vector3]>>)
+	UpdatePosition (A: ServerJob<Partial<[number, Vector3, number]>>)
 	{
-		print("Vessel position needs to be updated.");
 		if (A.Returned !== undefined && A.Returned[0] !== undefined)
 		{
 			let VesselId = A.Returned[0];
@@ -31,9 +30,15 @@ export class VesselMovementHandler extends ServerJobHandler<[number, Vector3]>
 					}
 				});
 			});
-			if (VesselSent !== undefined && A.Returned[1] !== undefined)
+			if (VesselSent !== undefined && A.Returned[1] !== undefined && A.Returned[2] !== undefined)
 			{
+				print("Vessel position updating . . .");
+				Vessel.ChangeVesselThrottles(VesselSent, A.Returned[2], A.Returned[2]);
 				Vessel.MoveVesselTo(VesselSent, A.Returned[1]);
+			}
+			else
+			{
+				print("No vessel found.");
 			}
 		}
 	}

@@ -14,27 +14,15 @@ import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
 import { FoAClient } from "./classes/clients/FoAClient";
 import { RenderTerrainResult } from "./classes/processor classes/RenderTerrainResult";
 
-print("Constructing client . .");
 const Client = new FoAClient();
-print("Client constructed.");
 let Self = Client.PlayerProcessor.GetCurrentPlayer();
 Client.PlayerProcessor.SaveFoAPlayerSettings(new FoAPlayerSettings(), Client.ObjectsProcessor);
 if (Self.Success && Self.Returned !== undefined)
 {
-	print("Registering faction . .");
-	/* 
-Vessel.ChangeVesselThrottles(V, 1, 0);
-Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
-	 */
-
 	let Faction = Client.PlayerProcessor.RegisterFactionToGame(new FactionArguments("Melancholic", FactionTitleKeys.AirTraverser, Color3.fromRGB(0, 0, 0)));
 	if (Faction.Success && Faction.Returned !== undefined)
 	{
-		print("Faction registered.");
-
 		Client.Camera.Connect();
-
-		print("Camera connected.");
 
 		let SpawnLoc = Faction.Returned.SpawnLocation;
 
@@ -44,13 +32,11 @@ Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
 		let StartPos = new Vector2((SpawnLoc.X - RenderAmount), (SpawnLoc.Z - RenderAmount));
 		let EndPos = new Vector2((SpawnLoc.X + RenderAmount), (SpawnLoc.Z + RenderAmount));
 		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 240, 1);
-		print("Asking for vessel . . .");
 		let MakeVessel = Client.VesselProcessor.TryToMakeVessel(new StuffOnRoundStart(Self.Returned).StartingVessels[0]);
-		print("Vessel request processed.");
 		if (MakeVessel.Success && MakeVessel.Returned !== undefined)
 		{
 			print("Moving vessel for everyone . . .");
-			let VesselMoveRequest = Client.VesselProcessor.TryToMoveVessel(MakeVessel.Returned, new Vector3(100, 100, 100));
+			let VesselMoveRequest = Client.VesselProcessor.TryToMoveVessel(MakeVessel.Returned, new Vector3(100, 100, 100), 1);
 			print(VesselMoveRequest.Returned !== undefined && VesselMoveRequest.Returned ? "Successfully moved vessel!" : "Vessel did not move.");
 		}
 		else

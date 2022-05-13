@@ -8,6 +8,7 @@ import { StorageContainer } from "../../../classes/in game/resources/StorageCont
 import { CrewMember } from "../../../classes/in game/vessels/CrewMember";
 import { Engine } from "../../../classes/in game/vessels/parts/specifics/Engine";
 import { NavBridge } from "../../../classes/in game/vessels/parts/specifics/NavBridge";
+import { VesselFrame } from "../../../classes/in game/vessels/parts/specifics/VesselFrame";
 import { Vessel } from "../../../classes/in game/vessels/Vessel";
 import { Geometry } from "../../../classes/util/measurements/Geometry";
 import { Rate } from "../../../classes/util/measurements/Rate";
@@ -34,8 +35,13 @@ export class StuffOnRoundStart
 			[],
 			new Rate(40, MetricUnits.RobloxStud, 1, TimeUnits.Minute));
 
+		let Frame = new VesselFrame("Logic Vessel Part", "Yes, this is actually a piece of logic air.", [], G, "",
+			new StorageContainer([], Geometry.GetVolumeOfGeometry(MetricUnits.Base, G)),
+			[],
+			new Rate(40, MetricUnits.RobloxStud, 1, TimeUnits.Minute));
+
 		let V = new Vessel(1, "Logic Air",
-			[E, N], [new CrewMember(1, "Izolabella")]);
+			[E, N, Frame], [new CrewMember(1, "Izolabella")]);
 
 		this.StartingCrew = [];
 		this.StartingVessels = [V]

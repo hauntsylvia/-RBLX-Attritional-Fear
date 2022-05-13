@@ -3,6 +3,7 @@ import { Storable } from "../shared/classes/in game/resources/specifics/Resource
 import { StorageContainer } from "../shared/classes/in game/resources/StorageContainer";
 import { CrewMember } from "../shared/classes/in game/vessels/CrewMember";
 import { Engine } from "../shared/classes/in game/vessels/parts/specifics/Engine";
+import { NavBridge } from "../shared/classes/in game/vessels/parts/specifics/NavBridge";
 import { VesselFrame } from "../shared/classes/in game/vessels/parts/specifics/VesselFrame";
 import { VesselPart } from "../shared/classes/in game/vessels/parts/VesselPart";
 import { Vessel } from "../shared/classes/in game/vessels/Vessel";

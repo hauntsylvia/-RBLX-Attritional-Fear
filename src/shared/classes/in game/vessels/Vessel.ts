@@ -28,9 +28,9 @@ export class Vessel extends Entity
 
 	Crew: CrewMember[];
 
-	ThrottleForward: number = 0;
+	ThrottleForward: number = 0.5;
 
-	ThrottleRotation: number = 0;
+	ThrottleRotation: number = 0.5;
 
 	CurrentForwardSpeed: Rate = new Rate(0, MetricUnits.Base, 1, TimeUnits.Hour);
 
@@ -42,8 +42,8 @@ export class Vessel extends Entity
 
 	static ChangeVesselThrottles (V: Vessel, ThrottleForward: number, ThrottleRotation: number)
 	{
-		V.ThrottleForward = math.clamp(ThrottleForward, -1, 1);
-		V.ThrottleRotation = math.clamp(ThrottleRotation, -1, 1);
+		V.ThrottleForward = math.clamp(ThrottleForward, 0, 1);
+		V.ThrottleRotation = math.clamp(ThrottleRotation, 0, 1);
 	}
 
 	/**
@@ -75,9 +75,9 @@ export class Vessel extends Entity
 		let Time = Distance / TargetSpeed.DistanceValue;
 		let TimeUnit = TimeUnits[TargetSpeed.TimeUnit];
 		let DistanceUnit = MetricUnits[TargetSpeed.DistanceUnits];
-		print("Moving at: " + TargetSpeed.DistanceValue + DistanceUnit + "s every " + TargetSpeed.TimeValue + TimeUnit);
-		print("ETA: " + Time + TimeUnit + "s");
-		print("Distance: " + Distance + DistanceUnit + "s");
+		print("Moving at: " + TargetSpeed.DistanceValue + " " + DistanceUnit + "s every " + TargetSpeed.TimeValue + TimeUnit);
+		print("ETA: " + Time + " " + TimeUnit + "s");
+		print("Distance: " + Distance + " " + DistanceUnit + "s");
 	}
 
 	static StopMovingVessel (V: Vessel)
@@ -138,7 +138,8 @@ export class Vessel extends Entity
 		let MaxSpeedPotential = Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
 		let MaxRotationPotential = Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
 
-		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second), TotalSight);
+		let TotalStats = new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second), TotalSight);
+		return TotalStats;
 	}
 }
 

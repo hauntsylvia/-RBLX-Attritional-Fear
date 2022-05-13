@@ -17,7 +17,7 @@ export class VesselHandler implements IHandler
     Endpoints: Endpoint<any, any>[] =
         [
             new Endpoint<any, Vessel | undefined>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, (Player: Player, PlayerWantsToMake: Vessel, Replicator: Replicator) => this.TryToMakeAVessel(Player, PlayerWantsToMake, Replicator)),
-            new Endpoint<any, boolean>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, (Player: Player, IdAndMoveTo: [number, Vector3], Replicator: Replicator) => this.TryToMoveAVessel(Player, IdAndMoveTo, Replicator)),
+            new Endpoint<any, boolean>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, (Player: Player, IdAndMoveToAndThrottles: [number, Vector3, number], Replicator: Replicator) => this.TryToMoveAVessel(Player, IdAndMoveToAndThrottles, Replicator)),
         ];
 
     ServerData!: ServerData;
@@ -36,7 +36,7 @@ export class VesselHandler implements IHandler
 
                 if (IsVisible)
                 {
-                    Replicator.SendToClient([Player], new ServerJob<Vessel>(ServerJobSpecifications.VesselCreated, PlayerRefinedVessel));
+                    Replicator.SendToClient([Player], new ServerJob<[number, Vessel]>(ServerJobSpecifications.VesselCreated, [Player.UserId, PlayerRefinedVessel]));
                 }
             });
             return PlayerRefinedVessel;
@@ -44,12 +44,12 @@ export class VesselHandler implements IHandler
         return undefined;
     }
 
-    TryToMoveAVessel (Player: Player, IdAndMoveTo: [number, Vector3], Replicator: Replicator): boolean | undefined
+    TryToMoveAVessel (Player: Player, IdAndMoveToAndThrottles: [number, Vector3, number], Replicator: Replicator): boolean | undefined
     {
         let F: SelfFoAFaction | undefined = this.ServerData.CurrentActiveFactions.find(X => X.UserId === Player.UserId);
         if (F !== undefined)
         {
-            let VA: Vessel[] = F.Entities.filter(E => E.EntitySpecies === Species[Species.Vessel] && E.Id === IdAndMoveTo[0]) as Vessel[];
+            let VA: Vessel[] = F.Entities.filter(E => E.EntitySpecies === Species[Species.Vessel] && E.Id === IdAndMoveToAndThrottles[0]) as Vessel[];
             if (VA.size() > 0)
             {
                 let V = VA[0];
@@ -59,7 +59,7 @@ export class VesselHandler implements IHandler
                     {
                         if (Faction.Player !== undefined)
                         {
-                            Replicator.SendToClient([Faction.Player.RobloxPlayerInstance], new ServerJob<[number, Vector3]>(ServerJobSpecifications.VesselMove, IdAndMoveTo));
+                            Replicator.SendToClient([Faction.Player.RobloxPlayerInstance], new ServerJob<[number, Vector3, number]>(ServerJobSpecifications.VesselMove, IdAndMoveToAndThrottles));
                         }
                         else
                         {
