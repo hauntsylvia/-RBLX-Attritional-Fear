@@ -48,10 +48,9 @@ Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
 		print("Vessel request processed.");
 		if (MakeVessel.Success && MakeVessel.Returned !== undefined)
 		{
-			print("V.");
-			let V = MakeVessel.Returned;
-			Vessel.ChangeVesselThrottles(V, 1, 0);
-			Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
+			print("Moving vessel for everyone . . .");
+			let VesselMoveRequest = Client.VesselProcessor.TryToMoveVessel(MakeVessel.Returned, new Vector3(100, 100, 100));
+			print(VesselMoveRequest.Returned !== undefined && VesselMoveRequest.Returned ? "Successfully moved vessel!" : "Vessel did not move.");
 		}
 		else
 		{

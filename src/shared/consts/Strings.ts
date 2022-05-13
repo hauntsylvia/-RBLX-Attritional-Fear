@@ -47,6 +47,7 @@ export class Strings
             static VesselHandlerRoute: string = "Vessels";
 
             static TryToMakeVessel: string = "MakeVessel";
+            static TryToMoveAVessel: string = "MoveVessel";
         };
         static EntityStrings = class
         {

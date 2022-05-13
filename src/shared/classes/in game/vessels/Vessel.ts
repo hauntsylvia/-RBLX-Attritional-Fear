@@ -1,3 +1,5 @@
+import { FoAClient } from "../../../../client/classes/clients/FoAClient";
+import { Processor } from "../../../../client/classes/processors/Processor";
 import { MetricUnits, PartType, Species, TimeUnits } from "../../../consts/Enums";
 import { VesselCondition } from "../../../consts/in game/entities/conditions/VesselCondition";
 import { Geometry } from "../../util/measurements/Geometry";
@@ -61,11 +63,6 @@ export class Vessel extends Entity
 	 */
 	static MoveVesselTo (V: Vessel, MoveTo: Vector3)
 	{
-		if (game.GetService("RunService").IsServer())
-		{
-			print("This method is meant to be fired on the clients!");
-		}
-
 		let Base = MetricUnits.Base;
 		let TU = TimeUnits.Second;
 

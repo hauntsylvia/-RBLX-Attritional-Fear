@@ -1,6 +1,7 @@
 import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { OpponentFoAFaction } from "../../../shared/classes/in game/factions/OpponentFoAFaction";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 import { NoiseHelper } from "../../../shared/classes/in game/terrain/NoiseHelper";
 import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
 import { Sleep } from "../../../shared/classes/util/Sleep";
@@ -8,7 +9,7 @@ import { SNumbers } from "../../../shared/consts/SNumbers";
 
 export class ServerData
 {
-    CurrentActiveFactions: OpponentFoAFaction[] =[];
+    CurrentActiveFactions: SelfFoAFaction[] = [];
     CurrentActivePlayers: SelfFoAPlayer[] = [];
     TerrainData = new ServerTerrainData();
 }

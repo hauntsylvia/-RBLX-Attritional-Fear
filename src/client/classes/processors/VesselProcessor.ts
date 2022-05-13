@@ -18,4 +18,9 @@ export class VesselProcessor extends Processor
     {
         return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.VesselHandlerStrings.VesselHandlerRoute, Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, Vessel));
     }
+
+    TryToMoveVessel (Vessel: Vessel, MoveTo: Vector3): ServerResponse<boolean>
+    {
+        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.VesselHandlerStrings.VesselHandlerRoute, Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, [Vessel.Id, MoveTo]));
+	}
 }

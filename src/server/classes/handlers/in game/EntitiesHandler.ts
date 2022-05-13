@@ -14,20 +14,9 @@ export class EntitiesHandler implements IHandler
 
     Endpoints: Endpoint<any, any>[] =
         [
-            new Endpoint<any, Entity | undefined>(Strings.ServerAPIStrings.EntityStrings.GetEntityById, (Player: Player, PlayerWantsToFind: number) => this.GetEntityById(Player, PlayerWantsToFind)),
         ];
 
     ServerData!: ServerData;
-
-    GetEntityById (Player: Player, PlayerWantsToFind: number): Entity | undefined
-    {
-        let F = this.ServerData.CurrentActiveFactions.find(Fa => Fa.UserId === Player.UserId);
-        if (F !== undefined)
-        {
-            let MappedEntities = EntityMapper.MapVisibleEntities(F as SelfFoAFaction, this.ServerData.CurrentActiveFactions);
-		}
-        return undefined;
-    }
 
     ServerRegistering (ServerData: ServerData)
     {

@@ -16,7 +16,7 @@ export class FoAClient
 {
     constructor()
     {
-        let ServerAPIStuff = this.WaitForServer();
+        let ServerAPIStuff = FoAClient.WaitForServer();
         let RemoteFunction = ServerAPIStuff[0];
         let RemoteEvent = ServerAPIStuff[1];
 
@@ -64,7 +64,7 @@ export class FoAClient
         });
 	}
 
-    WaitForServer (): [RemoteFunction, RemoteEvent]
+    static WaitForServer (): [RemoteFunction, RemoteEvent]
     {
         let RemoteFunction = game.GetService("ReplicatedStorage").WaitForChild(Strings.ServerAPIStrings.APIInstanceName) as RemoteFunction;
         let RemoteEvent = game.GetService("ReplicatedStorage").WaitForChild(Strings.ServerAPIStrings.APIReplicatorName) as RemoteEvent;
