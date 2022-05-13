@@ -3,6 +3,7 @@ import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";
@@ -13,7 +14,13 @@ export class PlayerProcessor extends Processor
     constructor (APIInstance: RemoteFunction)
     {
         super(APIInstance);
+        let F = this.GetAllPlayers().Returned;
+        this.KnownFactions = F !== undefined ? F : [];
     }
+
+    PlayerFaction?: SelfFoAFaction;
+
+    KnownFactions: FoAFaction[];
 
     GetAllPlayers (): ServerResponse<FoAFaction[]>
     {
@@ -22,7 +29,12 @@ export class PlayerProcessor extends Processor
 
     RegisterFactionToGame (Faction: FoAFaction): ServerResponse<FoAFaction>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction, Faction));
+        let R = this.MakeRequest<SelfFoAFaction>(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction, Faction));
+        if (R.Success && R.Returned !== undefined)
+        {
+            this.PlayerFaction = R.Returned;
+        }
+        return R;
     }
 
     GetCurrentPlayer (): ServerResponse<SelfFoAPlayer>

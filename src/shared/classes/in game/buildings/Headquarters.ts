@@ -1,5 +1,5 @@
-import { IdGenerator } from "../../../../server/classes/modules/entities/IdGenerator";
 import { BuildingTypes, BuildingVisuals } from "../../../consts/Enums";
+import { IdGenerator } from "../../util/IdGenerator";
 import { Geometry } from "../../util/measurements/Geometry";
 import { IId } from "../entities/Unique";
 import { IBuilding } from "./interfaces/IBuilding";

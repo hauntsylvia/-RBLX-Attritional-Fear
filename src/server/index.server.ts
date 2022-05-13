@@ -12,18 +12,6 @@ import { Volume } from "../shared/classes/util/measurements/Volume";
 import { MetricUnits, PartType, TimeUnits } from "../shared/consts/Enums";
 import { Server } from "./classes/server communication/Server";
 
-let G = new Geometry(MetricUnits.Base, 5, 5, 5, 10);
-let Gh = new Geometry(MetricUnits.Base, 5, 5, 5, 100);
-let E = new Engine("Logic Vessel Part", "Yes, this is actually a piece of logic air.", [], G, "Small 12 Cylinder Diesel Engine",
-	new StorageContainer([], Geometry.GetVolumeOfGeometry(MetricUnits.Base, G)),
-	[],
-	new Rate(120, MetricUnits.Kilo, 1, TimeUnits.Minute));
-
-let V = new Vessel(1, "Logic Air",
-	[E], [new CrewMember(1, "Izolabella")]);
-Vessel.ChangeVesselThrottles(V, 1, 0);
-Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
-
 new Server();
 
 export {};

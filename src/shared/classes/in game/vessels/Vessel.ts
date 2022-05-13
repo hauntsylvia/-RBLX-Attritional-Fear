@@ -16,10 +16,11 @@ import { VesselStats } from "./parts/VesselStats";
 
 export class Vessel extends Entity
 {
-	constructor (Id: number, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
+	constructor (Id: number | undefined, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
 	{
 		let NavB = VesselParts.find(P => P.Type === PartType.NavBridge);
 		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : new Rate(0, MetricUnits.Base, 1, TimeUnits.Second));
+		this.VesselPartsSpecifically = VesselParts;
 		this.Crew = Crew;
 	}
 
@@ -34,6 +35,8 @@ export class Vessel extends Entity
 	CurrentRotationalSpeed: Rate = new Rate(0, MetricUnits.Base, 1, TimeUnits.Hour);
 
 	CurrentFuelConsumption: Rate = new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Hour);
+
+	VesselPartsSpecifically: VesselPart[];
 
 	static ChangeVesselThrottles (V: Vessel, ThrottleForward: number, ThrottleRotation: number)
 	{

@@ -5,6 +5,8 @@ import { MetricUnits, TimeUnits } from "../../../shared/consts/Enums";
 import { Strings } from "../../../shared/consts/Strings";
 import { Replicator } from "../client communication/Replicator";
 import { IHandler } from "../handlers/Handler";
+import { EntitiesHandler } from "../handlers/in game/EntitiesHandler";
+import { VesselHandler } from "../handlers/in game/VesselHandler";
 import { PlayerDataHandler } from "../handlers/PlayerDataHandler";
 import { PlayerHandler } from "../handlers/PlayerHandler";
 import { TerrainHandler } from "../handlers/TerrainHandler";
@@ -41,6 +43,8 @@ export class Server
             new PlayerDataHandler(),
             new PlayerHandler(),
             new TerrainHandler(),
+            new EntitiesHandler(),
+            new VesselHandler(),
         ];
 
     AvailableHandlers: IHandler[] = [];

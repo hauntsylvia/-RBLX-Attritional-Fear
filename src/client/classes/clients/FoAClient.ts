@@ -2,10 +2,15 @@ import { TerrainFollower } from "../../../shared/classes/in game/terrain/Terrain
 import { Strings } from "../../../shared/consts/Strings";
 import { FoACamera } from "../camera/FoACamera";
 import { LevelOfZoom } from "../camera/LevelOfZoom";
+import { ServerJobHandler } from "../processor classes/server job handlers/ServerJobHandler";
+import { VesselCreationHandler } from "../processor classes/server job handlers/VesselCreationHandler";
+import { VesselMovementHandler } from "../processor classes/server job handlers/VesselMovementHandler";
 import { EntityProcessor } from "../processors/EntityProcessor";
 import { InterfacingObjectsProcessor } from "../processors/InterfacingObjectsProcessor";
 import { PlayerProcessor } from "../processors/PlayerProcessor";
+import { ServerJobProcessor } from "../processors/ServerJobProcessor";
 import { TerrainProcessor } from "../processors/TerrainProcessor";
+import { VesselProcessor } from "../processors/VesselProcessor";
 
 export class FoAClient
 {
@@ -20,14 +25,17 @@ export class FoAClient
         this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
 
         let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer().Returned ?? error("No player loaded.");
-
         this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), CurrentPlayer.FoAPlayerSettings);
-        this.TerrainChunker = new TerrainFollower(this.Camera, CurrentPlayer.FoAPlayerSettings, this.TerrainProcessor);
 
+        this.TerrainChunker = new TerrainFollower(this.Camera, CurrentPlayer.FoAPlayerSettings, this.TerrainProcessor);
         this.EntitiesProcessor = new EntityProcessor(RemoteFunction);
+        this.VesselProcessor = new VesselProcessor(RemoteFunction);
+        this.ServerJobProcessor = new ServerJobProcessor(RemoteFunction, RemoteEvent);
 
         this.ObjectsProcessor.NewClientObject(this.Camera);
         this.ObjectsProcessor.NewClientObject(this.TerrainChunker);
+
+        this.RegisterJobHandlers();
     }
 
     PlayerProcessor: PlayerProcessor;
@@ -41,6 +49,20 @@ export class FoAClient
     ObjectsProcessor: InterfacingObjectsProcessor;
 
     EntitiesProcessor: EntityProcessor;
+
+    VesselProcessor: VesselProcessor;
+
+    ServerJobProcessor: ServerJobProcessor;
+
+    RegisterJobHandlers ()
+    {
+        this.ServerJobProcessor.StartDispatching();
+        let ToR: ServerJobHandler<any>[] = [new VesselMovementHandler(this), new VesselCreationHandler(this)];
+        ToR.forEach(R =>
+        {
+            this.ServerJobProcessor.RegisterHandler(R);
+        });
+	}
 
     WaitForServer (): [RemoteFunction, RemoteEvent]
     {

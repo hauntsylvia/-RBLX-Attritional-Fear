@@ -37,10 +37,11 @@ export class ServerJobProcessor extends Processor
 
     StartDispatching(): void
     {
-        if (this.Signal !== undefined && !this.Signal.Connected)
+        if ((this.Signal !== undefined && !this.Signal.Connected) || this.Signal === undefined)
         {
-            this.Signal = this.ListenTo.OnClientEvent.ConnectParallel((Arg: unknown) => this.OnServerDispatching(Arg));
-		}
+            print("Dispatching server jobs!");
+            this.Signal = this.ListenTo.OnClientEvent.Connect((Arg: unknown) => this.OnServerDispatching(Arg));
+        }
     }
 
     private OnServerDispatching (Arg: unknown)

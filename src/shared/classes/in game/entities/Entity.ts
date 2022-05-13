@@ -1,4 +1,5 @@
 import { Species } from "../../../consts/Enums";
+import { IdGenerator } from "../../util/IdGenerator";
 import { Geometry } from "../../util/measurements/Geometry";
 import { Rate } from "../../util/measurements/Rate";
 import { EntityCondition } from "./conditions/EntityCondition";
@@ -7,9 +8,9 @@ import { IId } from "./Unique";
 
 export class Entity implements IId
 {
-	constructor (Id: number, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: Rate)
+	constructor (Id: number | undefined, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: Rate)
 	{
-		this.Id = Id;
+		this.Id = Id ?? IdGenerator.GenerateId();
 		this.Parts = Parts;
 		this.EntityName = Name;
 		this.EntitySpecies = typeOf(SpeciesName) === "string" ? SpeciesName as string : Species[SpeciesName as Species];

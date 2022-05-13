@@ -89,7 +89,7 @@ export class Strings
         }
         static GetVesselPartsFolder (PType: PartType): Folder
         {
-            let F = game.GetService("ReplicatedStorage").WaitForChild(".Vessel Parts")?.WaitForChild("Models")?.WaitForChild(PartType[PType]);
+            let F = game.GetService("ReplicatedStorage").WaitForChild(".Vessel Parts")?.WaitForChild("Models")?.WaitForChild(PType);
             if (F !== undefined && F.IsA("Folder"))
             {
                 return F;
@@ -101,7 +101,7 @@ export class Strings
                 let F2 = new Instance("Folder", F1);
                 F2.Name = "Models";
                 let F3 = new Instance("Folder", F1);
-                F3.Name = PartType[PType];
+                F3.Name = PType;
                 return F3;
             }
         }
