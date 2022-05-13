@@ -19,6 +19,7 @@ export class VesselPart implements IEntityPart
 		this.Type = Type;
 		this.StorageOfPart = StorageOfPart;
 		this.ResourcesConsumedByPart = ResourcesConsumedByPart;
+		this.ModelCenter = VesselPart.GetModelCenter(this);
 	}
 
 	Name: string;
@@ -36,6 +37,8 @@ export class VesselPart implements IEntityPart
 	StorageOfPart: StorageContainer;
 
 	ResourcesConsumedByPart: Storable[];
+
+	ModelCenter: Vector3;
 
 	static GetModel (VP: VesselPart): Model | undefined
 	{

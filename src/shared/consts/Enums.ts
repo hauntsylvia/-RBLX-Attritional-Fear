@@ -55,7 +55,9 @@ export enum MetricUnits
 	Base = 1,
 	Deci = 0.1,
 	Centi = 0.01,
-	Milli = 0.001
+	Milli = 0.001,
+
+	RobloxStud = 3.572,
 }
 
 export enum TimeUnits
@@ -73,6 +75,9 @@ export enum ServerJobSpecifications
 
 	/** Indicates that the returned object in the replicator job is one containing data of a new player that has registered a faction. */
 	NewFactionInGame,
+
+	/** Indicates that the returned object in the replicator job is one containing data of any player constructing a building successfully. */
+	NewBuildingConstructedInGame,
 }
 
 export enum BuildingVisuals

@@ -7,13 +7,13 @@ import { Storable } from "../../../resources/specifics/Resource";
 import { StorageContainer } from "../../../resources/StorageContainer";
 import { VesselPart } from "../VesselPart";
 
-export class Engine extends VesselPart
+export class NavBridge extends VesselPart
 {
-	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], Speed: Rate)
+	constructor (Name: string, Description: string, EntityDamageEvents: EntityDamageEvent[], Geometry: Geometry, ModelToCloneName: string, StorageOfPart: StorageContainer, ResourcesConsumedByPart: Storable[], Speed: number)
 	{
-		super(Name, Description, EntityDamageEvents, Geometry, PartType.Engine, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart);
-		this.Speed = Speed;
+		super(Name, Description, EntityDamageEvents, Geometry, PartType.NavBridge, ModelToCloneName, StorageOfPart, ResourcesConsumedByPart);
+		this.SightRadiusMax = Speed;
 	}
 
-	Speed: Rate;
+	SightRadiusMax: number;
 }

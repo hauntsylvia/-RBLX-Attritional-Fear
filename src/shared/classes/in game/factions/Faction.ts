@@ -19,9 +19,9 @@ export interface FoAFaction
 
     Color: Color3;
 
-    Buildings: Partial<IBuilding[]>;
+    Buildings: Partial<IBuilding>[];
 
-    Crew: Partial<CrewMember[]>;
+    Crew: Partial<CrewMember>[];
 
-    Entities: Partial<Entity[]>;
+    Entities: Partial<Entity>[];
 }

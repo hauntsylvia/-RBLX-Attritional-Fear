@@ -7,7 +7,7 @@ export class Church implements ITerrainObject
 {
 	constructor (YOffset: number)
 	{
-		this.Model = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Abandoned", 5)?.WaitForChild("Church", 5) as Model ?? error("No church model.");
+		this.Model = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Abandoned")?.WaitForChild("Church") as Model ?? error("No church model.");
 		this.YOffset = YOffset;
 	}
 	GeneratedByTerrain (TerrainCell: TerrainResult, Clone: Model)

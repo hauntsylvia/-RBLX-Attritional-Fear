@@ -9,7 +9,7 @@ export class Tree implements ITerrainObject
 	{
 		if (TreeModel !== TreeType.SnowTree1)
 		{
-			let Children = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Trees", 5)?.GetChildren();
+			let Children = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("Trees")?.GetChildren();
 			if (Children !== undefined)
 			{
 				this.Model = (Children.size() > TreeModel ? Children[TreeModel].IsA("Model") ? Children[TreeModel] as Model : Children[0] as Model : Children[0] as Model);
@@ -21,7 +21,7 @@ export class Tree implements ITerrainObject
 		}
 		else
 		{
-			let M = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("SnowTrees", 5)?.WaitForChild("SnowTree", 5);
+			let M = Strings.StorageStrings.GetBiomeModelsFolder().WaitForChild("SnowTrees")?.WaitForChild("SnowTree");
 			this.Model = M === undefined ? error("Snow tree gone :(") : M.IsA("Model") ? M as Model : error("Not a model.");
 		}
 		this.TreeModel = TreeModel;

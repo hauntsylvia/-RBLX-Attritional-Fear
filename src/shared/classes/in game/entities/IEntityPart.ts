@@ -14,4 +14,6 @@ export interface IEntityPart
 	readonly EntityDamageEvents: EntityDamageEvent[];
 
 	readonly Geometry: Geometry;
+
+	readonly ModelCenter: Vector3;
 }

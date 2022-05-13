@@ -44,10 +44,16 @@ export class Strings
         };
         static VesselHandlerStrings = class
         {
-            static VesselHandlerRoute: string = "VesselHandler";
+            static VesselHandlerRoute: string = "Vessels";
 
             static TryToMakeVessel: string = "MakeVessel";
-		}
+        };
+        static EntityStrings = class
+        {
+            static EntityHandlerRoute: string = "Entities";
+
+            static GetEntityById: string = "ById";
+        };
 	}
     static FactionStrings = class
     {
@@ -63,11 +69,11 @@ export class Strings
                 [FactionTitleKeys.AirTraverser, "Air Traverser"]
             ]);
     };
-	static StorageStrings = class
+    static StorageStrings = class
     {
         static GetBiomeModelsFolder (): Folder
         {
-            let F = game.GetService("ReplicatedStorage").WaitForChild("Biomes", 5)?.WaitForChild("Models", 5);
+            let F = game.GetService("ReplicatedStorage").WaitForChild("Biomes")?.WaitForChild("Models");
             if (F !== undefined && F.IsA("Folder"))
             {
                 return F;
@@ -79,11 +85,11 @@ export class Strings
                 let F2 = new Instance("Folder", F1);
                 F2.Name = "Models";
                 return F2;
-			}
+            }
         }
         static GetVesselPartsFolder (PType: PartType): Folder
         {
-            let F = game.GetService("ReplicatedStorage").WaitForChild(".Vessel Parts", 5)?.WaitForChild("Models", 5)?.WaitForChild(PartType[PType], 5);
+            let F = game.GetService("ReplicatedStorage").WaitForChild(".Vessel Parts")?.WaitForChild("Models")?.WaitForChild(PartType[PType]);
             if (F !== undefined && F.IsA("Folder"))
             {
                 return F;
@@ -102,8 +108,18 @@ export class Strings
         static GetBuildingModel (BuildingVisuals: BuildingVisuals, BuildingType: BuildingTypes): Model | undefined
         {
 
-            let F = game.GetService("ReplicatedStorage").WaitForChild(".Buildings", 5)?.WaitForChild("Models", 5)?.WaitForChild(BuildingVisuals, 5)?.WaitForChild(BuildingType);
-            return F?.FindFirstChildOfClass("Model");
-		}
-	}
+            let F = game.GetService("ReplicatedStorage").WaitForChild(".Buildings")?.WaitForChild("Models")?.WaitForChild(BuildingVisuals)?.WaitForChild(BuildingType);
+            let M = new Instance("Model");
+            M.Parent = F;
+            M.Name = "DEFAULT MODEL";
+            let P = new Instance("Part");
+            P.Parent = M;
+            P.Name = "DEFAULT PART";
+            P.Position = Vector3.zero;
+            P.Anchored = true;
+            P.CanCollide = false;
+
+            return F.FindFirstChildOfClass("Model");
+        }
+    };
 }

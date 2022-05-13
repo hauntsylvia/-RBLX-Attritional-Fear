@@ -21,7 +21,7 @@ export class Server
         this.AvailableListeners.Parent = game.GetService("ReplicatedStorage");
 
         this.APIListenerFunction = new Instance("RemoteFunction");
-        this.APIListenerFunction.Name = "API";
+        this.APIListenerFunction.Name = Strings.ServerAPIStrings.APIInstanceName;
         this.APIListenerFunction.OnServerInvoke = (Player: Player, Controller: unknown, Endpoint: unknown, Arg: unknown) =>
         {
             return this.OnAPIInvoke(Player, Controller, Endpoint, Arg);
@@ -31,7 +31,7 @@ export class Server
         this.RegisterHandlers();
 
         let _APIReplicator = new Instance("RemoteEvent");
-        _APIReplicator.Name = "APIReplicator";
+        _APIReplicator.Name = Strings.ServerAPIStrings.APIReplicatorName;
         _APIReplicator.Parent = game.GetService("ReplicatedStorage");
         this.APIReplicator = new Replicator(_APIReplicator);
     }

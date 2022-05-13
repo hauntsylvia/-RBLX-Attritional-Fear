@@ -9,6 +9,7 @@ import { Storable } from "../resources/specifics/Resource";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
 import { Engine } from "./parts/specifics/Engine";
+import { NavBridge } from "./parts/specifics/NavBridge";
 import { VesselFrame } from "./parts/specifics/VesselFrame";
 import { VesselPart } from "./parts/VesselPart";
 import { VesselStats } from "./parts/VesselStats";
@@ -17,7 +18,8 @@ export class Vessel extends Entity
 {
 	constructor (Id: number, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
 	{
-		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition());
+		let NavB = VesselParts.find(P => P.Type === PartType.NavBridge);
+		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : 0);
 		this.Crew = Crew;
 	}
 
@@ -32,21 +34,6 @@ export class Vessel extends Entity
 	CurrentRotationalSpeed: Rate = new Rate(0, MetricUnits.Base, 1, TimeUnits.Hour);
 
 	CurrentFuelConsumption: Rate = new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Hour);
-
-	static GetPositionalAverageOfVessel (V: Vessel): Vector3
-	{
-		let Sum = Vector3.zero;
-		let Iterations = 0;
-		V.Parts.forEach(VP =>
-		{
-			Sum = Sum.add(VesselPart.GetModelCenter(VP as VesselPart));
-			Iterations++;
-		});
-		Iterations = Iterations !== 0 ? Iterations : 1;
-		Sum = Sum !== Vector3.zero ? Sum.div(Iterations) : Vector3.zero;
-		let Avg = Sum.div(Iterations);
-		return Avg;
-	}
 
 	static ChangeVesselThrottles (V: Vessel, ThrottleForward: number, ThrottleRotation: number)
 	{
@@ -79,12 +66,12 @@ export class Vessel extends Entity
 		let Base = MetricUnits.Base;
 		let TU = TimeUnits.Second;
 
-		let CurrentPos = Vessel.GetPositionalAverageOfVessel(V);
+		let CurrentPos = Vessel.GetPositionalAverage(V);
 		Vessel.RotateVesselTowards(V, MoveTo);
 		let Stats = Vessel.GetVesselStats(Base, TU, V);
 		let TargetSpeed = new Rate(Stats.MaxSpeedPotential.DistanceValue * V.ThrottleForward, Base, Stats.MaxSpeedPotential.TimeValue, TU);
 		let DistanceInStuds = CurrentPos.sub(MoveTo).Magnitude;
-		let Distance = (DistanceInStuds / 3.572) / Base;
+		let Distance = (DistanceInStuds / MetricUnits.RobloxStud) / Base;
 		let Time = Distance / TargetSpeed.DistanceValue;
 		let TimeUnit = TimeUnits[TargetSpeed.TimeUnit];
 		let DistanceUnit = MetricUnits[TargetSpeed.DistanceUnits];
@@ -115,6 +102,7 @@ export class Vessel extends Entity
 	{
 		let Engines = Vessel.GetPartsOfType<Engine>(V, PartType.Engine);
 		let Frames = Vessel.GetPartsOfType<VesselFrame>(V, PartType.VesselFrame);
+		let NavBs = Vessel.GetPartsOfType<NavBridge>(V, PartType.NavBridge);
 
 		let TotalMass: Mass = new Mass(DUnits, 0);
 		V.Parts.forEach(VP =>
@@ -143,7 +131,7 @@ export class Vessel extends Entity
 		let MaxSpeedPotential = Mass.GetSpeedPotential(TotalMass, TotalSpeedPerOne);
 		let MaxRotationPotential = Mass.GetSpeedPotential(TotalMass, TotalRotationPerOne);
 
-		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second));
+		return new VesselStats(MaxSpeedPotential, MaxRotationPotential, new Rate(0.5, MetricUnits.Base, 1, TimeUnits.Second), new Rate(40, MetricUnits.RobloxStud, 1, TimeUnits.Second));
 	}
 }
 

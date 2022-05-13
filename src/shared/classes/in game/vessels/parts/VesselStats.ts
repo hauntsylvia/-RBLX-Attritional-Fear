@@ -4,11 +4,12 @@ import { Rate } from "../../../util/measurements/Rate";
 
 export class VesselStats
 {
-	constructor (MaxSpeedPotential: Rate, MaxRotationPotential: Rate, IdleFuelConsumption: Rate)
+	constructor (MaxSpeedPotential: Rate, MaxRotationPotential: Rate, IdleFuelConsumption: Rate, MaxSightRadiusStuds: Rate)
 	{
 		this.MaxSpeedPotential = MaxSpeedPotential;
 		this.MaxRotationPotential = MaxRotationPotential;
 		this.IdleFuelConsumption = IdleFuelConsumption;
+		this.MaxSightRadius = MaxSightRadiusStuds;
 	}
 
 	MaxSpeedPotential: Rate;
@@ -17,4 +18,5 @@ export class VesselStats
 
 	IdleFuelConsumption: Rate;
 
+	MaxSightRadius: Rate;
 }

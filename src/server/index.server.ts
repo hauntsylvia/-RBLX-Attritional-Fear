@@ -14,21 +14,13 @@ import { Server } from "./classes/server communication/Server";
 
 let G = new Geometry(MetricUnits.Base, 5, 5, 5, 10);
 let Gh = new Geometry(MetricUnits.Base, 5, 5, 5, 100);
-let E = new Engine("Logic Vessel Part", "Yes, this is actually a piece of logic air.", [], G, PartType.Engine, "",
+let E = new Engine("Logic Vessel Part", "Yes, this is actually a piece of logic air.", [], G, "Small 12 Cylinder Diesel Engine",
 	new StorageContainer([], Geometry.GetVolumeOfGeometry(MetricUnits.Base, G)),
 	[],
 	new Rate(120, MetricUnits.Kilo, 1, TimeUnits.Minute));
 
-let F = new Engine("Logic Vessel Part", "Yes, this is actually a piece of logic air.", [], G, PartType.VesselFrame, "",
-	new StorageContainer([], Geometry.GetVolumeOfGeometry(MetricUnits.Base, G)),
-	[],
-	new Rate(10, MetricUnits.Kilo, 1, TimeUnits.Hour));
-
-let RandomPart = new VesselPart("Logic Vessel Part", "Logic air!!!!!!", [], Gh, PartType.CrewQ, "",
-	new StorageContainer([], Geometry.GetVolumeOfGeometry(MetricUnits.Base, Gh)), []);
-
 let V = new Vessel(1, "Logic Air",
-	[E, F, RandomPart], [new CrewMember(1, "Izolabella")]);
+	[E], [new CrewMember(1, "Izolabella")]);
 Vessel.ChangeVesselThrottles(V, 1, 0);
 Vessel.MoveVesselTo(V, new Vector3(100, 100, 100));
 

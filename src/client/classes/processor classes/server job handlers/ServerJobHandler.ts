@@ -9,7 +9,7 @@ export class ServerJobHandler<T>
 		this.DispatchJobType = DispatchJobType;
 	}
 
-	private DoJob: (S: ServerJob<Partial<T>>) => any
+	private DoJob: (S: ServerJob<Partial<T>>) => any;
 
 	DispatchJobType: ServerJobSpecifications;
 
