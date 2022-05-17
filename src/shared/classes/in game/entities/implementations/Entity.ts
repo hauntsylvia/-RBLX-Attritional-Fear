@@ -1,14 +1,13 @@
-import { Species } from "../../../consts/Enums";
-import { IdGenerator } from "../../util/IdGenerator";
-import { Geometry } from "../../util/measurements/Geometry";
-import { Rate } from "../../util/measurements/Rate";
-import { EntityCondition } from "./conditions/EntityCondition";
-import { IEntityPart } from "./IEntityPart";
-import { IId } from "./Unique";
+import { Species } from "../../../../consts/Enums";
+import { IdGenerator } from "../../../util/IdGenerator";
+import { Rate } from "../../../util/measurements/Rate";
+import { EntityCondition } from "../conditions/EntityCondition";
+import { IEntityPart } from "../interfaces/IEntityPart";
+import { IId } from "./IId";
 
 export class Entity implements IId
 {
-	constructor (Id: number | undefined, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: Rate)
+	constructor (Id: number | undefined, Parts: IEntityPart[], Name: string, SpeciesName: string | Species, EntityCondition: EntityCondition, EntitySightRadius: Rate, Origin: CFrame)
 	{
 		this.Id = Id ?? IdGenerator.GenerateId();
 		this.Parts = Parts;
@@ -16,6 +15,7 @@ export class Entity implements IId
 		this.EntitySpecies = typeOf(SpeciesName) === "string" ? SpeciesName as string : Species[SpeciesName as Species];
 		this.EntityCondition = EntityCondition;
 		this.EntitySightRadius = EntitySightRadius;
+		this.Origin = Origin;
 	}
 
     Id: number;
@@ -29,6 +29,8 @@ export class Entity implements IId
 	EntityCondition: EntityCondition;
 
 	EntitySightRadius: Rate;
+
+	Origin: CFrame;
 
 	static GetPositionalAverage (V: Entity): Vector3
 	{

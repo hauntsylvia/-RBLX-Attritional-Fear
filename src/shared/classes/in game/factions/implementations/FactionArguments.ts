@@ -1,4 +1,4 @@
-import { FactionTitleKeys } from "../../../consts/Strings";
+import { FactionTitleKeys } from "../../../../consts/Strings";
 
 export class FactionArguments
 {

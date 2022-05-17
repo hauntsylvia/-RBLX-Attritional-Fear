@@ -1,6 +1,6 @@
+import { PenetrationForce } from "../forces/PenetrationForce";
+import { IEntityDamageEvent } from "../interfaces/IEntityDamageEvent";
 import { Entity } from "./Entity";
-import { PenetrationForce } from "./forces/PenetrationForce";
-import { IEntityDamageEvent } from "./IEntityDamageEvent";
 
 export class EntityDamageEvent implements IEntityDamageEvent
 {

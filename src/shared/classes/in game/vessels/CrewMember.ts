@@ -1,4 +1,4 @@
-import { IId } from "../entities/Unique";
+import { IId } from "../entities/implementations/IId";
 
 export class CrewMember implements IId
 {

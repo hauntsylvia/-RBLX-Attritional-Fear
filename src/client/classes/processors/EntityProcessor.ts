@@ -1,4 +1,4 @@
-import { Entity } from "../../../shared/classes/in game/entities/Entity";
+import { Entity } from "../../../shared/classes/in game/entities/implementations/Entity";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerRequest } from "../../../shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "../../../shared/classes/server helpers/ServerResponse";

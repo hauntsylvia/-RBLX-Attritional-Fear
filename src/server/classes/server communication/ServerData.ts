@@ -1,6 +1,5 @@
-import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
-import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/implementations/SelfFoAFaction";
 import { NoiseHelper } from "../../../shared/classes/in game/terrain/NoiseHelper";
 import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
 import { Sleep } from "../../../shared/classes/util/Sleep";

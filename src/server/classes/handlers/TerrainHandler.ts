@@ -1,19 +1,11 @@
-import { Server } from "server/classes/server communication/Server";
-import { FoAFaction } from "shared/classes/in game/factions/Faction";
-import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Strings } from "shared/consts/Strings";
-import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
-import { Registers } from "../../../shared/consts/Registers";
 import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
-import { NoiseHelper } from "../../../shared/classes/in game/terrain/NoiseHelper";
 import { TerrainHelper } from "../../../shared/classes/in game/terrain/TerrainHelper";
 import { AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize } from "../../../shared/consts/Biomes";
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
 import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
 import { ServerData } from "../server communication/ServerData";
-import { Sleep } from "../../../shared/classes/util/Sleep";
-import { SNumbers } from "../../../shared/consts/SNumbers";
 import { IHandler } from "./Handler";
 
 export class TerrainHandler implements IHandler

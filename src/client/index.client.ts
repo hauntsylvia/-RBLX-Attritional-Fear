@@ -1,7 +1,5 @@
-import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { Server } from "../server/classes/server communication/Server";
-import { FactionArguments } from "../shared/classes/in game/factions/FactionArguments";
-import { SelfFoAFaction } from "../shared/classes/in game/factions/SelfFoAFaction";
+import { FactionArguments } from "../shared/classes/in game/factions/implementations/FactionArguments";
 import { FoAPlayerSettings } from "../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { Hotkeys } from "../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { ServerTerrainRequest } from "../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
@@ -32,17 +30,6 @@ if (Self.Success && Self.Returned !== undefined)
 		let StartPos = new Vector2((SpawnLoc.X - RenderAmount), (SpawnLoc.Z - RenderAmount));
 		let EndPos = new Vector2((SpawnLoc.X + RenderAmount), (SpawnLoc.Z + RenderAmount));
 		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 240, 1);
-		let MakeVessel = Client.VesselProcessor.TryToMakeVessel(new StuffOnRoundStart(Self.Returned).StartingVessels[0]);
-		if (MakeVessel.Success && MakeVessel.Returned !== undefined)
-		{
-			print("Moving vessel for everyone . . .");
-			let VesselMoveRequest = Client.VesselProcessor.TryToMoveVessel(MakeVessel.Returned, new Vector3(100, 100, 100), 1);
-			print(VesselMoveRequest.Returned !== undefined && VesselMoveRequest.Returned ? "Successfully moved vessel!" : "Vessel did not move.");
-		}
-		else
-		{
-			print("No v!");
-		}
 	}
 	else
 	{

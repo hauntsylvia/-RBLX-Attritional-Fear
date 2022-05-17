@@ -5,8 +5,7 @@ import { VesselCondition } from "../../../consts/in game/entities/conditions/Ves
 import { Geometry } from "../../util/measurements/Geometry";
 import { Mass } from "../../util/measurements/Mass";
 import { Rate } from "../../util/measurements/Rate";
-import { Entity } from "../entities/Entity";
-import { IId } from "../entities/Unique";
+import { Entity } from "../entities/implementations/Entity";
 import { Storable } from "../resources/specifics/Resource";
 import { StorageContainer } from "../resources/StorageContainer";
 import { CrewMember } from "./CrewMember";
@@ -18,10 +17,10 @@ import { VesselStats } from "./parts/VesselStats";
 
 export class Vessel extends Entity
 {
-	constructor (Id: number | undefined, Name: string, VesselParts: VesselPart[], Crew: CrewMember[])
+	constructor (Id: number | undefined, Name: string, VesselParts: VesselPart[], Crew: CrewMember[], Origin: CFrame)
 	{
 		let NavB = VesselParts.find(P => P.Type === PartType.NavBridge);
-		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : new Rate(0, MetricUnits.Base, 1, TimeUnits.Second));
+		super(Id, VesselParts, Name, Species.Vessel, new VesselCondition(), NavB !== undefined ? (NavB as NavBridge).SightRadiusMax : new Rate(0, MetricUnits.Base, 1, TimeUnits.Second), Origin);
 		this.VesselPartsSpecifically = VesselParts;
 		this.Crew = Crew;
 	}

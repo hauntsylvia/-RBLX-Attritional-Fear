@@ -1,10 +1,8 @@
-import { Entity } from "../../../shared/classes/in game/entities/Entity";
-import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
+
 import { Vessel } from "../../../shared/classes/in game/vessels/Vessel";
 import { ServerRequest } from "../../../shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "../../../shared/classes/server helpers/ServerResponse";
 import { Strings } from "../../../shared/consts/Strings";
-import { ISettingsInvolved } from "../clients/ISettingsInvolved";
 import { Processor } from "./Processor";
 
 export class VesselProcessor extends Processor

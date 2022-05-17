@@ -1,6 +1,6 @@
-import { Entity } from "../../../../shared/classes/in game/entities/Entity";
-import { FoAFaction } from "../../../../shared/classes/in game/factions/Faction";
-import { SelfFoAFaction } from "../../../../shared/classes/in game/factions/SelfFoAFaction";
+import { Entity } from "../../../../shared/classes/in game/entities/implementations/Entity";
+import { SelfFoAFaction } from "../../../../shared/classes/in game/factions/implementations/SelfFoAFaction";
+import { FoAFaction } from "../../../../shared/classes/in game/factions/interfaces/FoAFaction";
 import { Rate } from "../../../../shared/classes/util/measurements/Rate";
 import { MetricUnits, TimeUnits } from "../../../../shared/consts/Enums";
 

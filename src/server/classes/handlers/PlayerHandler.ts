@@ -1,5 +1,4 @@
 import { Server } from "server/classes/server communication/Server";
-import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { Endpoint } from "server/classes/server communication/Endpoint";
 import { Strings } from "shared/consts/Strings";
@@ -7,13 +6,14 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { Registers } from "../../../shared/consts/Registers";
 import { ServerData } from "../server communication/ServerData";
 import { IHandler } from "./Handler";
-import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
 import { StuffOnRoundStart } from "../../../shared/consts/in game/factions/StuffOnRoundStart";
 import { Replicator } from "../client communication/Replicator";
 import { ServerJob } from "../../../shared/classes/server helpers/server replications/ServerJob";
 import { ServerJobSpecifications } from "../../../shared/consts/Enums";
-import { FactionArguments } from "../../../shared/classes/in game/factions/FactionArguments";
-import { OtherFoAFaction } from "../../../shared/classes/in game/factions/OtherFoAFaction";
+import { FoAFaction } from "../../../shared/classes/in game/factions/interfaces/FoAFaction";
+import { FactionArguments } from "../../../shared/classes/in game/factions/implementations/FactionArguments";
+import { OtherFoAFaction } from "../../../shared/classes/in game/factions/implementations/OtherFoAFaction";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/implementations/SelfFoAFaction";
 
 export class PlayerHandler implements IHandler
 {
@@ -47,8 +47,9 @@ export class PlayerHandler implements IHandler
                 let AdjustedTerSize = TerrSize / 2;
                 let RanX = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
                 let RanZ = new Random().NextInteger(-AdjustedTerSize, AdjustedTerSize);
-                let StartingInformation = new StuffOnRoundStart(SFoAPlayer);
-                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, new Vector3(RanX, 50, RanZ), Arg, StartingInformation.StartingBuildings, StartingInformation.StartingVessels, StartingInformation.StartingCrew);
+                let StartingPos = new Vector3(RanX, 50, RanZ);
+                let StartingInformation = new StuffOnRoundStart(SFoAPlayer, new CFrame(StartingPos));
+                let NewFac = new SelfFoAFaction(SFoAPlayer, Player.UserId, StartingPos, Arg, StartingInformation.StartingBuildings, StartingInformation.StartingVessels, StartingInformation.StartingCrew);
                 let WhatOthersSee = new OtherFoAFaction(SFoAPlayer, Player.UserId, NewFac.SpawnLocation, Arg, [], [], []);
                 this.ServerData.CurrentActiveFactions.push(NewFac);
                 Replicator.SendToClient(game.GetService("Players").GetPlayers(), new ServerJob<OtherFoAFaction>(ServerJobSpecifications.FactionInGameChanged, WhatOthersSee));

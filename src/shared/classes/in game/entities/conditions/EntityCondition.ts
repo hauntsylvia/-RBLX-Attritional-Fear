@@ -1,4 +1,3 @@
-import { IEntityPart } from "../IEntityPart";
 import { ConditionEntry } from "./ConditionEntry";
 
 export class EntityCondition

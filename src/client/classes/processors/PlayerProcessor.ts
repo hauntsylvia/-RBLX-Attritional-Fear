@@ -1,11 +1,10 @@
-import { FoAFaction } from "shared/classes/in game/factions/Faction";
 import { SelfFoAPlayer } from "shared/classes/in game/players/SelfFoAPlayer";
 import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
-import { FactionArguments } from "../../../shared/classes/in game/factions/FactionArguments";
-import { OtherFoAFaction } from "../../../shared/classes/in game/factions/OtherFoAFaction";
-import { SelfFoAFaction } from "../../../shared/classes/in game/factions/SelfFoAFaction";
+import { FactionArguments } from "../../../shared/classes/in game/factions/implementations/FactionArguments";
+import { OtherFoAFaction } from "../../../shared/classes/in game/factions/implementations/OtherFoAFaction";
+import { SelfFoAFaction } from "../../../shared/classes/in game/factions/implementations/SelfFoAFaction";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
 import { ServerDataOperationResponse } from "../../../shared/classes/server helpers/ServerDataOperationResponse";
 import { InterfacingObjectsProcessor } from "./InterfacingObjectsProcessor";

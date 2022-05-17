@@ -1,8 +1,8 @@
-import { FoAFaction } from "../../../../shared/classes/in game/factions/Faction";
-import { SelfFoAFaction } from "../../../../shared/classes/in game/factions/SelfFoAFaction";
+import { SelfFoAFaction } from "../../../../shared/classes/in game/factions/implementations/SelfFoAFaction";
+import { FoAFaction } from "../../../../shared/classes/in game/factions/interfaces/FoAFaction";
 import { Vessel } from "../../../../shared/classes/in game/vessels/Vessel";
 import { ServerJob } from "../../../../shared/classes/server helpers/server replications/ServerJob";
-import { ServerJobSpecifications, Species } from "../../../../shared/consts/Enums";
+import { BuildingTypes, ServerJobSpecifications, Species } from "../../../../shared/consts/Enums";
 import { Strings } from "../../../../shared/consts/Strings";
 import { Replicator } from "../../client communication/Replicator";
 import { EntityMapper } from "../../modules/entities/EntityMapper";
@@ -16,30 +16,36 @@ export class VesselHandler implements IHandler
 
     Endpoints: Endpoint<any, any>[] =
         [
-            new Endpoint<any, Vessel | undefined>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, (Player: Player, PlayerWantsToMake: Vessel, Replicator: Replicator) => this.TryToMakeAVessel(Player, PlayerWantsToMake, Replicator)),
+            new Endpoint<any, Vessel | undefined>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, (Player: Player, BuildingIdPlayerRequestedVessel: [number, Vessel], Replicator: Replicator) => this.TryToMakeAVessel(Player, BuildingIdPlayerRequestedVessel, Replicator)),
             new Endpoint<any, boolean>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, (Player: Player, IdAndMoveToAndThrottles: [number, Vector3, number], Replicator: Replicator) => this.TryToMoveAVessel(Player, IdAndMoveToAndThrottles, Replicator)),
         ];
 
     ServerData!: ServerData;
 
-    TryToMakeAVessel (Player: Player, PlayerWantsToMake: Vessel, Replicator: Replicator): Vessel | undefined
+    TryToMakeAVessel (Player: Player, BuildingIdPlayerRequestedVessel: [number, Vessel], Replicator: Replicator): Vessel | undefined
     {
         let F: FoAFaction | undefined = this.ServerData.CurrentActiveFactions.find(X => X.UserId === Player.UserId);
         if (F !== undefined)
         {
-            let PlayerRefinedVessel = new Vessel(undefined, PlayerWantsToMake.EntityName, PlayerWantsToMake.VesselPartsSpecifically, PlayerWantsToMake.Crew);
-            F.Entities.push(PlayerRefinedVessel);
-            this.ServerData.CurrentActiveFactions.forEach(ActiveFaction =>
+            let BId = BuildingIdPlayerRequestedVessel[0];
+            let B = F.Buildings.find(B => B.BuildingType === BuildingTypes.VesselManufacturingFacility && B.Id === BId);
+            if (B !== undefined)
             {
-                let ActiveFactionAsSelf = ActiveFaction as SelfFoAFaction;
-                let IsVisible = EntityMapper.IsEntityVisibleToFaction(ActiveFactionAsSelf, PlayerRefinedVessel);
-
-                if (IsVisible)
+                let V = BuildingIdPlayerRequestedVessel[1];
+                let PlayerRefinedVessel = new Vessel(undefined, V.EntityName, V.VesselPartsSpecifically, V.Crew, B.Origin);
+                F.Entities.push(PlayerRefinedVessel);
+                this.ServerData.CurrentActiveFactions.forEach(ActiveFaction =>
                 {
-                    Replicator.SendToClient([Player], new ServerJob<[number, Vessel]>(ServerJobSpecifications.VesselCreated, [Player.UserId, PlayerRefinedVessel]));
-                }
-            });
-            return PlayerRefinedVessel;
+                    let ActiveFactionAsSelf = ActiveFaction as SelfFoAFaction;
+                    let IsVisible = EntityMapper.IsEntityVisibleToFaction(ActiveFactionAsSelf, PlayerRefinedVessel);
+
+                    if (IsVisible)
+                    {
+                        Replicator.SendToClient([Player], new ServerJob<[number, Vessel]>(ServerJobSpecifications.VesselCreated, [Player.UserId, PlayerRefinedVessel]));
+                    }
+                });
+                return PlayerRefinedVessel;
+			}
         }
         return undefined;
     }

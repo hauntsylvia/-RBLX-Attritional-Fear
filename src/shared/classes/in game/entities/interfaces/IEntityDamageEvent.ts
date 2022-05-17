@@ -1,5 +1,4 @@
-import { Entity } from "./Entity";
-import { PenetrationForce } from "./forces/PenetrationForce";
+import { PenetrationForce } from "../forces/PenetrationForce";
 
 export interface IEntityDamageEvent
 {

@@ -1,6 +1,4 @@
-import { FoAFaction } from "../../../../shared/classes/in game/factions/Faction";
-import { FactionArguments } from "../../../../shared/classes/in game/factions/FactionArguments";
-import { OtherFoAFaction } from "../../../../shared/classes/in game/factions/OtherFoAFaction";
+import { OtherFoAFaction } from "../../../../shared/classes/in game/factions/implementations/OtherFoAFaction";
 import { Vessel } from "../../../../shared/classes/in game/vessels/Vessel";
 import { ServerJob } from "../../../../shared/classes/server helpers/server replications/ServerJob";
 import { ServerJobSpecifications } from "../../../../shared/consts/Enums";

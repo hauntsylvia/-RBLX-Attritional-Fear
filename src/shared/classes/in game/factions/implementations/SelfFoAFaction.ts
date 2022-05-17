@@ -1,10 +1,9 @@
-import { FactionTitleKeys } from "../../../consts/Strings";
-import { IBuilding } from "../buildings/interfaces/IBuilding";
-import { Entity } from "../entities/Entity";
-import { FoAPlayer } from "../players/FoAPlayer";
-import { SelfFoAPlayer } from "../players/SelfFoAPlayer";
-import { CrewMember } from "../vessels/CrewMember";
-import { FoAFaction } from "./Faction";
+
+import { IBuilding } from "../../buildings/interfaces/IBuilding";
+import { Entity } from "../../entities/implementations/Entity";
+import { SelfFoAPlayer } from "../../players/SelfFoAPlayer";
+import { CrewMember } from "../../vessels/CrewMember";
+import { FoAFaction } from "../interfaces/FoAFaction";
 import { FactionArguments } from "./FactionArguments";
 
 export class SelfFoAFaction implements FoAFaction

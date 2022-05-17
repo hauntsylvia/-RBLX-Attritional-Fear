@@ -1,7 +1,6 @@
-import { Headquarters } from "../../../classes/in game/buildings/Headquarters";
+import { Headquarters } from "../../../classes/in game/buildings/implementations/Headquarters";
 import { IBuilding } from "../../../classes/in game/buildings/interfaces/IBuilding";
-import { Entity } from "../../../classes/in game/entities/Entity";
-import { SelfFoAFaction } from "../../../classes/in game/factions/SelfFoAFaction";
+import { SelfFoAFaction } from "../../../classes/in game/factions/implementations/SelfFoAFaction";
 import { BuildingVisualsSettings } from "../../../classes/in game/players/personalizations/specifics/BuildingVisualsSettings";
 import { SelfFoAPlayer } from "../../../classes/in game/players/SelfFoAPlayer";
 import { StorageContainer } from "../../../classes/in game/resources/StorageContainer";
@@ -16,11 +15,11 @@ import { BuildingTypes, MetricUnits, TimeUnits } from "../../Enums";
 
 export class StuffOnRoundStart
 {
-	constructor (Player: SelfFoAPlayer)
+	constructor (Player: SelfFoAPlayer, Spawn: CFrame)
 	{
 		this.StartingBuildings =
 			[
-				new Headquarters(undefined, (Player.FoAPlayerSettings.BuildingVisualsSettings ?? new BuildingVisualsSettings(new Map())).GetVisualsForBuilding(BuildingTypes.HQ))
+				new Headquarters(undefined, (Player.FoAPlayerSettings.BuildingVisualsSettings ?? new BuildingVisualsSettings(new Map())).GetVisualsForBuilding(BuildingTypes.HQ), Spawn)
 			];
 
 		let G = new Geometry(MetricUnits.Base, 5, 5, 5, 10);
@@ -41,7 +40,7 @@ export class StuffOnRoundStart
 			new Rate(40, MetricUnits.RobloxStud, 1, TimeUnits.Minute));
 
 		let V = new Vessel(1, "Logic Air",
-			[E, N, Frame], [new CrewMember(1, "Izolabella")]);
+			[E, N, Frame], [new CrewMember(1, "Izolabella")], new CFrame());
 
 		this.StartingCrew = [];
 		this.StartingVessels = [V]

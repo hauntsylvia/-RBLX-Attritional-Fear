@@ -1,8 +1,7 @@
 import { PartType } from "../../../../../consts/Enums";
 import { Geometry } from "../../../../util/measurements/Geometry";
 import { Rate } from "../../../../util/measurements/Rate";
-import { EntityDamageEvent } from "../../../entities/EntityDamageEvent";
-import { IEntityPart } from "../../../entities/IEntityPart";
+import { EntityDamageEvent } from "../../../entities/implementations/EntityDamageEvent";
 import { Storable } from "../../../resources/specifics/Resource";
 import { StorageContainer } from "../../../resources/StorageContainer";
 import { VesselPart } from "../VesselPart";

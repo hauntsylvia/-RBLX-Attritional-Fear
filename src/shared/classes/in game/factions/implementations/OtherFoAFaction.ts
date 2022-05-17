@@ -1,8 +1,9 @@
-import { IBuilding } from "../buildings/interfaces/IBuilding";
-import { Entity } from "../entities/Entity";
-import { FoAPlayer } from "../players/FoAPlayer";
-import { CrewMember } from "../vessels/CrewMember";
-import { FoAFaction } from "./Faction";
+
+import { IBuilding } from "../../buildings/interfaces/IBuilding";
+import { Entity } from "../../entities/implementations/Entity";
+import { FoAPlayer } from "../../players/FoAPlayer";
+import { CrewMember } from "../../vessels/CrewMember";
+import { FoAFaction } from "../interfaces/FoAFaction";
 import { FactionArguments } from "./FactionArguments";
 
 export class OtherFoAFaction implements FoAFaction
