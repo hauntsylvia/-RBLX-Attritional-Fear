@@ -40,12 +40,13 @@ export class TerrainProcessor extends Processor
         this.KillThreads = true;
 	}
 
-    public RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number = 1): RenderTerrainResult
+    public RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number = 50): RenderTerrainResult
     {
         let Sleeper = new Sleep(FramesToSkipPerThread);
         let Result = new RenderTerrainResult([]);
         this.KillThreads = false;
         let S = new ServerTerrainRequest(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint, this.MapData.SizePerCell);
+        this.MakeRequest<any>(new ServerRequest<ServerTerrainRequest>(Strings.Endpoints.TerrainStrings.TerrainHandlerRoute, Strings.Endpoints.TerrainStrings.NotifyServerToPainTerrain, S))
         for (let BufferedX = S.XPoint; BufferedX <= S.XToPoint; BufferedX += ChunkSize)
         {
             BufferedX = BufferedX > BufferedX + ChunkSize ? BufferedX + ChunkSize : BufferedX;

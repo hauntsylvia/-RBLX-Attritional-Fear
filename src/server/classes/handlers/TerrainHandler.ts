@@ -15,14 +15,12 @@ export class TerrainHandler implements IHandler
     Endpoints =
     [
             new Endpoint(Strings.Endpoints.TerrainStrings.GetMapData, (Player: Player, Arg: unknown) => this.GetMapData(Player)),
-            new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.Endpoints.TerrainStrings.GetChunkOfTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.GetChunk(Player, Arg))
+            new Endpoint<ServerTerrainRequest, TerrainResult[]>(Strings.Endpoints.TerrainStrings.NotifyServerToPainTerrain, (Player: Player, Arg: ServerTerrainRequest) => this.PaintChunk(Player, Arg))
     ]
 
     THelper!: TerrainHelper;
 
-    Terrain!: TerrainResult[];
-
-    GetChunk (Player: Player | undefined, Req: ServerTerrainRequest): TerrainResult[] | undefined
+    PaintChunk (Player: Player | undefined, Req: ServerTerrainRequest): undefined
     {
         if (this.THelper !== undefined)
         {
@@ -30,8 +28,21 @@ export class TerrainHandler implements IHandler
             let TZ = Req.ZPoint;
             let ToTX = Req.XToPoint;
             let ToTZ = Req.ZToPoint;
-            let Terrain = this.THelper.GetTerrain(TX, TZ, ToTX, ToTZ);
-            return Terrain;
+            print(`Client asks for server to paint terrain from [${TX}, ${TZ}] to [${ToTX}, ${ToTZ}].`);
+            coroutine.resume(coroutine.create(() =>
+            {
+                let Terrain = this.THelper.GetTerrain(TX, TZ, ToTX, ToTZ);
+
+                //let Sleeper = new Sleep(5);
+                //let Ts = this.THelper.GetThreadsForTerrainFilling(this.Terrain);
+                //Ts.forEach(T =>
+                //{
+                //    coroutine.resume(T);
+                //    Sleeper.Step();
+                //});
+                this.THelper.PaintObjectsByBiome(Terrain);
+            }));
+            return undefined;
         }
     }
 
@@ -46,17 +57,6 @@ export class TerrainHandler implements IHandler
     ServerRegistering (Data: ServerData)
     {
         this.THelper = new TerrainHelper(Data.TerrainData.TerrainRequest, AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize);
-        this.Terrain = this.THelper.GetTerrain(-200, -200, 200, 200);
-        coroutine.resume(coroutine.create(() =>
-        {
-            //let Sleeper = new Sleep(5);
-            //let Ts = this.THelper.GetThreadsForTerrainFilling(this.Terrain);
-            //Ts.forEach(T =>
-            //{
-            //    coroutine.resume(T);
-            //    Sleeper.Step();
-            //});
-            this.THelper.PaintObjectsByBiome(this.Terrain);
-        }));
+        
     }
 }

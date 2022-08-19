@@ -36,6 +36,11 @@ export class TerrainHelper
 	public PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
 		const Stepper = new Sleep(100);
+		print(`CurrentTerrain size: ${CurrentTerrain.size()}.`);
+		if (CurrentTerrain.size() <= 0)
+		{
+			print(`CurrentTerrain size is 0. There's no terrain present!`);
+		}
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			const Terrain = CurrentTerrain[ThisOffset];
@@ -65,7 +70,7 @@ export class TerrainHelper
 		}
 	}
 
-	private ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[])
+	private ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[]): TerrainResult[]
 	{
 		const RayP = new RaycastParams();
 		RayP.FilterType = Enum.RaycastFilterType.Whitelist;
@@ -103,6 +108,7 @@ export class TerrainHelper
 				}
 			});
 		}
+		return CurrentTerrain;
 	}
 
 	public GetThreadsForTerrainFilling (CurrentTerrain: TerrainResult[]): thread[]
@@ -148,7 +154,7 @@ export class TerrainHelper
 	public GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
 		const Stepper = new Sleep(70000);
-		const T: TerrainResult[] = [];
+		let T: TerrainResult[] = [];
 		const OffsetXWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
 		const OffsetXWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
 
@@ -166,8 +172,14 @@ export class TerrainHelper
 		const NormalZpt = Zpt + this.TerrainReq.MapBoundaryMax / 2;
 
 		const ElevationMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		const MoistureMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		const TemperatureMap: number[][] =	NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		const MoistureMap: number[][] =			NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		const TemperatureMap: number[][] =		NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+
+
+		print((Xp < OffsetXWidthMax) + "xmax");
+		print((Xp >= OffsetXWidthMin) + "xmin");
+		print(Xpt + "-xpt");
+		print(Xp + "-xp");
 
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
@@ -208,8 +220,9 @@ export class TerrainHelper
 		}
 		if (game.GetService("RunService").IsServer())
 		{
-			this.ModifyTerrainWithObjects(T);
+			T = this.ModifyTerrainWithObjects(T);
 		}
+		print(`Result size: ${T.size()}`)
 		return T;
 	}
 }

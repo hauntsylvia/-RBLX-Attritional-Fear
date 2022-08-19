@@ -14,6 +14,8 @@ export class TerrainRequest
 
 		this.SizePerCell = SizePerCell;
 		this.WaterHeightOffset = WaterHeight;
+
+		this.MapSizeMeters = this.MapBoundaryMax * this.SizePerCell * 20;
 	}
 
 	MapBoundaryMax: number;
@@ -23,4 +25,6 @@ export class TerrainRequest
 
 	SizePerCell: number;
 	WaterHeightOffset: number;
+
+	MapSizeMeters: number;
 }

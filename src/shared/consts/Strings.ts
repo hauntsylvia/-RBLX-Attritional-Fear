@@ -40,7 +40,7 @@ export class Strings
             static TerrainHandlerRoute = "Terrain";
 
             static GetMapData = "GetMapData";
-            static GetChunkOfTerrain = "GetChunk";
+            static NotifyServerToPainTerrain = "GetChunk";
         };
         static VesselHandlerStrings = class
         {
