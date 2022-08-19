@@ -33,12 +33,12 @@ export class TerrainHelper
 
 	private Random = new Random();
 
-	PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
+	public PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-		let Stepper = new Sleep(100);
+		const Stepper = new Sleep(100);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
-			let Terrain = CurrentTerrain[ThisOffset];
+			const Terrain = CurrentTerrain[ThisOffset];
 			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 			{
 				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
@@ -47,9 +47,9 @@ export class TerrainHelper
 					TerrainHelper.ModelsResized = true;
 					Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
 				}
-				let ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
+				const ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
 				ForgetAbout.push(TerrainHelper.Workspace.Terrain);
-				let Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
+				const Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
 				if (Collision.isEmpty())
 				{
 					Clone.Parent = TerrainHelper.Workspace;
@@ -67,12 +67,12 @@ export class TerrainHelper
 
 	private ModifyTerrainWithObjects (CurrentTerrain: TerrainResult[])
 	{
-		let RayP = new RaycastParams();
+		const RayP = new RaycastParams();
 		RayP.FilterType = Enum.RaycastFilterType.Whitelist;
 		RayP.FilterDescendantsInstances.push(TerrainHelper.Workspace.Terrain);
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
-			let Terrain = CurrentTerrain[ThisOffset];
+			const Terrain = CurrentTerrain[ThisOffset];
 			let Choice = new Random().NextNumber(0, 1);
 			Terrain.Biome.RandomObjects.forEach(Obj =>
 			{
@@ -81,21 +81,21 @@ export class TerrainHelper
 					Choice -= (Obj.BiomesAndRarity.get(Terrain.Biome.BiomeEnum) ?? 0);
 					if (Choice <= 0)
 					{
-						let BaseE = (Terrain.Biome.MinimumElevation + Terrain.Biome.MaximumElevation);
-						let MinElevation = BaseE * Obj.MinimumElevation;
-						let MaxElevation = BaseE * Obj.MaximumElevation;
-						let BaseM = (Terrain.Biome.MinimumMoisture + Terrain.Biome.MaximumMoisture);
-						let MinM = BaseM * Obj.MinimumMoisture;
-						let MaxM = BaseM * Obj.MaximumMoisture;
-						let BaseT = (Terrain.Biome.MinimumTemp + Terrain.Biome.MaximumTemp);
-						let MinT = BaseT * Obj.MinimumTemperature;
-						let MaxT = BaseT * Obj.MaximumTemperature;
+						const BaseE = (Terrain.Biome.MinimumElevation + Terrain.Biome.MaximumElevation);
+						const MinElevation = BaseE * Obj.MinimumElevation;
+						const MaxElevation = BaseE * Obj.MaximumElevation;
+						const BaseM = (Terrain.Biome.MinimumMoisture + Terrain.Biome.MaximumMoisture);
+						const MinM = BaseM * Obj.MinimumMoisture;
+						const MaxM = BaseM * Obj.MaximumMoisture;
+						const BaseT = (Terrain.Biome.MinimumTemp + Terrain.Biome.MaximumTemp);
+						const MinT = BaseT * Obj.MinimumTemperature;
+						const MaxT = BaseT * Obj.MaximumTemperature;
 						if (MaxElevation >= Terrain.Elevation && MinElevation <= Terrain.Elevation &&
 							MaxM >= Terrain.Moisture && MinM <= Terrain.Moisture &&
 							MaxT >= Terrain.Temperature && MinT <= Terrain.Temperature)
 						{
 							//let Coll = CollisionCalculator.Calculate(new CFrame(Terrain.RealPosition.Position.add(new Vector3(0, 50, 0))), Terrain.RealPosition.Position.sub(new Vector3(0, -5, 0)), 500, RayP);
-							let FullSizeOfModel = Obj.Model.GetExtentsSize();
+							const FullSizeOfModel = Obj.Model.GetExtentsSize();
 							Terrain.ModelToSpawnHere = Obj;
 							Terrain.SpawnModelAt = new CFrame(Terrain.RealPosition.Position.add(new Vector3(0, FullSizeOfModel.Y / 2 + Obj.YOffset, 0)));
 						}
@@ -105,25 +105,25 @@ export class TerrainHelper
 		}
 	}
 
-	GetThreadsForTerrainFilling (CurrentTerrain: TerrainResult[]): thread[]
+	public GetThreadsForTerrainFilling (CurrentTerrain: TerrainResult[]): thread[]
 	{
-		let Threads: thread[] = [];
+		const Threads: thread[] = [];
 		for (let Index = 0; Index < CurrentTerrain.size(); Index += 50)
 		{
-			let Thread = coroutine.create(() =>
+			const Thread = coroutine.create(() =>
 			{
-				let Sleeper = new Sleep(1);
+				const Sleeper = new Sleep(1);
 				for (let ThisOffset = Index; ThisOffset < Index + 50 && ThisOffset < CurrentTerrain.size(); ThisOffset++)
 				{
 					Sleeper.Step();
-					let Terrain = CurrentTerrain[ThisOffset];
+					const Terrain = CurrentTerrain[ThisOffset];
 
-					let FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * SNumbers.Terrain.TerrainElevation);
+					const FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * SNumbers.Terrain.TerrainElevation);
 
-					let Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
-					let Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
+					const Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
+					const Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
 
-					let Part = new Instance("Part", TerrainHelper.Workspace);
+					const Part = new Instance("Part", TerrainHelper.Workspace);
 					Part.Anchored = true;
 					Part.Name = "TerrainPart";
 					Part.Position = Pos;
@@ -131,7 +131,7 @@ export class TerrainHelper
 					Part.CanCollide = false;
 					Part.Transparency = 1;
 
-					let BB = Terrain.Biome;
+					const BB = Terrain.Biome;
 					Part.Size = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
 					Part.Position = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
 					TerrainHelper.Workspace.Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
@@ -143,45 +143,45 @@ export class TerrainHelper
 		return Threads;
 	}
 
-	// The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
-	// to the center of the real world space.
-	GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
+	/** The coords of the heightmap are 0 to width. The coords of the map in real world space are subtracted by half the width to offset it
+	to the center of the real world space. */
+	public GetTerrain (Xp: number, Zp: number, Xpt: number, Zpt: number): TerrainResult[]
 	{
-		let Stepper = new Sleep(70000);
-		let T: TerrainResult[] = [];
-		let OffsetXWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
-		let OffsetXWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
+		const Stepper = new Sleep(70000);
+		const T: TerrainResult[] = [];
+		const OffsetXWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
+		const OffsetXWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
 
-		let OffsetZWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
-		let OffsetZWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
+		const OffsetZWidthMin = -(this.TerrainReq.MapBoundaryMax / 2);
+		const OffsetZWidthMax = (this.TerrainReq.MapBoundaryMax / 2);
 
 		Xp = Xp < OffsetXWidthMin ? OffsetXWidthMin : Xp;
 		Zp = Zp < OffsetZWidthMin ? OffsetZWidthMin : Zp;
 		Xpt = Xpt > OffsetXWidthMax ? OffsetXWidthMax : Xpt;
 		Zpt = Zpt > OffsetZWidthMax ? OffsetZWidthMax : Zpt;
 
-		let NormalXp = Xp + this.TerrainReq.MapBoundaryMax / 2;
-		let NormalZp = Zp + this.TerrainReq.MapBoundaryMax / 2;
-		let NormalXpt = Xpt + this.TerrainReq.MapBoundaryMax / 2;
-		let NormalZpt = Zpt + this.TerrainReq.MapBoundaryMax / 2;
+		const NormalXp = Xp + this.TerrainReq.MapBoundaryMax / 2;
+		const NormalZp = Zp + this.TerrainReq.MapBoundaryMax / 2;
+		const NormalXpt = Xpt + this.TerrainReq.MapBoundaryMax / 2;
+		const NormalZpt = Zpt + this.TerrainReq.MapBoundaryMax / 2;
 
-		let ElevationMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		let MoistureMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
-		let TemperatureMap: number[][] =	NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		const ElevationMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.ElevationMapZ, 5, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		const MoistureMap: number[][] =		NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
+		const TemperatureMap: number[][] =	NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
 
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
-			let NormalX = RealWorldRequestedX + this.TerrainReq.MapBoundaryMax / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
+			const NormalX = RealWorldRequestedX + this.TerrainReq.MapBoundaryMax / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
 			for (let RealWorldRequestedZ = Zp; RealWorldRequestedZ < OffsetZWidthMax && RealWorldRequestedZ >= OffsetZWidthMin && RealWorldRequestedZ < Zpt; RealWorldRequestedZ++)
 			{
-				let NormalZ = RealWorldRequestedZ + this.TerrainReq.MapBoundaryMax / 2;
+				const NormalZ = RealWorldRequestedZ + this.TerrainReq.MapBoundaryMax / 2;
 				let TR: TerrainResult | undefined = undefined;
-				let Elevation = ElevationMap[NormalX][NormalZ];
-				let FakeElevation = this.TerrainReq.SizePerCell * (Elevation * SNumbers.Terrain.TerrainElevation);
-				let Moisture = MoistureMap[NormalX][NormalZ];
-				let Temperature = TemperatureMap[NormalX][NormalZ];
+				const Elevation = ElevationMap[NormalX][NormalZ];
+				const FakeElevation = this.TerrainReq.SizePerCell * (Elevation * SNumbers.Terrain.TerrainElevation);
+				const Moisture = MoistureMap[NormalX][NormalZ];
+				const Temperature = TemperatureMap[NormalX][NormalZ];
 
-				let Pos = new CFrame(RealWorldRequestedX * this.TerrainReq.SizePerCell, FakeElevation, RealWorldRequestedZ * this.TerrainReq.SizePerCell);
+				const Pos = new CFrame(RealWorldRequestedX * this.TerrainReq.SizePerCell, FakeElevation, RealWorldRequestedZ * this.TerrainReq.SizePerCell);
 
 				let BiomeFilled = false;
 				this.Biomes.forEach(B =>

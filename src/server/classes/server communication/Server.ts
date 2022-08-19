@@ -32,7 +32,7 @@ export class Server
 
         this.RegisterHandlers();
 
-        let _APIReplicator = new Instance("RemoteEvent");
+        const _APIReplicator = new Instance("RemoteEvent");
         _APIReplicator.Name = Strings.ServerAPIStrings.APIReplicatorName;
         _APIReplicator.Parent = game.GetService("ReplicatedStorage");
         this.APIReplicator = new Replicator(_APIReplicator);
@@ -61,8 +61,8 @@ export class Server
     {
         if(typeIs(ControllerRequested, "string") && typeIs(EndpointRequested, "string"))
         {
-            const Request = new ServerRequest<any>(ControllerRequested as string, EndpointRequested as string, Args);
-            let Result: ServerResponse<any> | undefined;
+            const Request = new ServerRequest<unknown>(ControllerRequested as string, EndpointRequested as string, Args);
+            let Result: ServerResponse<unknown> | undefined;
             this.AvailableHandlers.forEach(Handler =>
             {
                 if(Handler.Name === Request.ControllerRequested)
@@ -95,7 +95,7 @@ export class Server
                 Handler.ServerRegistering(this.ServerData);
                 print(Handler.Name + " has initialized.");
                 this.AvailableHandlers.push(Handler);
-                let Expose = new Instance("BoolValue");
+                const Expose = new Instance("BoolValue");
                 Expose.Name = Handler.Name;
                 Expose.Value = true;
                 Expose.Parent = this.AvailableListeners;
