@@ -5,7 +5,7 @@ import { IHandler } from "../Handler";
 
 export class EntitiesHandler implements IHandler
 {
-    Name: string = Strings.ServerAPIStrings.EntityStrings.EntityHandlerRoute;
+    Name: string = Strings.Endpoints.EntityStrings.EntityHandlerRoute;
 
     Endpoints: Endpoint<any, any>[] =
         [

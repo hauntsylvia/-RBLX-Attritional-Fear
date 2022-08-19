@@ -12,12 +12,12 @@ import { IHandler } from "../Handler";
 
 export class VesselHandler implements IHandler
 {
-    Name: string = Strings.ServerAPIStrings.VesselHandlerStrings.VesselHandlerRoute;
+    Name: string = Strings.Endpoints.VesselHandlerStrings.VesselHandlerRoute;
 
     Endpoints: Endpoint<any, any>[] =
         [
-            new Endpoint<any, Vessel | undefined>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, (Player: Player, BuildingIdPlayerRequestedVessel: [number, Vessel], Replicator: Replicator) => this.TryToMakeAVessel(Player, BuildingIdPlayerRequestedVessel, Replicator)),
-            new Endpoint<any, boolean>(Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, (Player: Player, IdAndMoveToAndThrottles: [number, Vector3, number], Replicator: Replicator) => this.TryToMoveAVessel(Player, IdAndMoveToAndThrottles, Replicator)),
+            new Endpoint<any, Vessel | undefined>(Strings.Endpoints.VesselHandlerStrings.TryToMakeVessel, (Player: Player, BuildingIdPlayerRequestedVessel: [number, Vessel], Replicator: Replicator) => this.TryToMakeAVessel(Player, BuildingIdPlayerRequestedVessel, Replicator)),
+            new Endpoint<any, boolean>(Strings.Endpoints.VesselHandlerStrings.TryToMoveAVessel, (Player: Player, IdAndMoveToAndThrottles: [number, Vector3, number], Replicator: Replicator) => this.TryToMoveAVessel(Player, IdAndMoveToAndThrottles, Replicator)),
         ];
 
     ServerData!: ServerData;

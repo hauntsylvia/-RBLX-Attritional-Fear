@@ -15,6 +15,6 @@ export class EntityProcessor extends Processor
 
     GetEntityById (Id: number): ServerResponse<Partial<Entity>>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.EntityStrings.EntityHandlerRoute, Strings.ServerAPIStrings.EntityStrings.GetEntityById, Id));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.EntityStrings.EntityHandlerRoute, Strings.Endpoints.EntityStrings.GetEntityById, Id));
     }
 }

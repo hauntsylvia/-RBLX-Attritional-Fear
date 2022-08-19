@@ -15,7 +15,7 @@ export enum FactionTitleKeys
 export class Strings
 {
     static AvailableServicesFolderName = "Available Services";
-    static ServerAPIStrings = class
+    static Endpoints = class
     {
         static APIInstanceName: string = "APIInstance";
         static APIReplicatorName: string = "APIReplicator";

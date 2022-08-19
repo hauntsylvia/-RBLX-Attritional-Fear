@@ -17,15 +17,15 @@ import { SelfFoAFaction } from "../../../shared/classes/in game/factions/impleme
 
 export class PlayerHandler implements IHandler
 {
-    Name: string = Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute;
+    Name: string = Strings.Endpoints.PlayerStrings.PlayerHandlerRoute;
 
     Endpoints =
         [
-            new Endpoint<any, FoAFaction[]>(Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions,
+            new Endpoint<any, FoAFaction[]>(Strings.Endpoints.PlayerStrings.GetAllActivePlayerFactions,
                 (Player: Player) => this.GetAllActivePlayerFactions(Player)),
-            new Endpoint<FactionArguments, FoAFaction | undefined>(Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction,
+            new Endpoint<FactionArguments, FoAFaction | undefined>(Strings.Endpoints.PlayerStrings.RegisterPlayerFaction,
                 (Player: Player, Arg: FactionArguments, Replicator: Replicator) => this.RegisterPlayerFaction(Player, Arg, Replicator)),
-            new Endpoint<any, SelfFoAPlayer>(Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerFromPlayer,
+            new Endpoint<any, SelfFoAPlayer>(Strings.Endpoints.PlayerStrings.GetFoAPlayerFromPlayer,
                 (Player: Player) => this.GetFoAPlayerFromPlayer(Player))
         ]
 

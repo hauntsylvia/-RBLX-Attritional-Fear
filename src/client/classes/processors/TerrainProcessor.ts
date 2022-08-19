@@ -22,25 +22,25 @@ export class TerrainProcessor extends Processor
         this.TerrainHelper = new TerrainHelper(this.MapData, AllBiomes, FallbackBiome, MaxModelSize, MinimumModelSize);
     }
 
-    MapData: TerrainRequest;
+    private MapData: TerrainRequest;
 
-    TerrainHelper: TerrainHelper;
+    private TerrainHelper: TerrainHelper;
 
-    KillThreads: boolean = false;
+    private KillThreads: boolean = false;
 
-    GetMapData (): TerrainRequest
+    public GetMapData (): TerrainRequest
     {
         wait(2);
-        let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.ServerAPIStrings.TerrainStrings.TerrainHandlerRoute, Strings.ServerAPIStrings.TerrainStrings.GetMapData, undefined));
+        let MapData = this.MakeRequest<TerrainRequest>(new ServerRequest<any>(Strings.Endpoints.TerrainStrings.TerrainHandlerRoute, Strings.Endpoints.TerrainStrings.GetMapData, undefined));
         return MapData.Returned ?? this.GetMapData();
     }
 
-    StopCurrentRendering ()
+    public StopCurrentRendering ()
     {
         this.KillThreads = true;
 	}
 
-    RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number = 1): RenderTerrainResult
+    public RenderTerrain (Req: ServerTerrainRequest, FramesToSkipPerThread: number, ChunkSize: number = 1): RenderTerrainResult
     {
         let Sleeper = new Sleep(FramesToSkipPerThread);
         let Result = new RenderTerrainResult([]);

@@ -25,12 +25,12 @@ export class PlayerProcessor extends Processor
 
     GetAllPlayers (): ServerResponse<OtherFoAFaction[]>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.GetAllActivePlayerFactions, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.PlayerStrings.PlayerHandlerRoute, Strings.Endpoints.PlayerStrings.GetAllActivePlayerFactions, undefined));
     }
 
     RegisterFactionToGame (Faction: FactionArguments): ServerResponse<SelfFoAFaction>
     {
-        let R = this.MakeRequest<SelfFoAFaction>(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.RegisterPlayerFaction, Faction));
+        let R = this.MakeRequest<SelfFoAFaction>(new ServerRequest<any>(Strings.Endpoints.PlayerStrings.PlayerHandlerRoute, Strings.Endpoints.PlayerStrings.RegisterPlayerFaction, Faction));
         if (R.Success && R.Returned !== undefined)
         {
             this.PlayerFaction = R.Returned;
@@ -40,12 +40,12 @@ export class PlayerProcessor extends Processor
 
     GetCurrentPlayer (): ServerResponse<SelfFoAPlayer>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.PlayerStrings.PlayerHandlerRoute, Strings.Endpoints.PlayerStrings.GetFoAPlayerFromPlayer, undefined));
     }
 
     SaveFoAPlayerSettings (SettingsToSave: FoAPlayerSettings, HandlingProcessor: InterfacingObjectsProcessor): ServerResponse<ServerDataOperationResponse>
     {
         HandlingProcessor.ChangedSettings(SettingsToSave);
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.PlayerStrings.PlayerHandlerRoute, Strings.ServerAPIStrings.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.PlayerStrings.PlayerHandlerRoute, Strings.Endpoints.PlayerStrings.SaveFoAPlayerSettings, SettingsToSave));
 	}
 }

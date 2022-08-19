@@ -10,12 +10,12 @@ import { Record } from "../modules/datastores/Record";
 
 export class PlayerDataHandler implements IHandler
 {
-    Name: string = Strings.ServerAPIStrings.PlayerStrings.PlayerDataHandlerRoute;
+    Name: string = Strings.Endpoints.PlayerStrings.PlayerDataHandlerRoute;
 
     Endpoints: Endpoint<any, any>[] =
     [
-            new Endpoint<any, FoAPlayerSettings>(Strings.ServerAPIStrings.PlayerStrings.GetFoAPlayerSettings, (Player: Player) => this.GetFoAPlayerSettings(Player)),
-            new Endpoint<FoAPlayerSettings, ServerDataOperationResponse>(Strings.ServerAPIStrings.PlayerStrings.SaveFoAPlayerSettings, (Player: Player, S: FoAPlayerSettings) => this.SaveFoAPlayerSettings(Player, S)),
+            new Endpoint<any, FoAPlayerSettings>(Strings.Endpoints.PlayerStrings.GetFoAPlayerSettings, (Player: Player) => this.GetFoAPlayerSettings(Player)),
+            new Endpoint<FoAPlayerSettings, ServerDataOperationResponse>(Strings.Endpoints.PlayerStrings.SaveFoAPlayerSettings, (Player: Player, S: FoAPlayerSettings) => this.SaveFoAPlayerSettings(Player, S)),
     ];
 
     GetFoAPlayerSettings (Player: Player): FoAPlayerSettings

@@ -14,11 +14,11 @@ export class VesselProcessor extends Processor
 
     TryToMakeVessel (Vessel: Vessel): ServerResponse<Vessel>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.VesselHandlerStrings.VesselHandlerRoute, Strings.ServerAPIStrings.VesselHandlerStrings.TryToMakeVessel, Vessel));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.VesselHandlerStrings.VesselHandlerRoute, Strings.Endpoints.VesselHandlerStrings.TryToMakeVessel, Vessel));
     }
 
     TryToMoveVessel (Vessel: Vessel, MoveTo: Vector3, Throttle: number): ServerResponse<boolean>
     {
-        return this.MakeRequest(new ServerRequest<any>(Strings.ServerAPIStrings.VesselHandlerStrings.VesselHandlerRoute, Strings.ServerAPIStrings.VesselHandlerStrings.TryToMoveAVessel, [Vessel.Id, MoveTo, Throttle]));
+        return this.MakeRequest(new ServerRequest<any>(Strings.Endpoints.VesselHandlerStrings.VesselHandlerRoute, Strings.Endpoints.VesselHandlerStrings.TryToMoveAVessel, [Vessel.Id, MoveTo, Throttle]));
 	}
 }
