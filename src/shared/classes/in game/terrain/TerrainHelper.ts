@@ -35,7 +35,7 @@ export class TerrainHelper
 
 	public PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-		const Stepper = new Sleep(100);
+		const Stepper = new Sleep(50);
 		print(`CurrentTerrain size: ${CurrentTerrain.size()}.`);
 		if (CurrentTerrain.size() <= 0)
 		{
@@ -46,27 +46,38 @@ export class TerrainHelper
 			const Terrain = CurrentTerrain[ThisOffset];
 			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 			{
-				let Clone = Terrain.ModelToSpawnHere.Model.Clone();
-				if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
+				for (let SpecificPointX = 0; SpecificPointX < SNumbers.Terrain.SizePerCell; SpecificPointX = SpecificPointX + Terrain.ModelToSpawnHere.Density)
 				{
-					TerrainHelper.ModelsResized = true;
-					Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
-				}
-				const ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
-				ForgetAbout.push(TerrainHelper.Workspace.Terrain);
-				const Collision = CollisionCalculator.CalculateByBoundingBox(Terrain.SpawnModelAt, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
-				if (Collision.isEmpty())
-				{
-					Clone.Parent = TerrainHelper.Workspace;
-					Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
-					Clone.SetPrimaryPartCFrame(Terrain.SpawnModelAt.mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0)));
-				}
-				else
-				{
-					Clone.Destroy();
+					for (let SpecificPointZ = 0; SpecificPointZ < SNumbers.Terrain.SizePerCell; SpecificPointZ = SpecificPointZ + Terrain.ModelToSpawnHere.Density)
+					{
+						let NewPoint = Terrain.SpawnModelAt.add(new Vector3(SpecificPointX, 0, SpecificPointZ)).mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0));
+						let Clone = Terrain.ModelToSpawnHere.Model.Clone();
+						if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
+						{
+							TerrainHelper.ModelsResized = true;
+							Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
+						}
+
+
+						const ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
+						ForgetAbout.push(TerrainHelper.Workspace.Terrain);
+						const Collision = CollisionCalculator.CalculateByBoundingBox(NewPoint, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
+
+						if (Collision.isEmpty())
+						{
+							Clone.Parent = TerrainHelper.Workspace;
+							Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
+							Clone.SetPrimaryPartCFrame(NewPoint);
+						}
+						else
+						{
+							Clone.Destroy();
+						}
+
+						Stepper.Step();
+					}
 				}
 			}
-			Stepper.Step();
 		}
 	}
 
@@ -175,12 +186,6 @@ export class TerrainHelper
 		const MoistureMap: number[][] =			NoiseHelper.GenerateHeightmap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, this.TerrainReq.MapBoundaryMax / 150, this.TerrainReq.MoistureMapZ, 12, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
 		const TemperatureMap: number[][] =		NoiseHelper.GenerateTemperatureMap(NormalXp, NormalZp, NormalXpt, NormalZpt, this.TerrainReq.MapBoundaryMax, new Sleep(SNumbers.Terrain.NoiseHelperStepAmount));
 
-
-		print((Xp < OffsetXWidthMax) + "xmax");
-		print((Xp >= OffsetXWidthMin) + "xmin");
-		print(Xpt + "-xpt");
-		print(Xp + "-xp");
-
 		for (let RealWorldRequestedX = Xp; RealWorldRequestedX < OffsetXWidthMax && RealWorldRequestedX >= OffsetXWidthMin && RealWorldRequestedX < Xpt; RealWorldRequestedX++)
 		{
 			const NormalX = RealWorldRequestedX + this.TerrainReq.MapBoundaryMax / 2; // -100 + (1200 / 2) = 500 (client wants a little left-center of map in real world coords)
@@ -222,7 +227,6 @@ export class TerrainHelper
 		{
 			T = this.ModifyTerrainWithObjects(T);
 		}
-		print(`Result size: ${T.size()}`)
 		return T;
 	}
 }

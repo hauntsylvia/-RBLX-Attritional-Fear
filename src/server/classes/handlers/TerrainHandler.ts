@@ -28,19 +28,12 @@ export class TerrainHandler implements IHandler
             let TZ = Req.ZPoint;
             let ToTX = Req.XToPoint;
             let ToTZ = Req.ZToPoint;
-            print(`Client asks for server to paint terrain from [${TX}, ${TZ}] to [${ToTX}, ${ToTZ}].`);
             coroutine.resume(coroutine.create(() =>
             {
+                print(`Client asks for server to paint terrain from [${TX}, ${TZ}] to [${ToTX}, ${ToTZ}].`);
                 let Terrain = this.THelper.GetTerrain(TX, TZ, ToTX, ToTZ);
-
-                //let Sleeper = new Sleep(5);
-                //let Ts = this.THelper.GetThreadsForTerrainFilling(this.Terrain);
-                //Ts.forEach(T =>
-                //{
-                //    coroutine.resume(T);
-                //    Sleeper.Step();
-                //});
                 this.THelper.PaintObjectsByBiome(Terrain);
+                print(`Paint finished.`);
             }));
             return undefined;
         }

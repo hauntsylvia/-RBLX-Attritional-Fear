@@ -1,5 +1,5 @@
 import { BiomeType } from "../../../../../consts/Enums";
-import { ITerrainObject } from "../objects/ITerrainObject";
+import { TerrainObject } from "../objects/ITerrainObject";
 import { BiomeAtmosphere } from "./BiomeAtmosphere";
 
 export class Biome
@@ -14,7 +14,7 @@ export class Biome
 		MaximumTemp: number,
 		MinimumTemp: number,
 
-		RandomObjects: ITerrainObject[],
+		RandomObjects: TerrainObject[],
 		GroundMaterialDefault: Enum.Material,
 		BiomeEnum: BiomeType,
 
@@ -47,7 +47,7 @@ export class Biome
 	MaximumTemp: number;
 	MinimumTemp: number;
 
-	RandomObjects: ITerrainObject[];
+	RandomObjects: TerrainObject[];
 
 	GroundMaterialDefault: Enum.Material;
 

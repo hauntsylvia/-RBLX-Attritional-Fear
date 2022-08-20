@@ -4,6 +4,6 @@ export class SNumbers
     {
         static NoiseHelperStepAmount: number = 100000;
         static TerrainElevation: number = 5;
-        static SizePerCell: number = 15;
+        static SizePerCell: number = 20;
     };
 }

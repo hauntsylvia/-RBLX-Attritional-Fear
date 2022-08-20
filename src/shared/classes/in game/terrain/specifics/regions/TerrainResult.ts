@@ -1,5 +1,5 @@
 import { Biome } from "../biomes/Biome";
-import { ITerrainObject } from "../objects/ITerrainObject";
+import { TerrainObject } from "../objects/ITerrainObject";
 
 export class TerrainResult
 {
@@ -22,7 +22,7 @@ export class TerrainResult
 	X: number;
 	Z: number;
 	Biome: Biome;
-	ModelToSpawnHere: ITerrainObject | undefined;
+	ModelToSpawnHere: TerrainObject | undefined;
 	SpawnModelAt: CFrame | undefined;
 	WaterHeight: number;
 }

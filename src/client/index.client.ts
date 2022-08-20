@@ -6,6 +6,7 @@ import { ServerTerrainRequest } from "../shared/classes/in game/terrain/specific
 import { TerrainFollower } from "../shared/classes/in game/terrain/TerrainFollower";
 import { Vessel } from "../shared/classes/in game/vessels/Vessel";
 import { StuffOnRoundStart } from "../shared/consts/in game/factions/StuffOnRoundStart";
+import { SNumbers } from "../shared/consts/SNumbers";
 import { FactionTitleKeys } from "../shared/consts/Strings";
 import { FoACamera } from "./classes/camera/FoACamera";
 import { LevelOfZoom } from "./classes/camera/LevelOfZoom";
@@ -29,7 +30,7 @@ if (Self.Success && Self.Returned !== undefined)
 		let RenderAmount = 2000;
 		let StartPos = new Vector2((SpawnLoc.X - RenderAmount), (SpawnLoc.Z - RenderAmount));
 		let EndPos = new Vector2((SpawnLoc.X + RenderAmount), (SpawnLoc.Z + RenderAmount));
-		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 10, 50);
+		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 100, 1);
 	}
 	else
 	{

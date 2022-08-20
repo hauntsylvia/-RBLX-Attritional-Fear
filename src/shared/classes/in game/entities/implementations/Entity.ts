@@ -46,4 +46,19 @@ export class Entity implements IId
 		let Avg = Sum.div(Iterations);
 		return Avg;
 	}
+
+	static GetPositionalAverageOfPartArray (Parts: BasePart[]): Vector3
+	{
+		let Sum = Vector3.zero;
+		let Iterations = 0;
+		Parts.forEach(VP =>
+		{
+			Sum = Sum.add(VP.Position);
+			Iterations++;
+		});
+		Iterations = Iterations !== 0 ? Iterations : 1;
+		Sum = Sum !== Vector3.zero ? Sum.div(Iterations) : Vector3.zero;
+		let Avg = Sum.div(Iterations);
+		return Avg;
+	}
 }
