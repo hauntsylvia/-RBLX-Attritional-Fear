@@ -28,6 +28,9 @@ export class TerrainHelper
 	Biomes: Biome[];
 	FallbackBiome: Biome;
 
+	private AlreadyPainted: TerrainResult[] = [];
+	private AlreadyRendered: TerrainResult[] = [];
+
 	private static ModelsResized = false;
 	private static Workspace = game.GetService("Workspace");
 
@@ -35,7 +38,7 @@ export class TerrainHelper
 
 	public PaintObjectsByBiome (CurrentTerrain: TerrainResult[])
 	{
-		const Stepper = new Sleep(50);
+		const Stepper = new Sleep(200);
 		print(`CurrentTerrain size: ${CurrentTerrain.size()}.`);
 		if (CurrentTerrain.size() <= 0)
 		{
@@ -44,37 +47,41 @@ export class TerrainHelper
 		for (let ThisOffset = 0; ThisOffset < CurrentTerrain.size(); ThisOffset++)
 		{
 			const Terrain = CurrentTerrain[ThisOffset];
-			if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
+			if ((!this.AlreadyPainted.some(T => T.X === Terrain.X && T.Z === Terrain.Z)))
 			{
-				for (let SpecificPointX = 0; SpecificPointX < SNumbers.Terrain.SizePerCell; SpecificPointX = SpecificPointX + Terrain.ModelToSpawnHere.Density)
+				this.AlreadyPainted.push(Terrain);
+				if (Terrain.SpawnModelAt !== undefined && Terrain.ModelToSpawnHere !== undefined && Terrain.ModelToSpawnHere.Model !== undefined)
 				{
-					for (let SpecificPointZ = 0; SpecificPointZ < SNumbers.Terrain.SizePerCell; SpecificPointZ = SpecificPointZ + Terrain.ModelToSpawnHere.Density)
+					for (let SpecificPointX = 0; SpecificPointX < SNumbers.Terrain.SizePerCell; SpecificPointX = SpecificPointX + Terrain.ModelToSpawnHere.Density)
 					{
-						let NewPoint = Terrain.SpawnModelAt.add(new Vector3(SpecificPointX, 0, SpecificPointZ)).mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0));
-						let Clone = Terrain.ModelToSpawnHere.Model.Clone();
-						if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
+						for (let SpecificPointZ = 0; SpecificPointZ < SNumbers.Terrain.SizePerCell; SpecificPointZ = SpecificPointZ + Terrain.ModelToSpawnHere.Density)
 						{
-							TerrainHelper.ModelsResized = true;
-							Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
+							let NewPoint = Terrain.SpawnModelAt.add(new Vector3(SpecificPointX, 0, SpecificPointZ)).mul(CFrame.Angles(0, math.rad(math.random(-360, 360)), 0));
+							let Clone = Terrain.ModelToSpawnHere.Model.Clone();
+							if (!TerrainHelper.ModelsResized && game.GetService("RunService").IsServer())
+							{
+								TerrainHelper.ModelsResized = true;
+								Clone = ModelResizer.ScaleModel(Clone, this.Random.NextNumber(this.RescaleModelsToMin, this.RescaleModelsToMax));
+							}
+
+
+							const ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
+							ForgetAbout.push(TerrainHelper.Workspace.Terrain);
+							const Collision = CollisionCalculator.CalculateByBoundingBox(NewPoint, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
+
+							if (Collision.isEmpty())
+							{
+								Clone.Parent = TerrainHelper.Workspace;
+								Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
+								Clone.SetPrimaryPartCFrame(NewPoint);
+							}
+							else
+							{
+								Clone.Destroy();
+							}
+
+							Stepper.Step();
 						}
-
-
-						const ForgetAbout = Terrain.ModelToSpawnHere.Model.GetChildren();
-						ForgetAbout.push(TerrainHelper.Workspace.Terrain);
-						const Collision = CollisionCalculator.CalculateByBoundingBox(NewPoint, Terrain.ModelToSpawnHere.Model.GetExtentsSize(), ForgetAbout);
-
-						if (Collision.isEmpty())
-						{
-							Clone.Parent = TerrainHelper.Workspace;
-							Terrain.ModelToSpawnHere.GeneratedByTerrain(Terrain, Clone);
-							Clone.SetPrimaryPartCFrame(NewPoint);
-						}
-						else
-						{
-							Clone.Destroy();
-						}
-
-						Stepper.Step();
 					}
 				}
 			}
@@ -134,25 +141,27 @@ export class TerrainHelper
 				{
 					Sleeper.Step();
 					const Terrain = CurrentTerrain[ThisOffset];
+					if (!(this.AlreadyRendered.some(A => A.X === Terrain.X && A.Z === Terrain.Z)))
+					{
+						const FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * SNumbers.Terrain.TerrainElevation);
 
-					const FakeElevation = this.TerrainReq.SizePerCell * (Terrain.Elevation * SNumbers.Terrain.TerrainElevation);
+						const Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
+						const Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
 
-					const Pos = new Vector3(Terrain.RealPosition.X, FakeElevation, Terrain.RealPosition.Z);
-					const Siz = new Vector3(this.TerrainReq.SizePerCell, this.TerrainReq.SizePerCell * 2, this.TerrainReq.SizePerCell);
+						const Part = new Instance("Part", TerrainHelper.Workspace);
+						Part.Anchored = true;
+						Part.Name = "TerrainPart";
+						Part.Position = Pos;
+						Part.Size = Siz;
+						Part.CanCollide = false;
+						Part.Transparency = 1;
 
-					const Part = new Instance("Part", TerrainHelper.Workspace);
-					Part.Anchored = true;
-					Part.Name = "TerrainPart";
-					Part.Position = Pos;
-					Part.Size = Siz;
-					Part.CanCollide = false;
-					Part.Transparency = 1;
-
-					const BB = Terrain.Biome;
-					Part.Size = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
-					Part.Position = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
-					TerrainHelper.Workspace.Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
-					Part.Destroy();
+						const BB = Terrain.Biome;
+						Part.Size = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Size.X, this.TerrainReq.WaterHeightOffset, Part.Size.Z) : Part.Size;
+						Part.Position = BB.BiomeEnum === BiomeType.Ocean ? new Vector3(Part.Position.X, Part.Size.Y, Part.Position.Z) : Part.Position;
+						TerrainHelper.Workspace.Terrain.FillBlock(Part.CFrame, Part.Size, BB.GroundMaterialDefault);
+						Part.Destroy();
+					}
 				}
 			});
 			Threads.push(Thread);

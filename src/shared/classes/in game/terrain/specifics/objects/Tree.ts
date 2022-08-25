@@ -66,7 +66,7 @@ export class Tree extends TerrainObject
 
 	Model: Model;
 
-	YOffset: number = 7;
+	YOffset: number = 13;
 
 	Density: number = 3;
 }

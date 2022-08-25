@@ -2,16 +2,21 @@ import { FoAPlayerSettings } from "../../../shared/classes/in game/players/perso
 import { Hotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/Hotkeys";
 import { CameraHotkeys } from "../../../shared/classes/in game/players/personalizations/specifics/hotkeys/CameraHotkeys";
 import { SelfFoAPlayer } from "../../../shared/classes/in game/players/SelfFoAPlayer";
+import { Biome } from "../../../shared/classes/in game/terrain/specifics/biomes/Biome";
+import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
 import { CollisionCalculator } from "../../../shared/classes/util/collisions/CollisionCalculator";
 import { EnumParser } from "../../../shared/classes/util/EnumParser";
+import { SNumbers } from "../../../shared/consts/SNumbers";
 import { ISettingsInvolved } from "../clients/ISettingsInvolved";
+import { TerrainProcessor } from "../processors/TerrainProcessor";
 import { LevelOfZoom } from "./LevelOfZoom";
 
 export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 {
-	constructor (CurrentLoZ: LevelOfZoom, Settings: FoAPlayerSettings, LocalCamera?: Camera)
+	constructor (CurrentLoZ: LevelOfZoom, TerrainProcessor: TerrainProcessor, Settings: FoAPlayerSettings, LocalCamera?: Camera)
 	{
 		this.LevelsOfZoom = [CurrentLoZ];
+		this.TerrainProcessor = TerrainProcessor;
 		this.LoadNewSettings(Settings);
 		this.CurrentCamera = LocalCamera ?? game.GetService("Workspace").CurrentCamera ?? error("No valid camera found.");
 		this.InputService = game.GetService("UserInputService");
@@ -19,6 +24,8 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 	}
 
 	static ThisRenderStepLabel: string = "CameraOperation";
+
+	TerrainProcessor: TerrainProcessor;
 
 	LevelsOfZoom: LevelOfZoom[];
 
@@ -49,8 +56,8 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 	CameraZoomSteps: number = 80;
 	CameraYAngle: number = 0;
 
-	MinZoom: number = 50;
-	MaxZoom: number = 300;
+	MinZoom: number = 25;
+	MaxZoom: number = 500;
 
 	DisableVelocity ()
 	{
@@ -103,11 +110,11 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 	{
 		let LPlr = game.GetService("Players").LocalPlayer;
 		while ((LPlr.Character ?? LPlr.CharacterAdded.Wait()) === undefined) { wait(); }
-		wait(3);
+		wait(0.1);
 		this.InputChangedConnection = this.InputService.InputChanged.Connect((Inp, GameProc) => this.MouseScrollSet(Inp, GameProc))
 		this.CurrentCamera.CameraType = Enum.CameraType.Scriptable;
 		this.CurrentCamera.CFrame = new CFrame(0, this.LevelsOfZoom[0].CameraDistance, 0);
-		this.CurrentCamera.FieldOfView = 80;
+		this.CurrentCamera.FieldOfView = SNumbers.Camera.FoV;
 		game.GetService("RunService").BindToRenderStep(FoACamera.ThisRenderStepLabel, Enum.RenderPriority.Camera.Value, (DT) => this.RenderStepped(DT));
 	}
 
@@ -140,8 +147,23 @@ export class FoACamera implements ISettingsInvolved // Omar, PhD says hi
 	UpdateCamera (MoveTo: CFrame)
 	{
 		this.CurrentCamera.CameraSubject = undefined;
-
+		
 		this.CurrentCamera.CFrame = this.CurrentCamera.CFrame.Lerp(MoveTo, 0.2);
+
+		this.UpdateBiome();
+	}
+
+	UpdateBiome ()
+	{
+		const B: Biome | undefined = this.TerrainProcessor.GetBiomeAtPoint(new ServerTerrainRequest(this.CurrentCamera.CFrame.X - 10, this.CurrentCamera.CFrame.Z - 10, this.CurrentCamera.CFrame.X + 10, this.CurrentCamera.CFrame.Z + 10));
+		if (B !== undefined)
+		{
+			B.Atmoshpere.ChangeLighting();
+		}
+		else
+		{
+			//print(`Atmosphere lighting doesn't exist for a biome!`);
+		}
 	}
 
 	RenderStepped (DeltaTime: number)

@@ -23,7 +23,7 @@ export class TerrainFollower implements ISettingsInvolved
 
 	TerrainP?: TerrainProcessor;
 
-	RenderAmount: number = 50;
+	RenderAmount: number = 500;
 
 	ChunkSize: number = 1;
 
@@ -37,7 +37,7 @@ export class TerrainFollower implements ISettingsInvolved
 
 	Connect ()
 	{
-		this.Signal = game.GetService("Workspace").StreamingEnabled ? game.GetService("RunService").RenderStepped.Connect((Dt) => this.RenderStepped(Dt)) : undefined;
+		this.Signal = game.GetService("RunService").RenderStepped.Connect((Dt) => this.RenderStepped(Dt));
 	}
 
 	Disconnect ()
@@ -47,8 +47,8 @@ export class TerrainFollower implements ISettingsInvolved
 
 	LoadNewSettings (Settings: FoAPlayerSettings) 
 	{
-		this.RenderAmount = (Settings.ChunkSettings ?? new ChunkSettings()).ChunkDistancePerCycle;
-		this.TimePerContentStreamUpdate = (Settings.ChunkSettings ?? new ChunkSettings()).SecondsPerCycle;
+		//this.RenderAmount = (Settings.ChunkSettings ?? new ChunkSettings()).ChunkDistancePerCycle;
+		//this.TimePerContentStreamUpdate = (Settings.ChunkSettings ?? new ChunkSettings()).SecondsPerCycle;
 	}
 
 	RenderRes?: RenderTerrainResult;
@@ -58,15 +58,16 @@ export class TerrainFollower implements ISettingsInvolved
 		if (this.Step >= this.TimePerContentStreamUpdate)
 		{
 			this.Step = 0;
-			this.Plr.RequestStreamAroundAsync(this.Follow.CurrentCamera.CFrame.Position);
+			let REQ = game.GetService("Workspace").StreamingEnabled ? this.Plr.RequestStreamAroundAsync(this.Follow.CurrentCamera.CFrame.Position) : undefined;
 			if (this.TerrainP !== undefined && (this.RenderRes === undefined || (this.RenderRes !== undefined && this.RenderRes.Dead())))
 			{
-				let SpawnLoc = this.Follow.CurrentCamera.CFrame.Position;
+				let SpawnLoc = this.Follow.CurrentCamera.CFrame.mul(new CFrame(this.RenderAmount / 2, 0, 0));
+				print(SpawnLoc.LookVector);
 				let ChunkSize = 1;
-				let FrameSkips = 60;
+				let ChunkUpdates = 50;
 				let StartPos = new Vector2((SpawnLoc.X - this.RenderAmount), (SpawnLoc.Z - this.RenderAmount));
 				let EndPos = new Vector2((SpawnLoc.X + this.RenderAmount), (SpawnLoc.Z + this.RenderAmount));
-				this.RenderRes = this.TerrainP.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), FrameSkips, ChunkSize);
+				this.RenderRes = this.TerrainP.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), ChunkUpdates, ChunkSize);
 			}
 		}
 		else

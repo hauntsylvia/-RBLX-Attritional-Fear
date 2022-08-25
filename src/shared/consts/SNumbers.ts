@@ -6,4 +6,9 @@ export class SNumbers
         static TerrainElevation: number = 5;
         static SizePerCell: number = 20;
     };
+
+    static Camera = class
+    {
+        static FoV: number = 75;
+    };
 }

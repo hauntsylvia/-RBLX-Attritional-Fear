@@ -3,6 +3,7 @@ import { ServerRequest } from "shared/classes/server helpers/ServerRequest";
 import { ServerResponse } from "shared/classes/server helpers/ServerResponse";
 import { Strings } from "shared/consts/Strings";
 import { FoAPlayerSettings } from "../../../shared/classes/in game/players/personalizations/FoAPlayerSettings";
+import { Biome } from "../../../shared/classes/in game/terrain/specifics/biomes/Biome";
 import { ServerTerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/ServerTerrainRequest";
 import { TerrainRequest } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainRequest";
 import { TerrainResult } from "../../../shared/classes/in game/terrain/specifics/regions/TerrainResult";
@@ -59,7 +60,11 @@ export class TerrainProcessor extends Processor
                     let Thr = this.TerrainHelper.GetThreadsForTerrainFilling(Terrain);
                     Thr.forEach(T =>
                     {
-                        coroutine.resume(T);
+
+                        coroutine.resume(coroutine.create(() =>
+                        {
+                            coroutine.resume(T);
+						}));
                         FramesToSkipPerThread >= 1 ? Sleeper.Step() : game.GetService("RunService").Heartbeat.Wait();
                         Result.Threads.push(T);
                     });
@@ -68,4 +73,10 @@ export class TerrainProcessor extends Processor
         }
         return Result;
     }
+
+    public GetBiomeAtPoint (Req: ServerTerrainRequest) : Biome | undefined
+    {
+        const R = this.TerrainHelper.GetTerrain(Req.XPoint, Req.ZPoint, Req.XToPoint, Req.ZToPoint);
+        return R.size() > 0 ? R[0].Biome : undefined;
+	}
 }

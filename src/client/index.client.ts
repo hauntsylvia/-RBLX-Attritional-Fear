@@ -27,10 +27,11 @@ if (Self.Success && Self.Returned !== undefined)
 
 		Client.Camera.MoveCamera(SpawnLoc);
 
-		let RenderAmount = 2000;
+		let RenderAmount = 750;
 		let StartPos = new Vector2((SpawnLoc.X - RenderAmount), (SpawnLoc.Z - RenderAmount));
 		let EndPos = new Vector2((SpawnLoc.X + RenderAmount), (SpawnLoc.Z + RenderAmount));
-		let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 100, 1);
+		//let R = Client.TerrainProcessor.RenderTerrain(new ServerTerrainRequest(StartPos.X, StartPos.Y, EndPos.X, EndPos.Y), 100, 1);
+		Client.TerrainChunker.Connect();
 	}
 	else
 	{

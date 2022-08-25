@@ -26,7 +26,7 @@ export class FoAClient
         this.TerrainProcessor = new TerrainProcessor(RemoteFunction);
 
         let CurrentPlayer = this.PlayerProcessor.GetCurrentPlayer().Returned ?? error("No player loaded.");
-        this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), CurrentPlayer.FoAPlayerSettings);
+        this.Camera = new FoACamera(new LevelOfZoom(game.GetService("Workspace").FindFirstChildOfClass("Model") as Model, 500, 60), this.TerrainProcessor, CurrentPlayer.FoAPlayerSettings);
 
         this.TerrainChunker = new TerrainFollower(this.Camera, CurrentPlayer.FoAPlayerSettings, this.TerrainProcessor);
         this.EntitiesProcessor = new EntityProcessor(RemoteFunction);
